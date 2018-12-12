@@ -1,18 +1,13 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: rayndeng
- * Date: 7/12/18
- * Time: 12:06 PM
- */
 
 namespace App\Modules\SeoAgent\Providers;
 
-use App\Modules\SeoAgent\Repositories\Interfaces\SeoAgentRepositoryInterface;
-use App\Modules\SeoAgent\Repositories\SeoAgentRepository as SeoAgentRepository;
+use App\Modules\SeoAgent\Contracts\SeoAgentServiceInterface;
+use App\Modules\SeoAgent\Services\SeoAgentService;
 use Illuminate\Support\ServiceProvider;
 
-class SeoAgentServiceProvider extends ServiceProvider
+
+class SeoAgentServiceProvider extends ServiceProvider 
 {
     /**
      * Perform post-registration booting of services.
@@ -21,15 +16,50 @@ class SeoAgentServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-
+        $this->map();
     }
 
     public function register()
     {
-
-        $this->app->singleton(
-            SeoAgentRepositoryInterface::class,
-            SeoAgentRepository::class
+       $this->app->singleton(
+            SeoAgentServiceInterface::class,
+            SeoAgentService::class
         );
+   }
+
+    /**
+     * Define the routes for the application.
+     *
+     * @return void
+     */
+    public function map()
+    {
+        $this->mapApiRoutes();
+        $this->mapWebRoutes();
+    }
+
+    /**
+     * Define the "web" routes for the application.
+     *
+     * These routes all receive session state, CSRF protection, etc.
+     *
+     * @return void
+     */
+    protected function mapWebRoutes()
+    {
+        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+    }
+
+    /**
+     * Define the "api" routes for the application.
+     *
+     * These routes are typically stateless.
+     *
+     * @return void
+     */
+    protected function mapApiRoutes()
+    {
+        $this->loadRoutesFrom(__DIR__ . '/../routes/api.php');
     }
 }
+

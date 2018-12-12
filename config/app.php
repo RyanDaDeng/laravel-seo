@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'name' => env('APP_NAME', 'Laravel'),
+    'name' => env('APP_NAME', 'SEO Agent Management'),
 
     /*
     |--------------------------------------------------------------------------
@@ -174,12 +174,9 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        \App\Modules\SeoAgent\Providers\SeoAgentServiceProvider::class,
+        \App\Modules\FrontEnd\Providers\FrontendServiceProvider::class
 
-
-        /*
-         * Our service
-         */
-        \App\Modules\SeoAgent\Providers\SeoAgentServiceProvider::class
     ],
 
     /*
@@ -229,10 +226,7 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
-        /*
-         * Our own facades
-         */
-        \App\Modules\SeoAgent\Facades\SeoAgentRepository::class
+
     ],
 
 ];

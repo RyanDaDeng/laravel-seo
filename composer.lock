@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "66ca7343889332c2b8ecca11c251430c",
+    "content-hash": "5646aa2650310aa0f19c4ff3ffdf8785",
     "packages": [
         {
             "name": "dnoegel/php-xdg-base-dir",
@@ -4877,6 +4877,132 @@
             "time": "2017-04-07T12:08:54+00:00"
         },
         {
+            "name": "timehunter/laravel-api-module-generator",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/RyanDaDeng/laravel-api-module-generator.git",
+                "reference": "e595e6068794bbddfc366265375484575b19c352"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/RyanDaDeng/laravel-api-module-generator/zipball/e595e6068794bbddfc366265375484575b19c352",
+                "reference": "e595e6068794bbddfc366265375484575b19c352",
+                "shasum": ""
+            },
+            "require": {
+                "timehunter/laravel-file-generator": "^1.6.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.1",
+                "orchestra/testbench": "~3.0",
+                "phpunit/phpunit": "~7.0",
+                "sempro/phpunit-pretty-print": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "TimeHunter\\LaravelApiModuleGenerator\\LaravelApiModuleGeneratorServiceProvider"
+                    ],
+                    "aliases": {
+                        "LaravelApiModuleGenerator": "TimeHunter\\LaravelApiModuleGenerator\\Facades\\LaravelApiModuleGenerator"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "TimeHunter\\LaravelApiModuleGenerator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ryan Deng",
+                    "email": "ryandadeng@gmail.com",
+                    "homepage": "https://github.com/RyanDaDeng"
+                }
+            ],
+            "description": "A simple laravel api module service generator to provide you with a clean and lightweight code structure.",
+            "homepage": "https://github.com/timehunter/laravelapimodulegenerator",
+            "keywords": [
+                "LaravelApiModuleGenerator",
+                "laravel",
+                "laravel api generator",
+                "laravel code generator",
+                "laravel curd generator",
+                "laravel generator",
+                "laravel maker",
+                "laravel module generator",
+                "laravel service generator"
+            ],
+            "time": "2018-12-09T23:58:12+00:00"
+        },
+        {
+            "name": "timehunter/laravel-file-generator",
+            "version": "1.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/RyanDaDeng/laravel-file-generator.git",
+                "reference": "65b6d6a611a0b00598ae258e848691aa0f1c8db6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/RyanDaDeng/laravel-file-generator/zipball/65b6d6a611a0b00598ae258e848691aa0f1c8db6",
+                "reference": "65b6d6a611a0b00598ae258e848691aa0f1c8db6",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.1",
+                "orchestra/testbench": "~3.0",
+                "phpunit/phpunit": "~7.0",
+                "sempro/phpunit-pretty-print": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "TimeHunter\\LaravelFileGenerator\\LaravelFileGeneratorServiceProvider"
+                    ],
+                    "aliases": {
+                        "LaravelFileGenerator": "TimeHunter\\LaravelFileGenerator\\Facades\\LaravelFileGenerator"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "TimeHunter\\LaravelFileGenerator\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ryan Deng",
+                    "email": "ryandadeng@gmail.com",
+                    "homepage": "https://ryandeng.com"
+                }
+            ],
+            "description": "A Laravel File Generator to automate creation of interface, trait and class files.",
+            "homepage": "https://github.com/timehunter/laravel-file-generator",
+            "keywords": [
+                "LaravelFileGenerator",
+                "file generator",
+                "laravel",
+                "laravel file generator",
+                "laravel structure generator"
+            ],
+            "time": "2018-12-08T13:36:59+00:00"
+        },
+        {
             "name": "webmozart/assert",
             "version": "1.3.0",
             "source": {
@@ -4929,7 +5055,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "timehunter/laravel-api-module-generator": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

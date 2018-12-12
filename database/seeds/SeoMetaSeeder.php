@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Database\Seeder;
-
+use App\Modules\Shared\Entities\Meta;
 class SeoMetaSeeder extends Seeder
 {
     use \Illuminate\Foundation\Testing\WithFaker;
@@ -17,12 +17,12 @@ class SeoMetaSeeder extends Seeder
         $faker = \Faker\Factory::create();
 
         for ($a = 0; $a < 3000; $a++) {
-            $currentData = new \App\Modules\SeoAgent\Objects\Meta();
+            $currentData = new Meta();
             $currentData->setCanonical($faker->url);
             $currentData->setDescription($faker->name(100));
             $currentData->setTitle($faker->title);
 
-            $previewData = new \App\Modules\SeoAgent\Objects\Meta();
+            $previewData = new Meta();
             $previewData->setCanonical($faker->url);
             $previewData->setDescription($faker->name(100));
             $previewData->setTitle($faker->title);
@@ -33,6 +33,8 @@ class SeoMetaSeeder extends Seeder
             $obj->hash = md5($url);
             $obj->current_data = $currentData->__toArray();
             $obj->draft_data = $previewData->__toArray();
+            $obj->draft_at = $faker->dateTime;
+            $obj->last_approved_at = $faker->dateTime;
             $obj->save();
         }
 

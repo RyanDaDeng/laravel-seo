@@ -19,8 +19,10 @@ class CreateSeoMetasTable extends Migration
 
             $table->string('path')->default('');
             $table->string('hash')->default('');
-            $table->text('current_data');
-            $table->text('draft_data');
+            $table->text('current_data')->default('{}');
+            $table->text('draft_data')->default('{}');
+            $table->dateTime('draft_at')->nullable();
+            $table->dateTime('last_approved_at')->nullable();
         });
     }
 

@@ -23,14 +23,3 @@ Auth::routes();
 Route::get('/home', 'HomeController@index')->name('home');
 
 
-/**
- * SeoAgent
- */
-Route::prefix('web/seo-agent')->group(function () {
-
-    Route::put('seo-metas/{id}', 'Web\SeoAgentController@updateMetaData');
-
-    Route::get('seo-metas/{id}', 'Web\SeoAgentController@getMetaDatById');
-
-    Route::get('seo-metas', 'Web\SeoAgentController@getMetaData');
-});

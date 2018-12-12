@@ -6,12 +6,11 @@
  * Time: 10:57 AM
  */
 
-namespace App\Modules\SeoAgent\Objects;
+namespace App\Modules\Shared\Entities;
 
 
 class Meta
 {
-
     /**
      * @var string $title
      */
@@ -26,6 +25,18 @@ class Meta
     private $description;
 
     /**
+     * @return array
+     */
+    public static function rules()
+    {
+        return [
+            'title' => 'string|required',
+            'description' => 'string|required',
+            'canonical' => 'string|required'
+        ];
+    }
+
+    /**
      * @return string
      */
     public function getTitle(): string
@@ -35,10 +46,12 @@ class Meta
 
     /**
      * @param string $title
+     * @return Meta
      */
-    public function setTitle(string $title): void
+    public function setTitle(string $title): self
     {
         $this->title = $title;
+        return $this;
     }
 
     /**
@@ -51,10 +64,12 @@ class Meta
 
     /**
      * @param string $canonical
+     * @return Meta
      */
-    public function setCanonical(string $canonical): void
+    public function setCanonical(string $canonical): self
     {
         $this->canonical = $canonical;
+        return $this;
     }
 
     /**
@@ -67,10 +82,12 @@ class Meta
 
     /**
      * @param string $description
+     * @return Meta
      */
-    public function setDescription(string $description): void
+    public function setDescription(string $description): self
     {
         $this->description = $description;
+        return $this;
     }
 
     /**

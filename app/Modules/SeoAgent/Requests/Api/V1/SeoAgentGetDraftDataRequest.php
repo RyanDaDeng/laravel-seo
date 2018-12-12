@@ -1,40 +1,33 @@
 <?php
 
-namespace App\Modules\SeoAgent\Requests;
+namespace App\Modules\SeoAgent\Requests\Api\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class SeoMetaGetMetaDataRequest extends FormRequest
+
+class SeoAgentGetDraftDataRequest extends FormRequest 
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     *
-     * @return bool
-     */
+
+
+    
     public function authorize()
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array
-     */
     public function rules()
     {
         return [
-            'per_page' => 'bail|numeric|max:100',
-            'order_by' => 'bail|nullable|string'
-        ];
+          'per_page'=>'integer',
+          'page'=>'integer'
+      ];
     }
-
-
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json($validator->errors(), 422));
     }
 
 }
+
