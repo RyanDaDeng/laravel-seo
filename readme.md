@@ -11,3 +11,7 @@ The boilerplate intends to cover the following stuff, they might from my own oth
 - Laravel Nova
 - Cron job management
 - Module-based structure
+
+I am not going to write document on it, because the project is self-intended and may change over the time.
+
+This is also a demo that how I work for Laravel industries.
