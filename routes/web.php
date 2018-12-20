@@ -22,6 +22,11 @@ Route::get('/home', function () {
     return redirect('app');
 });
 
+Route::middleware('admin')->get('app/api-management', function () {
+    return view('modules.api-management.index');
+});
+
+
 Auth::routes();
 
 

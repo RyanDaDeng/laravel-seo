@@ -27,6 +27,8 @@ Vue.use(Notifications)
  */
 
 Vue.component('draft-data-list', require('./components/DraftDataList.vue'));
+Vue.component('api-passport', require('./components/ApiPassport.vue'));
+
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key)))

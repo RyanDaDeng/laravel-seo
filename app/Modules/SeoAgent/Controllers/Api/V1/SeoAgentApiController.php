@@ -11,6 +11,7 @@ use App\Modules\SeoAgent\Requests\Api\V1\SeoAgentCreateCurrentDataRequest;
 use App\Modules\SeoAgent\Requests\Api\V1\SeoAgentGetOnlyDraftRequest;
 use App\Modules\SeoAgent\Requests\Api\V1\SeoAgentUpdateCurrentDataRequest;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Log;
 
 class SeoAgentApiController extends Controller
 {
@@ -199,6 +200,10 @@ class SeoAgentApiController extends Controller
      *     )
      * )
      */
+    /**
+     * @param SeoAgentBulkUpdateOrInsertMetaRequest $request
+     * @return array
+     */
     public function patchCurrentData(SeoAgentBulkUpdateOrInsertMetaRequest $request)
     {
         $request->validated();
@@ -206,64 +211,52 @@ class SeoAgentApiController extends Controller
         $data = $request->all();
 
         $collection = collect($data);
-
-
         $keys = $collection->pluck('hash');
         $mapper = $collection->keyBy('hash');
-
-
         $exists = SeoAgentCurrentData::query()->whereIn('hash', $keys)->get()->pluck('hash');
-
-
         $notExists = $keys->diff($exists);
-
-
         $metaSchema = new MetaSchemaEloquent();
-
         $defaultDraft = $metaSchema->toArray();
         $currentDateTime = Carbon::now()->format('Y-m-d H:i:s');
 
-        if (is_array($data)) {
-            // update existing data only
-            $existValues = [];
-            foreach ($exists as $exist) {
-                $row = [
-                    'hash' => $exist,
-                    'draft_data' => '',
-                    'updated_at' => $currentDateTime,
-                    'current_data' => json_encode($metaSchema->fill($mapper[$exist]['current_data'])->toArray()),
-                ];
-                $existValues[] = $row;
+        try {
+            if (is_array($data)) {
+                // update existing data only
+                $existValues = [];
+                foreach ($exists as $exist) {
+                    $row = [
+                        'hash' => $exist,
+                        'draft_data' => '',
+                        'updated_at' => $currentDateTime,
+                        'current_data' => json_encode($metaSchema->fill($mapper[$exist]['current_data'])->toArray()),
+                    ];
+                    $existValues[] = $row;
+                }
+                SeoAgentCurrentData::insertOnDuplicateKey($existValues, ['current_data', 'updated_at']);
+
+
+                // insert new data
+                $notExistRows = [];
+                foreach ($notExists as $notExist) {
+                    $row = [
+                        'hash' => $notExist,
+                        'path' => $mapper[$notExist]['path'],
+                        'draft_data' => json_encode($defaultDraft),
+                        'current_data' => json_encode($metaSchema->fill($mapper[$notExist]['current_data'])->toArray()),
+                        'type' => 0,
+                        'created_at' => $currentDateTime,
+                        'updated_at' => $currentDateTime
+                    ];
+                    $notExistRows[] = $row;
+                }
+                SeoAgentCurrentData::query()->insert($notExistRows);
+
+                return ['success' => true];
             }
-            SeoAgentCurrentData::insertOnDuplicateKey($existValues, ['current_data', 'updated_at']);
-
-
-            // insert new data
-
-            $notExistRows = [];
-            foreach ($notExists as $notExist) {
-                $row = [
-                    'hash' => $notExist,
-                    'path' => $mapper[$notExist]['path'],
-                    'draft_data' => json_encode($defaultDraft),
-                    'current_data' => json_encode($metaSchema->fill($mapper[$notExist]['current_data'])->toArray()),
-                    'type' => 0,
-                    'created_at' => $currentDateTime,
-                    'updated_at' => $currentDateTime
-                ];
-                $notExistRows[] = $row;
-            }
-            SeoAgentCurrentData::query()->insert($notExistRows);
-            return $existValues;
+        } catch (\Exception $e) {
+            Log::error($e);
+            return ['success' => false];
         }
-
-
-//
-//        $data = $request->only(['title', 'description', 'canonical', 'keywords']);
-//        $schema = new MetaSchemaEloquent($data);
-//        return SeoAgentService::updateCurrentDataByHash($hash, $schema);
     }
-
-
 }
 

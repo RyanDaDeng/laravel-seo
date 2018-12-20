@@ -13,6 +13,10 @@ class SeoAgentWebController extends Controller
 {
 
 
+    /**
+     * @param SeoAgentGetDraftDataRequest $request
+     * @return \Illuminate\Support\Collection
+     */
     public function getDraftData(SeoAgentGetDraftDataRequest $request)
     {
         $request->validated();
@@ -26,7 +30,11 @@ class SeoAgentWebController extends Controller
         );
     }
 
-
+    /**
+     * @param SeoAgentUpdateDraftDataRequest $request
+     * @param $id
+     * @return \Illuminate\Support\Collection
+     */
     public function updateDraftData(SeoAgentUpdateDraftDataRequest $request, $id)
     {
         $request->validated();
@@ -38,6 +46,10 @@ class SeoAgentWebController extends Controller
         return SeoAgentService::updateDraftData($id, $schema);
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Support\Collection
+     */
     public function deleteDraftData($id)
     {
         return SeoAgentService::deleteDraft($id);

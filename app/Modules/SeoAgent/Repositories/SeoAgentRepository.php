@@ -12,20 +12,31 @@ use Carbon\Carbon;
 class SeoAgentRepository
 {
 
-
+    /**
+     * @param $hash
+     * @return array|\Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|null|object
+     */
     public function getCurrentDataByHash($hash)
     {
         $data = SeoAgentCurrentData::query()->where('hash', $hash)->first();
         return $data ? $data : [];
     }
 
-
+    /**
+     * @param $perPage
+     * @param null $page
+     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
+     */
     public function getOnlyDraftData($perPage, $page = null)
     {
         $data = SeoAgentDraftData::query()->where('type', SeoAgentBaseModel::IN_DRAFT);
         return $data->paginate($perPage);
     }
 
+    /**
+     * @param $id
+     * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Eloquent\Model|null|object
+     */
     public function deleteDraft($id)
     {
         $data = SeoAgentDraftData::query()->where('id', $id)->first();
@@ -43,6 +54,10 @@ class SeoAgentRepository
         return $data;
     }
 
+    /**
+     * @param $prepare
+     * @return SeoAgentBaseModel
+     */
     public function createCurrentData($prepare)
     {
         $obj = new SeoAgentBaseModel();
@@ -55,12 +70,19 @@ class SeoAgentRepository
         return $obj;
     }
 
-
+    /**
+     * @param $hash
+     * @return bool
+     */
     public function existsByHash($hash)
     {
         return SeoAgentDraftData::query()->where('hash', $hash)->exists();
     }
 
+    /**
+     * @param $id
+     * @return bool
+     */
     public function exists($id)
     {
         return SeoAgentDraftData::query()->where('id', $id)->exists();
