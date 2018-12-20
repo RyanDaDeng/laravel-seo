@@ -24,6 +24,7 @@ class CreateSeoMetasTable extends Migration
             $table->dateTime('draft_at')->nullable();
             $table->dateTime('last_approved_at')->nullable();
             $table->tinyInteger('type')->default(0);
+            $table->unique('hash','hash_key');
         });
         \Illuminate\Support\Facades\DB::statement('ALTER TABLE seo_metas ADD FULLTEXT fulltext_index (path, current_data, draft_data)');
     }

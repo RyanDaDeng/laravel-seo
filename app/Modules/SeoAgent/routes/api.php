@@ -7,4 +7,6 @@ Route::prefix('api/seoagent/v1')->group(function () {
     Route::put('/current-data/{hash}', 'App\Modules\SeoAgent\Controllers\Api\V1\SeoAgentApiController@updateCurrentDataByHash')->name('SeoAgent.api.updateCurrentDataByHash');
     Route::get('/draft-data', 'App\Modules\SeoAgent\Controllers\Api\V1\SeoAgentApiController@getOnlyDraftData')->name('SeoAgent.api.getOnlyDraftData');
     Route::get('/current-data/{hash}', 'App\Modules\SeoAgent\Controllers\Api\V1\SeoAgentApiController@getCurrentDataByHash')->name('SeoAgent.api.getCurrentDataByHash');
+
+    Route::patch('/current-data', 'App\Modules\SeoAgent\Controllers\Api\V1\SeoAgentApiController@patchCurrentData')->name('SeoAgent.api.patchCurrentData');
 });

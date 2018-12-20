@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Modules\SeoAgent\Facades\SeoAgentService;
 use App\Modules\SeoAgent\Models\MetaSchemaEloquent;
 use App\Modules\SeoAgent\Models\SeoAgentCurrentData;
+use App\Modules\SeoAgent\Requests\Api\V1\SeoAgentBulkUpdateOrInsertMetaRequest;
 use App\Modules\SeoAgent\Requests\Api\V1\SeoAgentCreateCurrentDataRequest;
 use App\Modules\SeoAgent\Requests\Api\V1\SeoAgentGetOnlyDraftRequest;
 use App\Modules\SeoAgent\Requests\Api\V1\SeoAgentUpdateCurrentDataRequest;
+use Carbon\Carbon;
 
 class SeoAgentApiController extends Controller
 {
@@ -135,7 +137,6 @@ class SeoAgentApiController extends Controller
     }
 
 
-
     /**
      * @OA\Put(
      *     path="/seoagent/v1/current-data/{hash}",
@@ -173,6 +174,94 @@ class SeoAgentApiController extends Controller
         $data = $request->only(['title', 'description', 'canonical', 'keywords']);
         $schema = new MetaSchemaEloquent($data);
         return SeoAgentService::updateCurrentDataByHash($hash, $schema);
+    }
+
+
+    /**
+     * @OA\Patch(
+     *     path="/seoagent/v1/current-data",
+     *     tags={"Current Data"},
+     *     summary="Bulk update or insert data",
+     *     description="Bulk update or insert data",
+     *     deprecated=false,
+     *     @OA\RequestBody(
+     *          description="Data required to create it",
+     *          required=true,
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *              @OA\Items(type="array",
+     *              @OA\Items(ref="#/components/schemas/SeoAgentBaseModel"))
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Update a resource"
+     *     )
+     * )
+     */
+    public function patchCurrentData(SeoAgentBulkUpdateOrInsertMetaRequest $request)
+    {
+        $request->validated();
+
+        $data = $request->all();
+
+        $collection = collect($data);
+
+
+        $keys = $collection->pluck('hash');
+        $mapper = $collection->keyBy('hash');
+
+
+        $exists = SeoAgentCurrentData::query()->whereIn('hash', $keys)->get()->pluck('hash');
+
+
+        $notExists = $keys->diff($exists);
+
+
+        $metaSchema = new MetaSchemaEloquent();
+
+        $defaultDraft = $metaSchema->toArray();
+        $currentDateTime = Carbon::now()->format('Y-m-d H:i:s');
+
+        if (is_array($data)) {
+            // update existing data only
+            $existValues = [];
+            foreach ($exists as $exist) {
+                $row = [
+                    'hash' => $exist,
+                    'draft_data' => '',
+                    'updated_at' => $currentDateTime,
+                    'current_data' => json_encode($metaSchema->fill($mapper[$exist]['current_data'])->toArray()),
+                ];
+                $existValues[] = $row;
+            }
+            SeoAgentCurrentData::insertOnDuplicateKey($existValues, ['current_data', 'updated_at']);
+
+
+            // insert new data
+
+            $notExistRows = [];
+            foreach ($notExists as $notExist) {
+                $row = [
+                    'hash' => $notExist,
+                    'path' => $mapper[$notExist]['path'],
+                    'draft_data' => json_encode($defaultDraft),
+                    'current_data' => json_encode($metaSchema->fill($mapper[$notExist]['current_data'])->toArray()),
+                    'type' => 0,
+                    'created_at' => $currentDateTime,
+                    'updated_at' => $currentDateTime
+                ];
+                $notExistRows[] = $row;
+            }
+            SeoAgentCurrentData::query()->insert($notExistRows);
+            return $existValues;
+        }
+
+
+//
+//        $data = $request->only(['title', 'description', 'canonical', 'keywords']);
+//        $schema = new MetaSchemaEloquent($data);
+//        return SeoAgentService::updateCurrentDataByHash($hash, $schema);
     }
 
 

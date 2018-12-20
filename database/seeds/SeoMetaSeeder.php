@@ -22,7 +22,7 @@ class SeoMetaSeeder extends Seeder
         $defaultUser->email = 'ryandadeng@gmail.com';
         $defaultUser->password = \Illuminate\Support\Facades\Hash::make('123123123');
         $defaultUser->save();
-        for ($a = 0; $a < 3000; $a++) {
+        for ($a = 0; $a < 5; $a++) {
             $currentData = new MetaSchemaEloquent();
             $currentData->fill([
                 'description' => $faker->sentence(80),
