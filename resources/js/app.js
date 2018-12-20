@@ -14,6 +14,9 @@ import BootstrapVue from 'bootstrap-vue'
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 Vue.use(BootstrapVue);
+import Notifications from 'vue-notification';
+
+Vue.use(Notifications)
 
 /**
  * The following block of code may be used to automatically register your

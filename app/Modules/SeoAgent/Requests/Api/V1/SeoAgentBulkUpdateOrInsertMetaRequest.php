@@ -7,7 +7,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 
-class SeoAgentGetChangeRequestsRequest extends FormRequest 
+class SeoAgentBulkUpdateOrInsertMetaRequest extends FormRequest
 {
 
 
@@ -20,8 +20,7 @@ class SeoAgentGetChangeRequestsRequest extends FormRequest
     public function rules()
     {
         return [
-          'per_page'=>'integer',
-          'page'=>'integer'
+          'data'=>'array'
       ];
     }
     protected function failedValidation(Validator $validator)

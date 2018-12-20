@@ -7,11 +7,10 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 
-class SeoAgentGetDraftDataRequest extends FormRequest 
+class SeoAgentGetOnlyDraftRequest extends FormRequest
 {
 
 
-    
     public function authorize()
     {
         return true;
@@ -20,10 +19,11 @@ class SeoAgentGetDraftDataRequest extends FormRequest
     public function rules()
     {
         return [
-          'per_page'=>'integer',
-          'page'=>'integer'
-      ];
+            'per_page' => 'integer|required',
+            'page' => 'integer|required'
+        ];
     }
+
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json($validator->errors(), 422));

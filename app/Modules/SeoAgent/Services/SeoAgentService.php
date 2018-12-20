@@ -2,11 +2,13 @@
 
 namespace App\Modules\SeoAgent\Services;
 
-use App\Modules\SeoAgent\Contracts\SeoAgentServiceInterface;
+use App\Modules\SeoAgent\Models\MetaSchemaEloquent;
+use App\Modules\SeoAgent\Models\SeoAgentBaseModel;
 use App\Modules\SeoAgent\Repositories\SeoAgentRepository;
+use Illuminate\Support\Facades\Log;
 
 
-class SeoAgentService implements SeoAgentServiceInterface
+class SeoAgentService
 {
 
     private $repository;
@@ -16,34 +18,63 @@ class SeoAgentService implements SeoAgentServiceInterface
         $this->repository = $repository;
     }
 
-    public function getDraftData($per_page, $page)
+    public function getDraftData($per_page, $page, $orderBy, $orderDesc, $wildSearch = null, $type = null)
     {
-        return $this->repository->getDraftMetaData($per_page);
+        return $this->repository->getDraftMetaData($per_page, $page, $orderBy, $orderDesc, $wildSearch, $type);
     }
 
-    public function updateDraftData($id, $data = [])
+    public function deleteDraft($id)
     {
+        if (!$this->repository->exists($id)) {
+            return false;
+        }
+        return $this->repository->deleteDraft($id);
+    }
+
+
+    public function updateDraftData($id, MetaSchemaEloquent $data)
+    {
+
         return $this->repository->updateDraftData($id, $data);
     }
 
-    public function getChangeRequests($per_page, $page)
+
+    public function createCurrentData($prepare)
     {
-        // TODO: Implement getChangeRequests() method.
+        try {
+            if ($this->repository->existsByHash($prepare['hash'])) {
+                return [];
+            }
+            return $this->repository->createCurrentData($prepare);
+        } catch (\Exception $e) {
+            Log::error($e);
+            return [];
+        }
     }
 
-    public function updateChangeRequests($hash_id, $data = [])
+    public function getOnlyDraftData($perPage, $page)
     {
-        // TODO: Implement updateChangeRequests() method.
+        return $this->repository->getOnlyDraftData($perPage);
     }
 
-    public function createChangeRequests($data = [])
+
+    public function getCurrentDataByHash($hash)
     {
-        // TODO: Implement createChangeRequests() method.
+        return $this->repository->getCurrentDataByHash($hash);
     }
 
-    public function bulkUpdateOrInsertChangeRequests($data = [])
+
+    public function updateCurrentDataByHash($hash, MetaSchemaEloquent $data)
     {
-        // TODO: Implement bulkUpdateOrInsertChangeRequests() method.
+        try {
+            if (!$this->repository->existsByHash($hash)) {
+                return [];
+            }
+            return $this->repository->updateCurrentDataByHash($hash, $data);
+        } catch (\Exception $e) {
+            Log::error($e);
+            return [];
+        }
     }
 }
 

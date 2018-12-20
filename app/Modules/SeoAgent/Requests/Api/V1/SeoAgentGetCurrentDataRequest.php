@@ -7,7 +7,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 
-class SeoAgentUpdateChangeRequestsRequest extends FormRequest 
+class SeoAgentGetCurrentDataRequest extends FormRequest
 {
 
 
@@ -20,8 +20,8 @@ class SeoAgentUpdateChangeRequestsRequest extends FormRequest
     public function rules()
     {
         return [
-          'current_data'=>'json',
-          'is_approved'=>'boolean'
+          'per_page'=>'integer',
+          'page'=>'integer'
       ];
     }
     protected function failedValidation(Validator $validator)

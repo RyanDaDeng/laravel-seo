@@ -3,16 +3,19 @@
 namespace App\Modules\SeoAgent\Facades;
 
 use App\Modules\SeoAgent\Contracts\SeoAgentServiceInterface;
+use App\Modules\SeoAgent\Models\MetaSchema;
+use App\Modules\SeoAgent\Models\MetaSchemaEloquent;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static Collection getDraftData($per_page,$page)
- * @method static Collection updateDraftData($id,$data =[])
- * @method static Collection getChangeRequests($per_page,$page)
- * @method static Collection updateChangeRequests($hash_id,$data =[])
- * @method static Collection createChangeRequests($data =[])
- * @method static Collection bulkUpdateOrInsertChangeRequests($data =[])
+ *  @method static Collection updateCurrentDataByHash($hash, $schema)
+ * @method static Collection createCurrentData($prepare)
+ * @method static Collection getCurrentDataByHash($id)
+ * @method static Collection getOnlyDraftData($perPage, $page)
+ * @method static Collection getDraftData($per_page,$page, $orderBy,$orderDesc, $wildSearch, $type)
+ * @method static Collection updateDraftData($id,MetaSchemaEloquent $data)
+ * @method static Collection deleteDraft($id)
  */
 class SeoAgentService extends Facade 
 {

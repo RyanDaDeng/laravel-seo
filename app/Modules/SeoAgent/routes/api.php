@@ -2,11 +2,9 @@
 
 
 // for api
-Route::prefix('seoagent/api/v1')->group(function () {
-    Route::get('/draft-data', 'App\Modules\SeoAgent\Controllers\Api\V1\SeoAgentApiController@getDraftData')->name('SeoAgent.getDraftData');
-    Route::put('/draft-data/{id}', 'App\Modules\SeoAgent\Controllers\Api\V1\SeoAgentApiController@updateDraftData')->name('SeoAgent.updateDraftData');
-    Route::get('/change-requests', 'App\Modules\SeoAgent\Controllers\Api\V1\SeoAgentApiController@getChangeRequests')->name('SeoAgent.getChangeRequests');
-    Route::put('/change-requests/{hash_id}', 'App\Modules\SeoAgent\Controllers\Api\V1\SeoAgentApiController@updateChangeRequests')->name('SeoAgent.updateChangeRequests');
-    Route::post('/change-requests', 'App\Modules\SeoAgent\Controllers\Api\V1\SeoAgentApiController@createChangeRequests')->name('SeoAgent.createChangeRequests');
-    Route::patch('/batch/change-requests', 'App\Modules\SeoAgent\Controllers\Api\V1\SeoAgentApiController@bulkUpdateOrInsertChangeRequests')->name('SeoAgent.bulkUpdateOrInsertChangeRequests');
+Route::prefix('api/seoagent/v1')->group(function () {
+    Route::post('/current-data', 'App\Modules\SeoAgent\Controllers\Api\V1\SeoAgentApiController@createCurrentData')->name('SeoAgent.api.createCurrentData');
+    Route::put('/current-data/{hash}', 'App\Modules\SeoAgent\Controllers\Api\V1\SeoAgentApiController@updateCurrentDataByHash')->name('SeoAgent.api.updateCurrentDataByHash');
+    Route::get('/draft-data', 'App\Modules\SeoAgent\Controllers\Api\V1\SeoAgentApiController@getOnlyDraftData')->name('SeoAgent.api.getOnlyDraftData');
+    Route::get('/current-data/{hash}', 'App\Modules\SeoAgent\Controllers\Api\V1\SeoAgentApiController@getCurrentDataByHash')->name('SeoAgent.api.getCurrentDataByHash');
 });

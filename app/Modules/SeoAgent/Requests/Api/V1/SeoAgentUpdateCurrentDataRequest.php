@@ -7,11 +7,10 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
 
-class SeoAgentUpdateDraftDataRequest extends FormRequest 
+class SeoAgentUpdateCurrentDataRequest extends FormRequest
 {
 
 
-    
     public function authorize()
     {
         return true;
@@ -20,12 +19,13 @@ class SeoAgentUpdateDraftDataRequest extends FormRequest
     public function rules()
     {
         return [
-          'draft_data'=>'json|required',
-          'draft_data.meta.defaults.title'=>'string|nullable',
-          'draft_data.meta.defaults.description'=>'string|nullable',
-          'draft_data.meta.defaults.canonical'=>'string|nullable'
-      ];
+            'title' => 'string|nullable',
+            'description' => 'string|nullable',
+            'canonical' => 'string|nullable',
+            'keywords' => 'array|nullable',
+        ];
     }
+
     protected function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json($validator->errors(), 422));
