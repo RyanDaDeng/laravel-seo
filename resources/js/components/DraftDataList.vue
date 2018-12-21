@@ -345,6 +345,7 @@
                         console.log(resp.data);
                         item.type = 0;
                         item._rowVariant ='';
+                        item.draft_data = resp.data.draft_data;
                         app.$notify({
                             type: 'warn',
                             title: 'SUCCESS',

@@ -7,6 +7,7 @@ use App\Modules\SeoAgent\Facades\SeoAgentService;
 use App\Modules\SeoAgent\Models\MetaSchemaEloquent;
 use App\Modules\SeoAgent\Requests\Web\SeoAgentGetDraftDataRequest;
 use App\Modules\SeoAgent\Requests\Web\SeoAgentUpdateDraftDataRequest;
+use Illuminate\Support\Facades\Response;
 
 
 class SeoAgentWebController extends Controller
@@ -48,11 +49,16 @@ class SeoAgentWebController extends Controller
 
     /**
      * @param $id
-     * @return \Illuminate\Support\Collection
+     * @return \Illuminate\Http\JsonResponse
      */
     public function deleteDraftData($id)
     {
-        return SeoAgentService::deleteDraft($id);
+        $result = SeoAgentService::deleteDraft($id);
+        if( $result === false){
+            return Response::json('Error', 500);
+        }else{
+            return Response::json($result, 200);
+        }
 
     }
 
