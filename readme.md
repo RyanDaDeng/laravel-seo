@@ -3,7 +3,7 @@
 #### Description
 This is a personal boilerplate that intends to help myself set up a new project. It also includes a really small project.
 
-The boilerplate intends to cover the following stuff, they might from my own other repo or other open-sources, some of them haven't been finished yet.
+The boilerplate intends to cover the following stuff, they might come from my own other repos or other open-sources, some of them haven't been finished yet.
 
 - Swagger API
 - Laravel Passport
