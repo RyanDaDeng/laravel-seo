@@ -51,10 +51,6 @@ class ApiController extends BaseController
      *          )
      * )
      */
-
-    public function apiManagment(){
-
-    }
     public function validate($rules, $data)
     {
 
