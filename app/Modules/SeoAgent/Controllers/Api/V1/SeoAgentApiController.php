@@ -5,6 +5,7 @@ namespace App\Modules\SeoAgent\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Modules\SeoAgent\Facades\SeoAgentService;
 use App\Modules\SeoAgent\Models\MetaSchemaEloquent;
+use App\Modules\SeoAgent\Models\SeoAgentBaseModel;
 use App\Modules\SeoAgent\Models\SeoAgentCurrentData;
 use App\Modules\SeoAgent\Requests\Api\V1\SeoAgentBulkUpdateOrInsertMetaRequest;
 use App\Modules\SeoAgent\Requests\Api\V1\SeoAgentCreateCurrentDataRequest;
@@ -226,13 +227,15 @@ class SeoAgentApiController extends Controller
                 foreach ($exists as $exist) {
                     $row = [
                         'hash' => $exist,
-                        'draft_data' => '',
+                        'draft_data' => json_encode($defaultDraft),
+                        'type' => SeoAgentBaseModel::DEFAULT,
                         'updated_at' => $currentDateTime,
-                        'current_data' => json_encode($metaSchema->fill($mapper[$exist]['current_data'])->toArray()),
+                        'current_data' => !empty($mapper[$exist]['current_data']) ? json_encode($metaSchema->fill($mapper[$exist]['current_data'])->toArray()) : $defaultDraft,
+                        'last_approved_at' => $currentDateTime
                     ];
                     $existValues[] = $row;
                 }
-                SeoAgentCurrentData::insertOnDuplicateKey($existValues, ['current_data', 'updated_at']);
+                SeoAgentCurrentData::insertOnDuplicateKey($existValues, ['current_data', 'updated_at', 'draft_data','last_approved_at','type']);
 
 
                 // insert new data
@@ -242,7 +245,7 @@ class SeoAgentApiController extends Controller
                         'hash' => $notExist,
                         'path' => $mapper[$notExist]['path'],
                         'draft_data' => json_encode($defaultDraft),
-                        'current_data' => json_encode($metaSchema->fill($mapper[$notExist]['current_data'])->toArray()),
+                        'current_data' => !empty($mapper[$notExist]['current_data']) ? json_encode($metaSchema->fill($mapper[$notExist]['current_data'])->toArray()) : $defaultDraft,
                         'type' => 0,
                         'created_at' => $currentDateTime,
                         'updated_at' => $currentDateTime

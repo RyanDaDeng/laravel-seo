@@ -66422,6 +66422,17 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -66433,18 +66444,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             filter: null,
             fields: [{ key: 'id', label: 'ID', class: 'id-table-wrap' }, { key: 'path', label: 'Path', 'class': 'path-table-wrap' },
             // 'Current vs Draft',
-            { key: 'title', label: 'Title', 'class': 'wrap' }, { key: 'description', label: 'Description', 'class': 'wrap' }, { key: 'keywords', label: 'Keywords', 'class': 'keywords-table-wrap' }, { key: 'draft_at', label: 'Daft At', sortable: true, 'class': 'date-wrap' }, { key: 'last_approved_at', label: 'Last Approved', sortable: true, 'class': 'date-wrap' }, { key: 'actions', label: 'Actions', 'class': 'action-wrap' }],
+            { key: 'canonical', label: 'Canonical', 'class': 'wrap' }, { key: 'title', label: 'Title', 'class': 'wrap' }, { key: 'description', label: 'Description', 'class': 'wrap' }, { key: 'keywords', label: 'Keywords', 'class': 'keywords-table-wrap' }, { key: 'draft_at', label: 'Daft At', sortable: true, 'class': 'date-wrap' }, { key: 'last_approved_at', label: 'Last Approved', sortable: true, 'class': 'date-wrap' }, { key: 'actions', label: 'Actions', 'class': 'action-wrap' }],
             formItem: {
                 canonical: '',
                 title: '',
                 description: '',
-                keywords: ''
+                keywords: []
             },
             selectedItem: {},
             currentItem: {
-                url_link: '',
-                meta_title: '',
-                meta_description: ''
+                canonical: '',
+                title: '',
+                description: '',
+                keywords: []
             },
             currentPage: 1,
             currentPageOptions: [],
@@ -66497,7 +66509,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             //
             this.formItem = {
                 id: item.id,
-                canonical: item.current_data.meta.defaults.canonical,
+                canonical: item.draft_data.meta.defaults.canonical,
                 title: item.draft_data.meta.defaults.title,
                 description: item.draft_data.meta.defaults.description,
                 keywords: item.draft_data.meta.defaults.keywords
@@ -66519,7 +66531,11 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         handleOk: function handleOk(evt) {
             evt.preventDefault();
+            console.log(this.formItem);
             var app = this;
+            if (this.formItem.keywords) if (typeof this.formItem.keywords === 'string') {
+                this.formItem.keywords = this.formItem.keywords.split(',');
+            }
             axios.put('/seoagent/web/draft-data/' + this.formItem.id, this.formItem).then(function (resp) {
                 app.selectedItem.draft_data.meta.defaults.keywords = resp.data.draft_data.meta.defaults.keywords;
                 app.selectedItem.draft_data.meta.defaults.description = resp.data.draft_data.meta.defaults.description;
@@ -66925,6 +66941,8 @@ var render = function() {
                     _c("thead", [
                       _c("th"),
                       _vm._v(" "),
+                      _c("th", [_vm._v("Canonical")]),
+                      _vm._v(" "),
                       _c("th", [_vm._v("Title")]),
                       _vm._v(" "),
                       _c("th", [_vm._v("Description")]),
@@ -66935,6 +66953,16 @@ var render = function() {
                     _c("tbody", [
                       _c("tr", [
                         _c("th", [_vm._v("Current Meta")]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(
+                            "\n                            " +
+                              _vm._s(
+                                row.item.current_data.meta.defaults.canonical
+                              ) +
+                              "\n                        "
+                          )
+                        ]),
                         _vm._v(" "),
                         _c("td", [
                           _vm._v(
@@ -66973,6 +67001,16 @@ var render = function() {
                         _c("td", [
                           _vm._v(
                             "\n                            " +
+                              _vm._s(
+                                row.item.draft_data.meta.defaults.canonical
+                              ) +
+                              "\n                        "
+                          )
+                        ]),
+                        _vm._v(" "),
+                        _c("td", [
+                          _vm._v(
+                            "\n                            " +
                               _vm._s(row.item.draft_data.meta.defaults.title) +
                               "\n                        "
                           )
@@ -67001,6 +67039,22 @@ var render = function() {
                     ])
                   ])
                 ])
+              ]
+            }
+          },
+          {
+            key: "canonical",
+            fn: function(data) {
+              return [
+                _vm._v(
+                  "\n            " +
+                    _vm._s(
+                      data.item.type === 2
+                        ? data.item.draft_data.meta.defaults.canonical
+                        : data.item.current_data.meta.defaults.canonical
+                    ) +
+                    "\n        "
+                )
               ]
             }
           },
@@ -67218,8 +67272,8 @@ var render = function() {
                       attrs: {
                         horizontal: "",
                         "label-cols": 2,
-                        label: "URL",
-                        "label-for": "url_link"
+                        label: "Canonical",
+                        "label-for": "Canonical"
                       }
                     },
                     [
@@ -67227,8 +67281,7 @@ var render = function() {
                         attrs: {
                           id: "exampleInput1",
                           type: "text",
-                          required: "",
-                          disabled: ""
+                          required: ""
                         },
                         model: {
                           value: _vm.formItem.canonical,
@@ -67319,7 +67372,7 @@ var render = function() {
                       attrs: {
                         horizontal: "",
                         "label-cols": 2,
-                        label: "Description",
+                        label: "Keywords",
                         "label-for": "meta_keywords"
                       }
                     },

@@ -29,7 +29,7 @@ class SeoAgentRepository
      */
     public function getOnlyDraftData($perPage, $page = null)
     {
-        $data = SeoAgentDraftData::query()->where('type', SeoAgentBaseModel::IN_DRAFT);
+        $data = SeoAgentDraftData::query()->select('hash','draft_data')->where('type', SeoAgentBaseModel::IN_DRAFT);
         return $data->paginate($perPage);
     }
 

@@ -109,6 +109,7 @@
                     <table class="table">
                         <thead>
                         <th></th>
+                        <th>Canonical</th>
                         <th>Title</th>
                         <th>Description</th>
                         <th>Keywords</th>
@@ -117,6 +118,9 @@
 
                         <tr>
                             <th>Current Meta</th>
+                            <td>
+                                {{row.item.current_data.meta.defaults.canonical}}
+                            </td>
                             <td>
                                 {{row.item.current_data.meta.defaults.title}}
                             </td>
@@ -130,6 +134,9 @@
 
                         <tr>
                             <th>Draft Meta</th>
+                            <td>
+                                {{row.item.draft_data.meta.defaults.canonical}}
+                            </td>
                             <td>
                                 {{row.item.draft_data.meta.defaults.title}}
                             </td>
@@ -145,7 +152,10 @@
 
                 </b-card>
             </template>
-
+            <template slot="canonical" slot-scope="data">
+                {{ data.item.type === 2 ? data.item.draft_data.meta.defaults.canonical :
+                data.item.current_data.meta.defaults.canonical }}
+            </template>
             <template slot="title" slot-scope="data">
                 {{ data.item.type === 2 ? data.item.draft_data.meta.defaults.title :
                 data.item.current_data.meta.defaults.title }}
@@ -202,15 +212,16 @@
 
             <b-card>
                 <b-form @submit="handleOk">
+
                     <b-form-group horizontal
                                   :label-cols="2"
-                                  label="URL"
-                                  label-for="url_link">
+                                  label="Canonical"
+                                  label-for="Canonical">
                         <b-form-input id="exampleInput1"
                                       type="text"
                                       v-model="formItem.canonical"
                                       required
-                                      disabled>
+                        >
                         </b-form-input>
                     </b-form-group>
 
@@ -253,7 +264,7 @@
 
                     <b-form-group horizontal
                                   :label-cols="2"
-                                  label="Description"
+                                  label="Keywords"
                                   label-for="meta_keywords">
                         <b-form-input
                                 placeholder="Enter keywords"
@@ -298,6 +309,7 @@
                     {key: 'id', label: 'ID', class: 'id-table-wrap'},
                     {key: 'path', label: 'Path', 'class': 'path-table-wrap'},
                     // 'Current vs Draft',
+                    {key: 'canonical', label: 'Canonical', 'class': 'wrap'},
                     {key: 'title', label: 'Title', 'class': 'wrap'},
                     {key: 'description', label: 'Description', 'class': 'wrap'},
                     {key: 'keywords', label: 'Keywords', 'class': 'keywords-table-wrap'},
@@ -309,13 +321,14 @@
                     canonical: '',
                     title: '',
                     description: '',
-                    keywords: ''
+                    keywords: []
                 },
                 selectedItem: {},
                 currentItem: {
-                    url_link: '',
-                    meta_title: '',
-                    meta_description: ''
+                    canonical: '',
+                    title: '',
+                    description: '',
+                    keywords: []
                 },
                 currentPage: 1,
                 currentPageOptions: [],
@@ -344,7 +357,7 @@
                     axios.delete('/seoagent/web/draft-data/' + item.id).then(function (resp) {
                         console.log(resp.data);
                         item.type = 0;
-                        item._rowVariant ='';
+                        item._rowVariant = '';
                         item.draft_data = resp.data.draft_data;
                         app.$notify({
                             type: 'warn',
@@ -368,7 +381,7 @@
                 //
                 this.formItem = {
                     id: item.id,
-                    canonical: item.current_data.meta.defaults.canonical,
+                    canonical: item.draft_data.meta.defaults.canonical,
                     title: item.draft_data.meta.defaults.title,
                     description: item.draft_data.meta.defaults.description,
                     keywords: item.draft_data.meta.defaults.keywords,
@@ -391,7 +404,12 @@
             },
             handleOk(evt) {
                 evt.preventDefault();
+                console.log(this.formItem);
                 var app = this;
+                if (this.formItem.keywords)
+                    if (typeof this.formItem.keywords === 'string') {
+                        this.formItem.keywords = this.formItem.keywords.split(',')
+                    }
                 axios.put('/seoagent/web/draft-data/' + this.formItem.id, this.formItem).then(function (resp) {
                     app.selectedItem.draft_data.meta.defaults.keywords = resp.data.draft_data.meta.defaults.keywords;
                     app.selectedItem.draft_data.meta.defaults.description = resp.data.draft_data.meta.defaults.description;
