@@ -225,12 +225,15 @@ class SeoAgentApiController extends Controller
                 // update existing data only
                 $existValues = [];
                 foreach ($exists as $exist) {
+                    if(!$exist){
+                      continue;
+                    }
                     $row = [
                         'hash' => $exist,
                         'draft_data' => json_encode($defaultDraft),
                         'type' => SeoAgentBaseModel::DEFAULT,
                         'updated_at' => $currentDateTime,
-                        'current_data' => !empty($mapper[$exist]['current_data']) ? json_encode($metaSchema->fill($mapper[$exist]['current_data'])->toArray()) : $defaultDraft,
+                        'current_data' => !empty($mapper[$exist]['current_data']) ? json_encode($metaSchema->fill($mapper[$exist]['current_data'])->toArray()) : json_encode($defaultDraft),
                         'last_approved_at' => $currentDateTime
                     ];
                     $existValues[] = $row;
@@ -240,12 +243,21 @@ class SeoAgentApiController extends Controller
 
                 // insert new data
                 $notExistRows = [];
+                $maps = [];
                 foreach ($notExists as $notExist) {
+                    if(!$notExist){
+                       continue;
+                    }
+                    if(isset($maps[$notExist])){
+                        continue;
+                    }
+                    $maps[$notExist] = 1;
+
                     $row = [
                         'hash' => $notExist,
                         'path' => $mapper[$notExist]['path'],
                         'draft_data' => json_encode($defaultDraft),
-                        'current_data' => !empty($mapper[$notExist]['current_data']) ? json_encode($metaSchema->fill($mapper[$notExist]['current_data'])->toArray()) : $defaultDraft,
+                        'current_data' => !empty($mapper[$notExist]['current_data']) ? json_encode($metaSchema->fill($mapper[$notExist]['current_data'])->toArray()) : json_encode($defaultDraft),
                         'type' => 0,
                         'created_at' => $currentDateTime,
                         'updated_at' => $currentDateTime
@@ -255,7 +267,7 @@ class SeoAgentApiController extends Controller
                 SeoAgentCurrentData::query()->insert($notExistRows);
 
                 return ['success' => true];
-            }
+           }
         } catch (\Exception $e) {
             Log::error($e);
             return ['success' => false];

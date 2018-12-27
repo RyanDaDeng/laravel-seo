@@ -67,7 +67,7 @@ return [
     |
     */
 
-    'timezone' => 'UTC',
+    'timezone' => 'Australia/Sydney',
 
     /*
     |--------------------------------------------------------------------------
@@ -174,8 +174,9 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
+        \App\Modules\FrontEnd\Providers\FrontendServiceProvider::class,
         \App\Modules\SeoAgent\Providers\SeoAgentServiceProvider::class,
-        \App\Modules\FrontEnd\Providers\FrontendServiceProvider::class
+        \App\Modules\Setting\Providers\SettingServiceProvider::class
 
     ],
 

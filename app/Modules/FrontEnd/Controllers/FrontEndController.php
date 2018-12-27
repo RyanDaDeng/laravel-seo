@@ -31,4 +31,9 @@ class FrontEndController extends Controller
     {
         return view('ui::api-management');
     }
+
+    public function setting()
+    {
+        return view('ui::setting');
+    }
 }

@@ -71,13 +71,13 @@ class SeoAgentBaseModel extends Model
     public function getDraftAtAttribute($value)
     {
 
-        return $value ?? Carbon::parse($value, 'UTC')->setTimezone('Australia/Sydney')->format('H:i A d/m/Y');
+        return $value ?? Carbon::parse($value)->format('H:i A d/m/Y');
     }
 
 
     public function getLastApprovedAtAttribute($value)
     {
-        return $value ?? Carbon::parse($value, 'UTC')->setTimezone('Australia/Sydney')->format('H:i A d/m/Y');
+        return $value ?? Carbon::parse($value)->format('H:i A d/m/Y');
     }
 }
 

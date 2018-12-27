@@ -79,7 +79,7 @@
         >
 
             <template slot="path" slot-scope="row">
-                <a :href="row.value" target="_blank">{{row.value}}</a>
+                <a :href="'https://www.inkstation.com.au/'+row.value" target="_blank">{{row.value}}</a>
             </template>
             <!--<template slot="Current vs Draft" slot-scope="data">-->
 
@@ -223,6 +223,10 @@
                                       required
                         >
                         </b-form-input>
+                        <b-form-text id="inputLiveHelp">
+                            <!-- this is a form text block (formerly known as help block) -->
+                            Current: {{currentItem.canonical}}
+                        </b-form-text>
                     </b-form-group>
 
 
@@ -273,6 +277,9 @@
                                 v-model="formItem.keywords"
                         >
                         </b-form-input>
+                        <b-form-text id="inputLiveHelp">
+                         Use comma to split, e.g. apple,orange,banana
+                        </b-form-text>
                         <b-form-text id="inputLiveHelp">
                             <!-- this is a form text block (formerly known as help block) -->
                             Current: {{currentItem.keywords}}
@@ -379,13 +386,24 @@
                 this.modalInfo.title = `Manage draft for #${item.id}`;
                 this.modalInfo.content = JSON.stringify(item, null, 2);
                 //
-                this.formItem = {
-                    id: item.id,
-                    canonical: item.draft_data.meta.defaults.canonical,
-                    title: item.draft_data.meta.defaults.title,
-                    description: item.draft_data.meta.defaults.description,
-                    keywords: item.draft_data.meta.defaults.keywords,
-                };
+
+                if( item.type === 2){
+                    this.formItem = {
+                        id: item.id,
+                        canonical: item.draft_data.meta.defaults.canonical,
+                        title: item.draft_data.meta.defaults.title,
+                        description: item.draft_data.meta.defaults.description,
+                        keywords: item.draft_data.meta.defaults.keywords,
+                    };
+                }else{
+                    this.formItem = {
+                        id: item.id,
+                        canonical: item.current_data.meta.defaults.canonical,
+                        title: item.current_data.meta.defaults.title,
+                        description: item.current_data.meta.defaults.description,
+                        keywords: item.current_data.meta.defaults.keywords,
+                    };
+                }
 
                 this.currentItem = {
                     canonical: item.current_data.meta.defaults.canonical,
@@ -393,8 +411,6 @@
                     description: item.current_data.meta.defaults.description,
                     keywords: item.current_data.meta.defaults.keywords,
                 };
-
-
                 this.selectedItem = item;
                 this.$root.$emit('bv::show::modal', 'modalInfo', button)
             },

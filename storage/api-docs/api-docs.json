@@ -1,0 +1,344 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "SEO Agent API Documentation",
+        "version": "1.0"
+    },
+    "servers": [
+        {
+            "url": "http://seoagent.test:8888/api"
+        }
+    ],
+    "paths": {
+        "/seoagent/v1/draft-data": {
+            "get": {
+                "tags": [
+                    "Draft Data"
+                ],
+                "summary": "Get only draft data",
+                "description": "Get only draft data",
+                "parameters": [
+                    {
+                        "name": "per_page",
+                        "in": "query",
+                        "description": "number of items shown in the list",
+                        "required": true,
+                        "style": "form",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    },
+                    {
+                        "name": "page",
+                        "in": "query",
+                        "description": "page number",
+                        "required": true,
+                        "style": "form",
+                        "schema": {
+                            "type": "integer"
+                        },
+                        "example": 1
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Create a resource"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/seoagent/v1/current-data/{hash}": {
+            "get": {
+                "tags": [
+                    "Current Data"
+                ],
+                "summary": "Get current data by HASH",
+                "description": "Get current data by HASH",
+                "parameters": [
+                    {
+                        "name": "hash",
+                        "in": "path",
+                        "description": "ID of resource to return",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get a resource"
+                    }
+                },
+                "deprecated": false
+            },
+            "put": {
+                "tags": [
+                    "Current Data"
+                ],
+                "summary": "Create a new current meta data entity",
+                "description": "Create a new current meta data entity",
+                "operationId": "App\\Modules\\SeoAgent\\Controllers\\Api\\V1\\SeoAgentApiController::updateCurrentDataByHash",
+                "parameters": [
+                    {
+                        "name": "hash",
+                        "in": "path",
+                        "description": "ID of resource to return",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "description": "Data required to create it",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/MetaSchemaEloquent"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update a resource"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/seoagent/v1/current-data": {
+            "post": {
+                "tags": [
+                    "Current Data"
+                ],
+                "summary": "Create a new current meta data entity",
+                "description": "Create a new current meta data entity",
+                "requestBody": {
+                    "description": "Data required to create it",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/SeoAgentBaseModel"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Create a resource"
+                    }
+                },
+                "deprecated": false
+            },
+            "patch": {
+                "tags": [
+                    "Current Data"
+                ],
+                "summary": "Bulk update or insert data",
+                "description": "Bulk update or insert data",
+                "requestBody": {
+                    "description": "Data required to create it",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/SeoAgentBaseModel"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update a resource"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/setting/v1/all-settings": {
+            "get": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "Get resource",
+                "description": "Get resource",
+                "operationId": "App\\Modules\\Setting\\Controllers\\Api\\V1\\SettingApiController::getAllSettings",
+                "responses": {
+                    "200": {
+                        "description": "get a resource"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/setting/v1/push-settings": {
+            "get": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "Get resource",
+                "description": "Get resource",
+                "operationId": "App\\Modules\\Setting\\Controllers\\Api\\V1\\SettingApiController::getPushSettings",
+                "responses": {
+                    "200": {
+                        "description": "get a resource"
+                    }
+                },
+                "deprecated": false
+            },
+            "put": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "update resource",
+                "description": "update resource",
+                "operationId": "App\\Modules\\Setting\\Controllers\\Api\\V1\\SettingApiController::updatePushSettings",
+                "requestBody": {
+                    "description": "Data required to create it",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "last_updated": {
+                                        "description": "last updated",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "update a resource"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/setting/v1/pull-settings": {
+            "get": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "Get only pull data",
+                "description": "Get only pull data",
+                "operationId": "App\\Modules\\Setting\\Controllers\\Api\\V1\\SettingApiController::getPullSettings",
+                "responses": {
+                    "200": {
+                        "description": "get a resource"
+                    }
+                },
+                "deprecated": false
+            },
+            "put": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "update resource",
+                "description": "update resource",
+                "operationId": "App\\Modules\\Setting\\Controllers\\Api\\V1\\SettingApiController::updatePullSettings",
+                "requestBody": {
+                    "description": "Data required to create it",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "last_updated": {
+                                        "description": "last updated",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "update a resource"
+                    }
+                },
+                "deprecated": false
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "MetaSchemaEloquent": {
+                "properties": {
+                    "title": {
+                        "schema": "MetaSchemaEloquent",
+                        "type": "string"
+                    },
+                    "description": {
+                        "schema": "MetaSchemaEloquent",
+                        "type": "string"
+                    },
+                    "canonical": {
+                        "schema": "MetaSchemaEloquent",
+                        "type": "string"
+                    },
+                    "keywords": {
+                        "schema": "MetaSchemaEloquent",
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "SeoAgentBaseModel": {
+                "properties": {
+                    "path": {
+                        "schema": "SeoAgentBaseModel",
+                        "type": "string"
+                    },
+                    "hash": {
+                        "schema": "SeoAgentBaseModel",
+                        "type": "string"
+                    },
+                    "current_data": {
+                        "schema": "SeoAgentBaseModel",
+                        "properties": {
+                            "title": {
+                                "description": "",
+                                "type": "string"
+                            },
+                            "description": {
+                                "description": "",
+                                "type": "string"
+                            },
+                            "canonical": {
+                                "description": "",
+                                "type": "string"
+                            },
+                            "keywords": {
+                                "description": "",
+                                "type": "array",
+                                "items": {
+                                    "type": "string"
+                                }
+                            }
+                        },
+                        "type": "object"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    }
+}

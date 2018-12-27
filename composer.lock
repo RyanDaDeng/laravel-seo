@@ -5651,16 +5651,16 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/RyanDaDeng/laravel-api-module-generator.git",
-                "reference": "e595e6068794bbddfc366265375484575b19c352"
+                "reference": "8a1eb26a568ae171eeab36f207dc18adc5f762fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/RyanDaDeng/laravel-api-module-generator/zipball/e595e6068794bbddfc366265375484575b19c352",
-                "reference": "e595e6068794bbddfc366265375484575b19c352",
+                "url": "https://api.github.com/repos/RyanDaDeng/laravel-api-module-generator/zipball/8a1eb26a568ae171eeab36f207dc18adc5f762fe",
+                "reference": "8a1eb26a568ae171eeab36f207dc18adc5f762fe",
                 "shasum": ""
             },
             "require": {
-                "timehunter/laravel-file-generator": "^1.6.0"
+                "timehunter/laravel-file-generator": "^1.7.0"
             },
             "require-dev": {
                 "mockery/mockery": "^1.1",
@@ -5708,20 +5708,20 @@
                 "laravel module generator",
                 "laravel service generator"
             ],
-            "time": "2018-12-09T23:58:12+00:00"
+            "time": "2018-12-25T11:07:24+00:00"
         },
         {
             "name": "timehunter/laravel-file-generator",
-            "version": "1.6.0",
+            "version": "1.8.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/RyanDaDeng/laravel-file-generator.git",
-                "reference": "65b6d6a611a0b00598ae258e848691aa0f1c8db6"
+                "reference": "cba0a1d2a534e0ccf9115594a2fd0c8a46bd6249"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/RyanDaDeng/laravel-file-generator/zipball/65b6d6a611a0b00598ae258e848691aa0f1c8db6",
-                "reference": "65b6d6a611a0b00598ae258e848691aa0f1c8db6",
+                "url": "https://api.github.com/repos/RyanDaDeng/laravel-file-generator/zipball/cba0a1d2a534e0ccf9115594a2fd0c8a46bd6249",
+                "reference": "cba0a1d2a534e0ccf9115594a2fd0c8a46bd6249",
                 "shasum": ""
             },
             "require": {
@@ -5769,7 +5769,7 @@
                 "laravel file generator",
                 "laravel structure generator"
             ],
-            "time": "2018-12-08T13:36:59+00:00"
+            "time": "2018-12-12T12:12:41+00:00"
         },
         {
             "name": "webmozart/assert",

@@ -70,19 +70,44 @@ return [
 //                'ChangeRequest','DraftData'
 //            ]
 //        ],
-        'SeoAgentFrontEnd' => [
+        'Setting' => [
+            'enable' => true, // enable = true will generate the folder
             'folder_path' => app_path('/Modules'), // root path to save the file, default is under your current local path: ../../app/
             'namespace' => 'App\\Modules',  // class prefix namespace
             'uri' => [
                 [
-                    'uri' => '/app/seoagent',
+                    'uri' => '/push-settings',
                     'rules' => [
                     ],
                     'method' => 'get',
-                    'function' => 'index'
+                    'function' => 'getPushSettings',
+                    'type' => 'api'
                 ],
+                [
+                    'uri' => '/pull-settings',
+                    'rules' => [
+                    ],
+                    'method' => 'get',
+                    'function' => 'getPullSettings',
+                    'type' => 'api'
+                ],
+                [
+                    'uri' => '/all-settings',
+                    'rules' => [
+                    ],
+                    'method' => 'get',
+                    'function' => 'getAllSettings',
+                    'type' => 'web'
+                ]
             ],
             'models' => [
+                'PushSetting', 'PullSetting', 'AllSetting'
+            ],
+            'm' => [
+                [
+                    'name' => 'PushSetting',
+                    'table' => ''
+                ]
             ]
         ]
     ]

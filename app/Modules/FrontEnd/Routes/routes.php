@@ -9,5 +9,6 @@
 
 Route::prefix('app')->middleware(['web', 'auth'])->namespace('App\Modules\FrontEnd\Controllers')->group(function () {
     Route::get('', 'FrontEndController@index')->name('FrontEnd.index');
+    Route::get('settings', 'FrontEndController@setting')->name('FrontEnd.setting');
     Route::middleware('admin')->get('api-management', 'FrontEndController@apiManagement')->name('FrontEnd.apiManagement');
 });

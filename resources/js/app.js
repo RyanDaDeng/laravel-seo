@@ -27,6 +27,7 @@ Vue.use(Notifications)
  */
 
 Vue.component('draft-data-list', require('./components/DraftDataList.vue'));
+Vue.component('setting', require('./components/Setting.vue'));
 Vue.component('api-passport', require('./components/ApiPassport.vue'));
 
 
