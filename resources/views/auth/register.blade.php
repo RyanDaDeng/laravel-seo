@@ -12,6 +12,22 @@
                         @csrf
 
                         <div class="form-group row">
+                            <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Secret Code') }}</label>
+
+                            <div class="col-md-6">
+                                <input id="secret" type="text" class="form-control{{ $errors->has('secret') ? ' is-invalid' : '' }}" name="secret" value="{{ old('secret') }}" required autofocus>
+
+                                @if ($errors->has('secret'))
+                                    <span class="invalid-feedback">
+                                        <strong>{{ $errors->first('secret') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+
+
+                        <div class="form-group row">
                             <label for="name" class="col-md-4 col-form-label text-md-right">{{ __('Name') }}</label>
 
                             <div class="col-md-6">
@@ -58,6 +74,19 @@
 
                             <div class="col-md-6">
                                 <input id="password-confirm" type="password" class="form-control" name="password_confirmation" required>
+                            </div>
+                        </div>
+
+
+                        <div class="form-group row">
+                            <div class="col-md-6 offset-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="is_admin" id="is_admin" {{ old('is_admin') ? 'checked' : '' }}>
+
+                                    <label class="form-check-label" for="remember">
+                                        is admin?
+                                    </label>
+                                </div>
                             </div>
                         </div>
 
