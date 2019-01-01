@@ -1,17 +1,20 @@
-## Personal Boilerplate Sample Template
 
-#### Description
-This is a personal boilerplate that intends to help myself set up a new project. It also includes a really small project.
 
-The boilerplate intends to cover the following stuff, they might come from my own other repos or other open-sources, some of them haven't been finished yet.
+## Set up
 
-- Swagger API
-- Laravel Passport
-- Vuejs
-- Laravel Nova
-- Cron job management
-- Module-based structure
+create an .env file (do not include APP_NAME and APP_DEBUG should be false) and run the following commands.
 
-I am not going to write document on it, because the project is self-intended and may change over the time.
+`composer install -vvv ` - install php packages
 
-This is also a demo that how I work for Laravel industries.
+`npm install` - install npm packages
+
+`php artisan key:generate` - generate application key
+
+`php artisan migrate:refresh —seed` - create db schema and load dummy data
+
+`php artisan passport:install`  - install default OAuth2 clients
+
+`php artisan passport:keys` - install applications OAuth2 secrets (if it shows the key already exist, then skip it)
+
+
+##Default users
