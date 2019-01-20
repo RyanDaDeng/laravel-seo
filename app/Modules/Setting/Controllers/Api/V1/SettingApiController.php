@@ -9,6 +9,7 @@ use App\Modules\Setting\Requests\Api\V1\SettingGetPullSettingsRequest;
 use App\Modules\Setting\Requests\Api\V1\SettingUpdatePullSettingsRequest;
 use App\Modules\Setting\Requests\Api\V1\SettingUpdatePushSettingsRequest;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 
 class SettingApiController extends Controller
@@ -47,6 +48,7 @@ class SettingApiController extends Controller
      */
     public function getPushSettings(SettingGetPushSettingsRequest $request)
     {
+        Log::info('getPushSettings');
         $request->validated();
         return SettingService::getPushSettings();
     }
@@ -99,6 +101,7 @@ class SettingApiController extends Controller
      */
     public function getPullSettings(SettingGetPullSettingsRequest $request)
     {
+        Log::info('getPullsetting');
         $request->validated();
         return SettingService::getPullSettings();
     }
