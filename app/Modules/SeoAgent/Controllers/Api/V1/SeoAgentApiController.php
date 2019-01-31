@@ -11,7 +11,10 @@ use App\Modules\SeoAgent\Requests\Api\V1\SeoAgentBulkUpdateOrInsertMetaRequest;
 use App\Modules\SeoAgent\Requests\Api\V1\SeoAgentCreateCurrentDataRequest;
 use App\Modules\SeoAgent\Requests\Api\V1\SeoAgentGetOnlyDraftRequest;
 use App\Modules\SeoAgent\Requests\Api\V1\SeoAgentUpdateCurrentDataRequest;
+use App\Modules\SeoAgent\Requests\Api\V1\UpdateStatusRequest;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class SeoAgentApiController extends Controller
@@ -52,17 +55,11 @@ class SeoAgentApiController extends Controller
      *     )
      * )
      */
-    /**
-     * @param SeoAgentGetOnlyDraftRequest $request
-     * @return \Illuminate\Support\Collection
-     */
     public function getOnlyDraftData(SeoAgentGetOnlyDraftRequest $request)
     {
         $request->validated();
         return SeoAgentService::getOnlyDraftData($request->query('per_page'), $request->query('page'));
     }
-
-
 
 
     /**
@@ -86,10 +83,6 @@ class SeoAgentApiController extends Controller
      *         description="Get a resource"
      *     )
      * )
-     */
-    /**
-     * @param $hash
-     * @return \Illuminate\Support\Collection
      */
     public function getCurrentDataByHash($hash)
     {
@@ -118,10 +111,7 @@ class SeoAgentApiController extends Controller
      *     )
      * )
      */
-    /**
-     * @param SeoAgentCreateCurrentDataRequest $request
-     * @return \Illuminate\Support\Collection
-     */
+
     public function createCurrentData(SeoAgentCreateCurrentDataRequest $request)
     {
         $request->validated();
@@ -208,9 +198,7 @@ class SeoAgentApiController extends Controller
     public function patchCurrentData(SeoAgentBulkUpdateOrInsertMetaRequest $request)
     {
         $request->validated();
-
         $data = $request->all();
-
         $collection = collect($data);
         $keys = $collection->pluck('hash');
         $mapper = $collection->keyBy('hash');
@@ -225,30 +213,29 @@ class SeoAgentApiController extends Controller
                 // update existing data only
                 $existValues = [];
                 foreach ($exists as $exist) {
-                    if(!$exist){
-                      continue;
+                    if (!$exist) {
+                        continue;
                     }
                     $row = [
                         'hash' => $exist,
                         'draft_data' => json_encode($defaultDraft),
-                        'type' => SeoAgentBaseModel::DEFAULT,
+                        'type' => SeoAgentBaseModel::TYPE_DEFAULT,
                         'updated_at' => $currentDateTime,
                         'current_data' => !empty($mapper[$exist]['current_data']) ? json_encode($metaSchema->fill($mapper[$exist]['current_data'])->toArray()) : json_encode($defaultDraft),
-                        'last_approved_at' => $currentDateTime
                     ];
                     $existValues[] = $row;
                 }
-                SeoAgentCurrentData::insertOnDuplicateKey($existValues, ['current_data', 'updated_at', 'draft_data','last_approved_at','type']);
+                SeoAgentCurrentData::insertOnDuplicateKey($existValues, ['current_data', 'updated_at', 'draft_data', 'type']);
 
 
                 // insert new data
                 $notExistRows = [];
                 $maps = [];
                 foreach ($notExists as $notExist) {
-                    if(!$notExist){
-                       continue;
+                    if (!$notExist) {
+                        continue;
                     }
-                    if(isset($maps[$notExist])){
+                    if (isset($maps[$notExist])) {
                         continue;
                     }
                     $maps[$notExist] = 1;
@@ -258,7 +245,7 @@ class SeoAgentApiController extends Controller
                         'path' => $mapper[$notExist]['path'],
                         'draft_data' => json_encode($defaultDraft),
                         'current_data' => !empty($mapper[$notExist]['current_data']) ? json_encode($metaSchema->fill($mapper[$notExist]['current_data'])->toArray()) : json_encode($defaultDraft),
-                        'type' => 0,
+                        'type' => SeoAgentBaseModel::TYPE_NEW,
                         'created_at' => $currentDateTime,
                         'updated_at' => $currentDateTime
                     ];
@@ -267,10 +254,96 @@ class SeoAgentApiController extends Controller
                 SeoAgentCurrentData::query()->insert($notExistRows);
 
                 return ['success' => true];
-           }
+            }
         } catch (\Exception $e) {
             Log::error($e);
             return ['success' => false];
+        }
+    }
+
+
+    /**
+     * @OA\Put(
+     *     path="/seoagent/v1/draft-data/{hash}/status",
+     *     tags={"Current Data"},
+     *     summary="Create a new current meta data entity",
+     *     description="Create a new current meta data entity",
+     *     deprecated=false,
+     *     @OA\Parameter(
+     *         description="ID of resource to return",
+     *         in="path",
+     *         name="hash",
+     *         required=true,
+     *         @OA\Schema(
+     *           type="string",
+     *         )
+     *     ),
+     *     @OA\RequestBody(
+     *          description="Data required to create it",
+     *          required=true,
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *           @OA\Schema(
+     *               type="object",
+     *               @OA\Property(
+     *                   property="status",
+     *                   description="Updated status of the pet",
+     *                   type="string"
+     *               ),
+     *               @OA\Property(
+     *                   property="comments",
+     *                   description="comments",
+     *                   type="string"
+     *               )
+     *           )
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Update a resource"
+     *     )
+     * )
+     */
+    public function updateStatus(UpdateStatusRequest $request, $hash)
+    {
+        $request->validated();
+        $result = SeoAgentService::updateStatus(
+            $hash,
+            $request->input('comments'),
+            $request->input('status')
+        );
+
+        return $result === true ? \Response::json(['success' => true], 200) : \Response::json(['success' => false], 500);
+    }
+
+
+    /**
+     * @OA\Put(
+     *     path="/seoagent/v1/deleteMetaData",
+     *     tags={"Recovery"},
+     *     summary="Create a new current meta data entity",
+     *     description="Create a new current meta data entity",
+     *     deprecated=false,
+     *     @OA\RequestBody(
+     *          description="Data required to create it",
+     *          required=true,
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Update a resource"
+     *     )
+     * )
+     */
+    public function deleteAllData()
+    {
+        try {
+            DB::table('seo_metas')->truncate();
+            return \Response::json(['success' => true], 200);
+        } catch (\Exception $e) {
+            return \Response::json(['success' => false], 500);
         }
     }
 }

@@ -40,8 +40,12 @@
 
 
                 <b-col md="6" class="my-1">
-                    <b-form-group horizontal label="Filters" class="mb-0">
+                    <b-form-group horizontal label="" class="mb-0">
                         <b-form-radio-group id="radios1" v-model="selected" :options="options" name="radioOpenions">
+                        </b-form-radio-group>
+                    </b-form-group>
+                    <b-form-group horizontal label="" class="mb-0">
+                        <b-form-radio-group id="radios12" v-model="selectedStatus" :options="statusOptions" name="radioOpenions2">
                         </b-form-radio-group>
                     </b-form-group>
                 </b-col>
@@ -63,6 +67,7 @@
         </b-row>
 
         <b-table
+                style="font-size:14px;"
                 ref="table"
                 responsive
                 :hover="true"
@@ -106,10 +111,10 @@
             <template slot="row-details" slot-scope="row">
                 <b-card>
 
-                    <table class="table">
+
+                    <table v-if="row.item.type == 2" class="table">
                         <thead>
                         <th></th>
-                        <th>Canonical</th>
                         <th>Title</th>
                         <th>Description</th>
                         <th>Keywords</th>
@@ -118,13 +123,11 @@
 
                         <tr>
                             <th>Current Meta</th>
-                            <td>
-                                {{row.item.current_data.meta.defaults.canonical}}
-                            </td>
+
                             <td>
                                 {{row.item.current_data.meta.defaults.title}}
                             </td>
-                            <td>
+                            <td style="word-break: break-word;">
                                 {{row.item.current_data.meta.defaults.description}}
                             </td>
                             <td>
@@ -135,12 +138,9 @@
                         <tr>
                             <th>Draft Meta</th>
                             <td>
-                                {{row.item.draft_data.meta.defaults.canonical}}
-                            </td>
-                            <td>
                                 {{row.item.draft_data.meta.defaults.title}}
                             </td>
-                            <td>
+                            <td style="word-break: break-word;">
                                 {{row.item.draft_data.meta.defaults.description}}
                             </td>
                             <td>
@@ -150,12 +150,48 @@
                         </tbody>
                     </table>
 
+                    <hr>
+
+                    <h6><b>History</b></h6>
+                    <table class="table">
+                        <thead>
+                        <th>Created At</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Keywords</th>
+                        <th>Status</th>
+                        <th>Comments</th>
+                        </thead>
+                        <tbody>
+
+
+                        <tr v-for="item in row.item.histories">
+                            <td>
+                                {{item.created_at}}
+                            </td>
+                            <td>
+                                {{item.data.meta.defaults.title}}
+                            </td>
+                            <td>
+                                {{item.data.meta.defaults.description}}
+                            </td>
+                            <td>
+                                {{item.data.meta.defaults.keywords}}
+                            </td>
+                            <td>
+                                {{item.status}}
+                            </td>
+                            <td>
+                                {{item.comments}}
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+
                 </b-card>
             </template>
-            <template slot="canonical" slot-scope="data">
-                {{ data.item.type === 2 ? data.item.draft_data.meta.defaults.canonical :
-                data.item.current_data.meta.defaults.canonical }}
-            </template>
+
             <template slot="title" slot-scope="data">
                 {{ data.item.type === 2 ? data.item.draft_data.meta.defaults.title :
                 data.item.current_data.meta.defaults.title }}
@@ -170,6 +206,19 @@
                 data.item.current_data.meta.defaults.keywords }}
             </template>
 
+            <template slot="last_history_status" slot-scope="data">
+
+                <b-badge  v-if="typeMap[data.item.type]"
+                          :variant="typeMap[data.item.type].value">
+                    {{typeMap[data.item.type].name}}
+                </b-badge>
+                <b-badge v-if="statusMap[data.item.last_history_status]"
+                         :variant="statusMap[data.item.last_history_status].value">
+                    {{statusMap[data.item.last_history_status].name}}
+                </b-badge>
+
+            </template>
+
 
             <template slot="actions" slot-scope="row">
                 <b-button-group vertical>
@@ -182,7 +231,7 @@
                         Delete Draft
                     </b-button>
 
-                    <b-button size="sm" @click.stop="row.toggleDetails" variant="primary">
+                    <b-button size="sm" @click.stop="toggleMetaHistory(row)" variant="primary">
                         {{ row.detailsShowing ? 'Hide' : 'Show' }} Details
                     </b-button>
 
@@ -208,42 +257,40 @@
         <!-- Info modal -->
         <!-- Info modal -->
         <b-modal id="modalInfo" size="lg" ref="modal" ok-title="Close" ok-only ok-variant="secondary"
-                 :title="modalInfo.title">
+        >
+
+            <div slot="modal-title" v-html="modalInfo.title" class="w-100">
+
+
+            </div>
 
             <b-card>
                 <b-form @submit="handleOk">
-
-                    <b-form-group horizontal
-                                  :label-cols="2"
-                                  label="Canonical"
-                                  label-for="Canonical">
-                        <b-form-input id="exampleInput1"
-                                      type="text"
-                                      v-model="formItem.canonical"
-                                      required
-                        >
-                        </b-form-input>
-                        <b-form-text id="inputLiveHelp">
-                            <!-- this is a form text block (formerly known as help block) -->
-                            Current: {{currentItem.canonical}}
-                        </b-form-text>
-                    </b-form-group>
 
 
                     <b-form-group horizontal
                                   :label-cols="2"
                                   label="Title"
                                   label-for="meta_title">
-                        <b-form-input
-                                type="text"
+
+                        <b-form-textarea
+                                placeholder="Enter something"
+                                :rows="6"
+                                :max-rows="10"
                                 v-model="formItem.title"
                                 required
                         >
-                        </b-form-input>
+                        </b-form-textarea>
+
+
+                        <b-form-text v-html="titleLeft">
+                        </b-form-text>
+
                         <b-form-text id="inputLiveHelp">
                             <!-- this is a form text block (formerly known as help block) -->
                             Current: {{currentItem.title}}
                         </b-form-text>
+
                     </b-form-group>
 
 
@@ -253,12 +300,18 @@
                                   label-for="meta_description">
                         <b-form-textarea
                                 placeholder="Enter something"
-                                :rows="3"
-                                :max-rows="6"
+                                :rows="6"
+                                :max-rows="10"
                                 v-model="formItem.description"
                                 required
                         >
                         </b-form-textarea>
+
+                        <b-form-text id="description_counter" v-html="descriptionLeft">
+
+                        </b-form-text>
+
+
                         <b-form-text id="inputLiveHelp">
                             <!-- this is a form text block (formerly known as help block) -->
                             Current: {{currentItem.description}}
@@ -278,7 +331,7 @@
                         >
                         </b-form-input>
                         <b-form-text id="inputLiveHelp">
-                         Use comma to split, e.g. apple,orange,banana
+                            Use comma to split, e.g. apple,orange,banana
                         </b-form-text>
                         <b-form-text id="inputLiveHelp">
                             <!-- this is a form text block (formerly known as help block) -->
@@ -304,24 +357,50 @@
     export default {
         data() {
             return {
+                descriptionMaxLength: 160,
+                titleMaxLength: 55,
                 selected: 0,
+                selectedStatus:0,
+                statusMap: {
+                    2: {
+                        value: 'danger',
+                        name: 'Recent Rejected'
+                    },
+                    1: {
+                        value: 'success',
+                        name: 'Recent Approved'
+                    },
+                },
+                typeMap: {
+                    2: {
+                        value: 'primary',
+                        name: 'In Draft'
+                    },
+                    1:{
+                        value: 'warning',
+                        name: 'New'
+                    }
+                },
                 options: [
                     {text: 'All', value: 0},
-                    {text: 'Recent Approved', value: 1},
-                    {text: 'Draft Only', value: 2}
+                    {text: '<b class="text-primary">Draft Only</b>', value: 2},
+                ],
+                statusOptions: [
+                    {text: 'All', value: 0},
+                    {text: '<b class="text-success">Recent Approved</b>', value: 1},
+                    {text: '<b class="text-danger">Recent Rejected</b>', value: 2},
                 ],
                 items: [],
                 filter: null,
                 fields: [
-                    {key: 'id', label: 'ID', class: 'id-table-wrap'},
+                    {key: 'id', label: 'ID', class: 'id-table-wrap',sortable: true},
                     {key: 'path', label: 'Path', 'class': 'path-table-wrap'},
                     // 'Current vs Draft',
-                    {key: 'canonical', label: 'Canonical', 'class': 'wrap'},
-                    {key: 'title', label: 'Title', 'class': 'wrap'},
-                    {key: 'description', label: 'Description', 'class': 'wrap'},
+                    {key: 'title', label: 'Title', 'class': 'title-wrap'},
+                    {key: 'description', label: 'Description', 'class': 'desc-wrap'},
                     {key: 'keywords', label: 'Keywords', 'class': 'keywords-table-wrap'},
-                    {key: 'draft_at', label: 'Daft At', sortable: true, 'class': 'date-wrap'},
-                    {key: 'last_approved_at', label: 'Last Approved', sortable: true, 'class': 'date-wrap'},
+                    {key: 'last_history_status', label: 'Status', sortable: true, 'class': 'status-wrap'},
+                    {key: 'updated_at', label: 'Last Updated', sortable: true, 'class': 'date-wrap'},
                     {key: 'actions', label: 'Actions', 'class': 'action-wrap'}
                 ],
                 formItem: {
@@ -344,23 +423,58 @@
                 pageOptions: [20, 50, 100, 200, 500],
                 modalInfo: {title: '', content: ''},
                 sortBy: null,
-                sortDesc: false,
+                sortDesc: true,
                 sortDirection: 'asc',
-                sortOptions: ['draft_at', 'last_approved_at']
+                sortOptions: ['status', 'updated_at']
             }
         },
         created() {
         },
+        computed: {
+            descriptionLeft() {
+                let char = this.formItem.description.length,
+                    limit = this.descriptionMaxLength;
+                if (char > limit) {
+                    return "<b class='text-warning'>" + char + " / " + limit + " characters counter" + "</b>";
+                } else {
+                    return char + " / " + limit + " characters counter";
+                }
+            },
+            titleLeft() {
+                let char = this.formItem.title.length,
+                    limit = this.titleMaxLength;
+                if (char > limit) {
+                    return "<b class='text-warning'>" + char + " / " + limit + " characters counter" + "</b>";
+                } else {
+                    return char + " / " + limit + " characters counter";
+                }
+            }
+        },
         watch: {
             selected(newValue, OldValue) {
+                this.$refs.table.refresh();
+            },
+            selectedStatus(newValue, OldValue) {
                 this.$refs.table.refresh();
             }
         },
         methods: {
+            toggleMetaHistory(row) {
+                let app = this;
+                if (!row.detailsShowing) {
+                    axios.get('/seoagent/web/draft-data/' + row.item.hash + '/histories').then(function (resp) {
+                        app.items[row.index].histories = resp.data;
+                        row.toggleDetails();
+                    }).catch(function (resp) {
+                    });
+                } else {
+                    row.toggleDetails();
+                }
+            },
             deleteDraftData(item, index, button) {
 
                 if (confirm('Are you sure you want to delete this draft?')) {
-                    var app = this;
+                    let app = this;
                     axios.delete('/seoagent/web/draft-data/' + item.id).then(function (resp) {
                         console.log(resp.data);
                         item.type = 0;
@@ -383,11 +497,16 @@
                 }
             },
             editForm(item, index, button) {
-                this.modalInfo.title = `Manage draft for #${item.id}`;
+                if(item.current_data.meta.defaults.canonical){
+                    this.modalInfo.title = `Manage draft for <a target="_blank" href="${item.current_data.meta.defaults.canonical}">${item.current_data.meta.defaults.canonical}</a>`;
+                }else{
+                    this.modalInfo.title = 'Missing canonical link';
+                }
+
                 this.modalInfo.content = JSON.stringify(item, null, 2);
                 //
 
-                if( item.type === 2){
+                if (item.type === 2) {
                     this.formItem = {
                         id: item.id,
                         canonical: item.draft_data.meta.defaults.canonical,
@@ -395,7 +514,7 @@
                         description: item.draft_data.meta.defaults.description,
                         keywords: item.draft_data.meta.defaults.keywords,
                     };
-                }else{
+                } else {
                     this.formItem = {
                         id: item.id,
                         canonical: item.current_data.meta.defaults.canonical,
@@ -421,7 +540,8 @@
             handleOk(evt) {
                 evt.preventDefault();
                 console.log(this.formItem);
-                var app = this;
+                let app = this;
+                let loader = this.$loading.show();
                 if (this.formItem.keywords)
                     if (typeof this.formItem.keywords === 'string') {
                         this.formItem.keywords = this.formItem.keywords.split(',')
@@ -440,6 +560,7 @@
                         title: 'SUCCESS',
                         text: 'Data updated'
                     });
+                    loader.hide();
                 }).catch(function (resp) {
                     console.log(resp);
                     app.$notify({
@@ -448,6 +569,7 @@
                         text: 'Cannot update data, please check your data format.',
                         duration: -1
                     });
+                    loader.hide();
                 });
 
             },
@@ -467,7 +589,8 @@
                         order_by: ctx.sortBy,
                         order_desc: ctx.sortDesc === true ? 1 : 0,
                         wild_search: ctx.filter,
-                        type: app.selected
+                        type: app.selected,
+                        status:app.selectedStatus
                     }
                 });
 
@@ -478,11 +601,11 @@
                     ctx.currentPage = resp.data.currentPage;
                     ctx.perPage = resp.data.perPage;
                     app.totalRows = resp.data.total;
-                    for (var i = 1; i <= resp.data.last_page; i++) {
+                    for (let i = 1; i <= resp.data.last_page; i++) {
                         app.currentPageOptions.push(i)
                     }
 
-                    for (var i = 0; i < app.items.length; i++) {
+                    for (let i = 0; i < app.items.length; i++) {
                         if (app.items[i].type === 1) {
                             app.items[i]._rowVariant = "success";
                         }
@@ -514,9 +637,14 @@
 </script>
 
 <style>
-    .wrap {
+    .title-wrap {
         word-break: break-word;
-        width: 10%;
+        width: 8%;
+    }
+
+    .desc-wrap {
+        word-break: break-word;
+        width: 20%;
     }
 
     .action-wrap {
@@ -529,6 +657,10 @@
         width: 4.2%;
     }
 
+    .status-wrap{
+        word-break: break-word;
+        width: 2.2%;
+    }
     .nested-table-wrap {
         word-break: break-word;
         width: 2%;
@@ -551,6 +683,10 @@
 
     .keywords-table-wrap {
         word-break: break-word;
-        width: 2%;
+        width: 3%;
+    }
+
+    .vld-overlay.is-full-page {
+        z-index: 9999 !important;
     }
 </style>
