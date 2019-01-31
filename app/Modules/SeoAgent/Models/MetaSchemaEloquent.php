@@ -13,15 +13,21 @@ use Illuminate\Database\Eloquent\Model;
 
 
 /**
- * @OA\Schema(type="object")
- * @OA\Property(property="title",type="string")
- * @OA\Property(property="description",type="string")
- * @OA\Property(property="canonical",type="string")
- * @OA\Property(
+ * App\Modules\SeoAgent\Models\MetaSchemaEloquent
+ *
+ * @OA\Schema (type="object")
+ * @OA\Property (property="title",type="string")
+ * @OA\Property (property="description",type="string")
+ * @OA\Property (property="canonical",type="string")
+ * @OA\Property (
  *     type="array",
  *     property="keywords",
  *       @OA\Items(type="string")
  * )
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\SeoAgent\Models\MetaSchemaEloquent newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\SeoAgent\Models\MetaSchemaEloquent newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\SeoAgent\Models\MetaSchemaEloquent query()
+ * @mixin \Eloquent
  */
 class MetaSchemaEloquent extends Model
 {
@@ -35,14 +41,18 @@ class MetaSchemaEloquent extends Model
         'keywords' => [],
         'title' => '',
         'description' => '',
-        'canonical' => ''
+        'canonical' => '',
+        'is_agent' => true,
+        'user_name' => ''
     ];
 
     protected $fillable = [
         'title',
         'description',
         'keywords',
-        'canonical'
+        'canonical',
+        'is_agent',
+        'user_name'
     ];
 
 
@@ -52,7 +62,9 @@ class MetaSchemaEloquent extends Model
             'title' => 'string|required',
             'description' => 'string|required',
             'canonical' => 'string|required',
-            'keywords' => 'array'
+            'keywords' => 'array',
+            'is_agent' => 'bool',
+            'user_name' => 'string'
         ];
     }
 
@@ -60,7 +72,9 @@ class MetaSchemaEloquent extends Model
         $title,
         $description,
         $canonical,
-        $keywords
+        $keywords,
+        $isAgent,
+        $userName
     )
     {
         return [
@@ -70,6 +84,8 @@ class MetaSchemaEloquent extends Model
                     'description' => $description,
                     'canonical' => $canonical,
                     'keywords' => $keywords,
+                    'is_agent' => $isAgent,
+                    'user_name' => $userName
                 ]
             ]
         ];
@@ -80,10 +96,12 @@ class MetaSchemaEloquent extends Model
     {
         $data = parent::attributesToArray();
         return self::schema(
-            $data['title'],
-            $data['description'],
-            $data['canonical'],
-            $data['keywords']
+            $data['title'] === null ? '' : $data['title'],
+            $data['description'] === null ? '' : $data['description'],
+            $data['canonical'] === null ? '' : $data['canonical'],
+            $data['keywords'] === null ? [] : $data['keywords'],
+            $data['is_agent'],
+            $data['user_name']=== null ? '' : $data['user_name']
         );
     }
 }

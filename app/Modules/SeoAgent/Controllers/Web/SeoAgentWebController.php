@@ -14,10 +14,6 @@ class SeoAgentWebController extends Controller
 {
 
 
-    /**
-     * @param SeoAgentGetDraftDataRequest $request
-     * @return \Illuminate\Support\Collection
-     */
     public function getDraftData(SeoAgentGetDraftDataRequest $request)
     {
         $request->validated();
@@ -27,41 +23,39 @@ class SeoAgentWebController extends Controller
             $request->query('order_by'),
             $request->query('order_desc'),
             $request->query('wild_search'),
-            $request->query('type')
+            $request->query('type'),
+            $request->query('status')
         );
     }
 
-    /**
-     * @param SeoAgentUpdateDraftDataRequest $request
-     * @param $id
-     * @return \Illuminate\Support\Collection
-     */
+
     public function updateDraftData(SeoAgentUpdateDraftDataRequest $request, $id)
     {
         $request->validated();
         $data = $request->only(['title', 'description', 'keywords', 'canonical']);
-
+        $data['user_name'] = \Auth::user()->name;
         $schema = new MetaSchemaEloquent();
         $schema->fill($data);
 
         return SeoAgentService::updateDraftData($id, $schema);
     }
 
-    /**
-     * @param $id
-     * @return \Illuminate\Http\JsonResponse
-     */
+
     public function deleteDraftData($id)
     {
         $result = SeoAgentService::deleteDraft($id);
-        if( $result === false){
+        if ($result === false) {
             return Response::json('Error', 500);
-        }else{
+        } else {
             return Response::json($result, 200);
         }
 
     }
 
+    public function getHistoryByMetaHash($hash)
+    {
+        return SeoAgentService::getHistoryByMetaHash($hash);
+    }
 
 }
 

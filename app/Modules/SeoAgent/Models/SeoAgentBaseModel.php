@@ -2,16 +2,17 @@
 
 namespace App\Modules\SeoAgent\Models;
 
-use App\Modules\Shared\Traits\FullTextSearch;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 
 /**
- * @OA\Schema(type="object")
- * @OA\Property(property="path",type="string")
- * @OA\Property(property="hash",type="string")
- * @OA\Property(property="current_data",type="object",
+ * App\Modules\SeoAgent\Models\SeoAgentBaseModel
+ *
+ * @OA\Schema (type="object")
+ * @OA\Property (property="path",type="string")
+ * @OA\Property (property="hash",type="string")
+ * @OA\Property (property="current_data",type="object",
  *               @OA\Property(
  *                   property="title",
  *                   description="",
@@ -34,14 +35,19 @@ use Illuminate\Database\Eloquent\Model;
  *                   @OA\Items(type="string")
  *               )
  * )
+ * @property-read mixed $draft_at
+ * @property-read mixed $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\SeoAgent\Models\SeoAgentBaseModel newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\SeoAgent\Models\SeoAgentBaseModel newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\SeoAgent\Models\SeoAgentBaseModel query()
+ * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\SeoAgent\Models\SeoAgentBaseModel search($term)
+ * @mixin \Eloquent
  */
 class SeoAgentBaseModel extends Model
 {
-    use FullTextSearch;
-
-    CONST DEFAULT = 0;
-    CONST RECENT_APPROVED = 1;
-    CONST IN_DRAFT = 2;
+    CONST TYPE_DEFAULT = 0;
+    CONST TYPE_NEW = 1;
+    CONST TYPE_IN_DRAFT = 2;
 
     protected $table = 'seo_metas';
 
@@ -77,7 +83,7 @@ class SeoAgentBaseModel extends Model
 
     public function getLastApprovedAtAttribute($value)
     {
-        return $value ?? Carbon::parse($value)->format('H:i A d/m/Y');
+        return $value ? Carbon::parse($value)->format('H:i A d/m/Y'):$value;
     }
 }
 

@@ -18,6 +18,14 @@ import Notifications from 'vue-notification';
 
 Vue.use(Notifications)
 
+
+// Import component
+import Loading from 'vue-loading-overlay';
+// Import stylesheet
+import 'vue-loading-overlay/dist/vue-loading.css';
+// Init plugin
+Vue.use(Loading);
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

@@ -22,7 +22,7 @@ class SeoAgentServiceProvider extends ServiceProvider
     public function register()
     {
        $this->app->singleton(
-            SeoAgentServiceInterface::class,
+           'SeoAgentService',
             SeoAgentService::class
         );
    }
