@@ -66589,7 +66589,9 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             statusOptions: [{ text: 'All', value: 0 }, { text: '<b class="text-success">Recent Approved</b>', value: 1 }, { text: '<b class="text-danger">Recent Rejected</b>', value: 2 }],
             items: [],
             filter: null,
-            fields: [{ key: 'id', label: 'ID', class: 'id-table-wrap', sortable: true }, { key: 'path', label: 'Path', 'class': 'path-table-wrap' },
+            fields: [
+            // {key: 'id', label: 'ID', class: 'id-table-wrap',sortable: true},
+            { key: 'path', label: 'Path', 'class': 'path-table-wrap' },
             // 'Current vs Draft',
             { key: 'title', label: 'Title', 'class': 'title-wrap' }, { key: 'description', label: 'Description', 'class': 'desc-wrap' }, { key: 'keywords', label: 'Keywords', 'class': 'keywords-table-wrap' }, { key: 'last_history_status', label: 'Status', sortable: true, 'class': 'status-wrap' }, { key: 'updated_at', label: 'Last Updated', sortable: true, 'class': 'date-wrap' }, { key: 'actions', label: 'Actions', 'class': 'action-wrap' }],
             formItem: {

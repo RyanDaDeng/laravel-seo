@@ -393,7 +393,7 @@
                 items: [],
                 filter: null,
                 fields: [
-                    {key: 'id', label: 'ID', class: 'id-table-wrap',sortable: true},
+                    // {key: 'id', label: 'ID', class: 'id-table-wrap',sortable: true},
                     {key: 'path', label: 'Path', 'class': 'path-table-wrap'},
                     // 'Current vs Draft',
                     {key: 'title', label: 'Title', 'class': 'title-wrap'},
