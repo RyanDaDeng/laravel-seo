@@ -238,6 +238,22 @@
                 "deprecated": false
             }
         },
+        "/seoagent/v1/online-users": {
+            "get": {
+                "tags": [
+                    "Online User"
+                ],
+                "summary": "is any user online",
+                "description": "is any user online",
+                "operationId": "App\\Modules\\SeoAgent\\Controllers\\Api\\V1\\SeoAgentApiController::isAnyUserOnline",
+                "responses": {
+                    "200": {
+                        "description": "get true or false"
+                    }
+                },
+                "deprecated": false
+            }
+        },
         "/setting/v1/all-settings": {
             "get": {
                 "tags": [
