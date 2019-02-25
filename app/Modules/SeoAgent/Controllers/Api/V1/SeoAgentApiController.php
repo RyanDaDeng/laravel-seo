@@ -346,5 +346,31 @@ class SeoAgentApiController extends Controller
             return \Response::json(['success' => false], 500);
         }
     }
+
+    /**
+     * @OA\Get(
+     *     path="/seoagent/v1/online-users",
+     *     tags={"Online User"},
+     *     summary="is any user online",
+     *     description="is any user online",
+     *     deprecated=false,
+     *     @OA\Response(
+     *         response=200,
+     *         description="get true or false"
+     *     )
+     * )
+     */
+    public function isAnyUserOnline()
+    {
+
+        $cache = \Cache::get('last_activity_record');
+        $lastActivity = isset($cache['last_activity_time']) ? Carbon::parse($cache['last_activity_time'], 'Australia/Sydney') : Carbon::now();
+        $counter = $lastActivity->diffForHumans(Carbon::now());
+
+        return [
+            'counter' => $counter,
+            'last_activity_record' => \Cache::get('last_activity_record')
+        ];
+    }
 }
 
