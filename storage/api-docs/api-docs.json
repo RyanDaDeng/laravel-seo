@@ -6,7 +6,7 @@
     },
     "servers": [
         {
-            "url": "http://seoagent.test:8888/api"
+            "url": "http://seomanager.inkstation.com.au/api"
         }
     ],
     "paths": {
