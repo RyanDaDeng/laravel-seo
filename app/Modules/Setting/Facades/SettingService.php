@@ -10,8 +10,10 @@ use Illuminate\Support\Facades\Facade;
  * @method static Collection getPushSettings()
  * @method static Collection getPullSettings()
  * @method static Collection getAllSettings()
+ * @method static Collection getGoogleSettings()
  * @method static Collection updatePushSettings($data)
  * @method static Collection updatePullSettings($data)
+ * @method static Collection updateGoogleSetting($data)
  */
 class SettingService extends Facade 
 {

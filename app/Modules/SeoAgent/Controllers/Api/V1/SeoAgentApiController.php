@@ -252,7 +252,6 @@ class SeoAgentApiController extends Controller
                     $notExistRows[] = $row;
                 }
                 SeoAgentCurrentData::query()->insert($notExistRows);
-
                 return ['success' => true];
             }
         } catch (\Exception $e) {

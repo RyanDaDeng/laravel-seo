@@ -1,5 +1,5 @@
 @extends('layouts.app')
 
 @section('content')
-    <draft-data-list></draft-data-list>
+<seo-layout></seo-layout>
 @endsection

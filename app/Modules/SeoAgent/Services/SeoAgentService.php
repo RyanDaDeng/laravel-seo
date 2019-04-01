@@ -27,11 +27,12 @@ class SeoAgentService
      * @param null $wildSearch
      * @param null $type
      * @param null $status
+     * @param null $md5
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function getDraftData($per_page, $page, $orderBy, $orderDesc, $wildSearch = null, $type = null, $status = null)
+    public function getDraftData($per_page, $page, $orderBy, $orderDesc, $wildSearch = null, $type = null, $status = null, $md5 = null)
     {
-        return $this->repository->getDraftMetaData($per_page, $page, $orderBy, $orderDesc, $wildSearch, $type,$status);
+        return $this->repository->getDraftMetaData($per_page, $page, $orderBy, $orderDesc, $wildSearch, $type, $status, $md5);
     }
 
     /**

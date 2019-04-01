@@ -39,5 +39,15 @@ class SettingService
     {
         return $this->repository->getAllSettings();
     }
+
+    public function getGoogleSettings(){
+        return $this->repository->getGoogleSetting();
+    }
+
+    public function updateGoogleSetting($data)
+    {
+        return $this->repository->updateGoogleSetting($data);
+    }
+
 }
 

@@ -3,6 +3,7 @@
 namespace App\Modules\Setting\Repositories;
 
 use App\Modules\Setting\Models\AllSetting;
+use App\Modules\Setting\Models\GoogleSetting;
 use App\Modules\Setting\Models\PullSetting;
 use App\Modules\Setting\Models\PushSetting;
 
@@ -42,6 +43,22 @@ class SettingRepository
         $data = AllSetting::query()->get();
         return $data;
     }
+
+
+    public function getGoogleSetting()
+    {
+        return GoogleSetting::query()->where('id', GoogleSetting::ID)->first();
+    }
+
+
+    public function updateGoogleSetting($data = [])
+    {
+        $obj = GoogleSetting::query()->where('id', GoogleSetting::ID)->first();
+        $obj->last_updated = $data['last_updated'];
+        $obj->save();
+        return $obj;
+    }
+
 
 }
 

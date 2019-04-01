@@ -111,20 +111,23 @@ class SeoAgentRepository
      * @param null $wildSearch
      * @param null $type
      * @param null $status
+     * @param null $md5
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function getDraftMetaData($perPage, $page = null, $orderBy = null, $orderDesc = null, $wildSearch = null, $type = null, $status = null)
+    public function getDraftMetaData($perPage, $page = null, $orderBy = null, $orderDesc = null, $wildSearch = null, $type = null, $status = null, $md5 = null)
     {
         $data = SeoAgentDraftData::query();
 
-        if (filter_var($wildSearch, FILTER_VALIDATE_URL) !== false) {
+        if ($md5) {
+            $data = $data->where('hash', $md5);
+        } else if (filter_var($wildSearch, FILTER_VALIDATE_URL) !== false) {
             $wildSearch = parse_url($wildSearch)['path'];
-            if($wildSearch[0] === '/'){
-                $wildSearch[0] ='|';
-                $wildSearch = str_replace('|','',$wildSearch );
+            if ($wildSearch[0] === '/') {
+                $wildSearch[0] = '|';
+                $wildSearch = str_replace('|', '', $wildSearch);
             }
-            $data->where('path', '=', str_replace('|','',$wildSearch ));
-        }else if ($wildSearch !== null) {
+            $data->where('path', '=', str_replace('|', '', $wildSearch));
+        } else if ($wildSearch !== null) {
             $data->where(function (Builder $q) use ($wildSearch) {
                 $q->where('draft_data', 'LIKE', '%' . $wildSearch . '%');
                 $q->orWhere('current_data', 'LIKE', '%' . $wildSearch . '%');
@@ -140,8 +143,8 @@ class SeoAgentRepository
 
         if ($orderBy !== null && $orderDesc !== null) {
             $data->orderBy($orderBy, $orderDesc == true ? 'desc' : 'asc');
-        }else{
-            $data->orderBy('updated_at','desc');
+        } else {
+            $data->orderBy('updated_at', 'desc');
         }
         return $data->paginate($perPage);
     }
@@ -200,7 +203,7 @@ class SeoAgentRepository
     public function createHistory(SeoAgentDraftData $meta, $comments, $status)
     {
         Log::info('23232');
-        if(!MetaHistory::query()->where('seo_meta_hash',$meta->hash)->exists()){
+        if (!MetaHistory::query()->where('seo_meta_hash', $meta->hash)->exists()) {
             $new = new MetaHistory();
             $new->comments = '';
             $new->seo_meta_hash = $meta->hash;
@@ -215,7 +218,7 @@ class SeoAgentRepository
         $new->status = $status;
         $new->save();
 
-        if((int)$status === MetaHistory::STATUS_APPROVED){
+        if ((int)$status === MetaHistory::STATUS_APPROVED) {
             $meta->current_data = $meta->draft_data;
             $meta->type = SeoAgentBaseModel::TYPE_DEFAULT;
             $metaSchema = new MetaSchemaEloquent();
@@ -223,7 +226,7 @@ class SeoAgentRepository
             $meta->draft_data = $defaultDraft;
         }
 
-        if((int)$status === MetaHistory::STATUS_REJECTED){
+        if ((int)$status === MetaHistory::STATUS_REJECTED) {
             $meta->type = SeoAgentBaseModel::TYPE_DEFAULT;
             $metaSchema = new MetaSchemaEloquent();
             $defaultDraft = $metaSchema->toArray();

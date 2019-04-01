@@ -1,74 +1,8 @@
 <template>
 
     <div>
-        <b-card>
-            <b-row>
-                <b-col md="6" class="my-1">
-                    <b-form-group label-cols-horizontal label="Search" class="mb-0">
-                        <b-input-group>
-                            <b-form-input v-model="filter" placeholder="Type to Search"/>
-                            <b-input-group-append>
-                                <b-btn :disabled="!filter" @click="filter = ''">Clear</b-btn>
-                            </b-input-group-append>
-                        </b-input-group>
-                        <b-form-text id="inputLiveHelp">
-                            Tips: Support wild search for meta and path for both current and draft data.
-                        </b-form-text>
-                    </b-form-group>
-                </b-col>
-
-
-                <b-col md="6" class="my-1">
-                    <b-form-group label-cols-horizontal label="Per page" class="mb-0">
-                        <b-form-select :options="pageOptions" v-model="perPage"/>
-                    </b-form-group>
-                </b-col>
-                <!--<b-col md="6" class="my-1">-->
-                    <!--<b-form-group label-cols-horizontal label="Sort" class="mb-0">-->
-                        <!--<b-input-group>-->
-                            <!--<b-form-select v-model="sortBy" :options="sortOptions">-->
-                                <!--<option slot="first" :value="null">&#45;&#45; none &#45;&#45;</option>-->
-                            <!--</b-form-select>-->
-                            <!--<b-form-select :disabled="!sortBy" v-model="sortDesc" slot="append">-->
-                                <!--<option :value="false">Asc</option>-->
-                                <!--<option :value="true">Desc</option>-->
-                            <!--</b-form-select>-->
-                        <!--</b-input-group>-->
-                    <!--</b-form-group>-->
-                <!--</b-col>-->
-
-
-                <b-col md="6" class="my-1">
-                    <b-form-group label-cols-horizontal label="" class="mb-0">
-                        <b-form-radio-group id="radios1" v-model="selected" :options="options"
-                                            name="radioOpenions">
-                        </b-form-radio-group>
-                    </b-form-group>
-                    <b-form-group label-cols-horizontal label="" class="mb-0">
-                        <b-form-radio-group id="radios12" v-model="selectedStatus" :options="statusOptions"
-                                            name="radioOpenions2">
-                        </b-form-radio-group>
-                    </b-form-group>
-                </b-col>
-
-            </b-row>
-        </b-card>
         <div>
-            <b-row class="float-right">
-                <div class="my-1">
-                    <b-form-group label-cols-horizontal class="mb-0">
-                        <b-input-group>
-                            <b-form-select :options="currentPageOptions" v-model="currentPage"
-                                           slot="append"/>
-                        </b-input-group>
-                    </b-form-group>
-                </div>
-                <b-col md="7" class="my-1 float-right">
-                    <b-pagination :total-rows="totalRows" :per-page="perPage"
-                                  v-model="currentPage"
-                                  class="my-0"/>
-                </b-col>
-            </b-row>
+
 
             <b-table
                     style="font-size:14px;"
@@ -247,35 +181,11 @@
                                 <i class="fa fa-info-circle"></i>
                             </b-button>
 
-                            <!--<b-button v-b-popover.hover="'View keywords'" size="sm"-->
-                                      <!--@click.stop="viewKeywords(row.item, row.index, $event.target)"-->
-                                      <!--variant="info">-->
-                                <!--<i class="fa fa-tag"></i>-->
-                            <!--</b-button>-->
-
                         </b-button-group>
                     </div>
 
-
                 </template>
             </b-table>
-
-            <b-row class="float-right">
-                <div class="my-1">
-                    <b-form-group label-cols-horizontal class="mb-0">
-                        <b-input-group>
-                            <b-form-select :options="currentPageOptions" v-model="currentPage"
-                                           slot="append"/>
-                        </b-input-group>
-                    </b-form-group>
-                </div>
-                <b-col md="6" class="my-1">
-                    <b-pagination :total-rows="totalRows" :per-page="perPage"
-                                  v-model="currentPage"
-                                  class="my-0"/>
-                </b-col>
-            </b-row>
-
 
             <!-- Info modal -->
             <!-- Info modal -->
@@ -508,9 +418,6 @@
                     row.toggleDetails();
                 }
             },
-            viewKeywords(item, index, button) {
-                this.$emit('view-keyword', item);
-            },
             deleteDraftData(item, index, button) {
 
                 if (confirm('Are you sure you want to delete this draft?')) {
@@ -624,7 +531,7 @@
             myProvider(ctx) {
                 let app = this;
 
-                console.log(ctx);
+                console.log('getting data');
                 let promise = axios.get('seoagent/web/draft-data', {
                     params: {
                         page: ctx.currentPage,
@@ -640,6 +547,16 @@
 
                 // Must return a promise that resolves to an array of items
                 return promise.then((resp) => {
+
+                    if (resp.data.success === false) {
+                        app.$notify({
+                            type: 'error',
+                            title: 'ERROR',
+                            text: resp.data.message,
+                            duration: -1
+                        });
+                        return [];
+                    }
                     // Pluck the array of items off our axios response
                     app.items = resp.data.data;
                     ctx.currentPage = resp.data.currentPage;
