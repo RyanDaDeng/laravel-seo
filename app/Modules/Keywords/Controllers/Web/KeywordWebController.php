@@ -149,7 +149,7 @@ class KeywordWebController extends Controller
         if ($old == 0) {
             return '∞';
         }
-        return round((abs($new - $old) / $old) * 100, 2);
+        return round((($new - $old) / $old) * 100, 2);
 
     }
 
