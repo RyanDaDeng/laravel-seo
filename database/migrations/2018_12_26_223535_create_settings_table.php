@@ -25,14 +25,14 @@ class CreateSettingsTable extends Migration
 
         $obj = new \App\Modules\Setting\Models\PullSetting();
         $obj->name = 'Pull Setting';
-        $obj->id = 1;
+        $obj->id = \App\Modules\Setting\Models\PullSetting::ID;
         $obj->last_updated = '2000-01-01 00:00:00';
         $obj->timezone = 'Australia/Sydney';
         $obj->description = 'The last updated date that agent site has pulled the latest meta from admin server.';
         $obj->save();
 
         $obj = new \App\Modules\Setting\Models\PushSetting();
-        $obj->id = 2;
+        $obj->id = \App\Modules\Setting\Models\PushSetting::ID;
         $obj->name = 'Push Setting';
         $obj->last_updated = '2000-01-01 00:00:00';
         $obj->timezone = 'Australia/Sydney';
@@ -41,7 +41,7 @@ class CreateSettingsTable extends Migration
 
 
         $obj = new \App\Modules\Setting\Models\GoogleSetting();
-        $obj->id = 2;
+        $obj->id = \App\Modules\Setting\Models\GoogleSetting::ID;
         $obj->name = 'Google Console Setting';
         $obj->last_updated = '2000-01-01 00:00:00';
         $obj->timezone = 'Australia/Sydney';

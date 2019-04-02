@@ -14,6 +14,7 @@
                                 <th scope="col">Description</th>
                                 <th scope="col">Last Updated</th>
                                 <th scope="col">Timezone</th>
+                                <th scope="col">Meta</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -23,6 +24,7 @@
                                 <td>{{item['description']}}</td>
                                 <td>{{item['last_updated']}}</td>
                                 <td>{{item['timezone']}}</td>
+                                <td>{{item['meta']}}</td>
                             </tr>
                             </tbody>
                         </table>

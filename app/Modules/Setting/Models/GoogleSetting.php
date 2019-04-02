@@ -2,7 +2,6 @@
 
 namespace App\Modules\Setting\Models;
 
-use Illuminate\Database\Eloquent\Model;
 
 
 /**
@@ -13,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Setting\Models\PushSetting query()
  * @mixin \Eloquent
  */
-class GoogleSetting extends Model
+class GoogleSetting extends AllSetting
 {
     const ID = 3;
     protected $table = 'settings';

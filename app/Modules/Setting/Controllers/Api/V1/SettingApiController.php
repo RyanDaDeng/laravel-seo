@@ -158,7 +158,7 @@ class SettingApiController extends Controller
     public function updateGoogleSettings(SettingUpdatePullSettingsRequest $request)
     {
         $request->validated();
-        return SettingService::updateGoogleSetting($request->only('last_updated'));
+        return SettingService::updateGoogleSetting($request->only('last_updated','meta'));
     }
 
 
