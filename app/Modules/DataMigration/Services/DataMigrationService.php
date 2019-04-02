@@ -14,6 +14,9 @@ use App\Modules\Keywords\Models\Page;
 class DataMigrationService
 {
 
+    /**
+     *
+     */
     public function generatePathMd5ForGooglePage()
     {
         $data = Page::query()->whereNull('path_md5')->get();

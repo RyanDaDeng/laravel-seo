@@ -23,7 +23,7 @@ class KeywordApiController
      * @OA\Patch(
      *     path="/keywords/v1/pages",
      *     tags={"Keywords"},
-     *     summary="Bulk update or insert data",
+     *     summary="Admin will use it to push Google Console Page data",
      *     description="Bulk update or insert data",
      *     deprecated=false,
      *     @OA\RequestBody(
@@ -67,7 +67,7 @@ class KeywordApiController
      * @OA\Patch(
      *     path="/keywords/v1/keywords",
      *     tags={"Keywords"},
-     *     summary="Bulk update or insert data",
+     *     summary="Admin will use it to push Keyword data",
      *     description="Bulk update or insert data",
      *     deprecated=false,
      *     @OA\RequestBody(
@@ -102,7 +102,7 @@ class KeywordApiController
      * @OA\Patch(
      *     path="/keywords/v1/query-details",
      *     tags={"Keywords"},
-     *     summary="Bulk update or insert data",
+     *     summary="Admin will use it to push Google Console query details",
      *     description="Bulk update or insert data",
      *     deprecated=false,
      *     @OA\RequestBody(

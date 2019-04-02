@@ -133,8 +133,8 @@ class SeoAgentApiController extends Controller
      * @OA\Put(
      *     path="/seoagent/v1/current-data/{hash}",
      *     tags={"Current Data"},
-     *     summary="Create a new current meta data entity",
-     *     description="Create a new current meta data entity",
+     *     summary="update meta data",
+     *     description="update meta data",
      *     deprecated=false,
      *     @OA\Parameter(
      *         description="ID of resource to return",
@@ -197,6 +197,12 @@ class SeoAgentApiController extends Controller
      */
     public function patchCurrentData(SeoAgentBulkUpdateOrInsertMetaRequest $request)
     {
+
+        /**
+         * When agent site receives data from admin, if the data already exists, then just update otherwise we need
+         * to create a entry. So we need to do a data diff here.
+         */
+
         $request->validated();
         $data = $request->all();
         $collection = collect($data);
@@ -265,8 +271,8 @@ class SeoAgentApiController extends Controller
      * @OA\Put(
      *     path="/seoagent/v1/draft-data/{hash}/status",
      *     tags={"Current Data"},
-     *     summary="Create a new current meta data entity",
-     *     description="Create a new current meta data entity",
+     *     summary="Admin call this API to approve/decline draft",
+     *     description="Admin call this API to approve/decline draft",
      *     deprecated=false,
      *     @OA\Parameter(
      *         description="ID of resource to return",
@@ -320,8 +326,8 @@ class SeoAgentApiController extends Controller
      * @OA\Put(
      *     path="/seoagent/v1/deleteMetaData",
      *     tags={"Recovery"},
-     *     summary="Create a new current meta data entity",
-     *     description="Create a new current meta data entity",
+     *     summary="Delete all seo metas",
+     *     description="Delete all seo metas",
      *     deprecated=false,
      *     @OA\RequestBody(
      *          description="Data required to create it",
@@ -350,8 +356,8 @@ class SeoAgentApiController extends Controller
      * @OA\Get(
      *     path="/seoagent/v1/online-users",
      *     tags={"Online User"},
-     *     summary="is any user online",
-     *     description="is any user online",
+     *     summary="Check if any user is online and return back last activity record",
+     *     description="Check if any user is online and return back last activity record",
      *     deprecated=false,
      *     @OA\Response(
      *         response=200,

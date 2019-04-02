@@ -18,7 +18,7 @@ class SettingApiController extends Controller
      * @OA\Get(
      *     path="/setting/v1/all-settings",
      *     tags={"Setting"},
-     *     summary="Get resource",
+     *     summary="Get all settings",
      *     description="Get resource",
      *     deprecated=false,
      *     @OA\Response(
@@ -37,7 +37,7 @@ class SettingApiController extends Controller
      * @OA\Get(
      *     path="/setting/v1/push-settings",
      *     tags={"Setting"},
-     *     summary="Get resource",
+     *     summary="Get push setting",
      *     description="Get resource",
      *     deprecated=false,
      *     @OA\Response(
