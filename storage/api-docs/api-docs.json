@@ -15,7 +15,7 @@
                 "tags": [
                     "Keywords"
                 ],
-                "summary": "Bulk update or insert data",
+                "summary": "Admin will use it to push Google Console Page data",
                 "description": "Bulk update or insert data",
                 "operationId": "App\\Modules\\Keywords\\Controllers\\Api\\V1\\KeywordApiController::syncPages",
                 "requestBody": {
@@ -45,7 +45,7 @@
                 "tags": [
                     "Keywords"
                 ],
-                "summary": "Bulk update or insert data",
+                "summary": "Admin will use it to push Keyword data",
                 "description": "Bulk update or insert data",
                 "operationId": "App\\Modules\\Keywords\\Controllers\\Api\\V1\\KeywordApiController::syncKeywords",
                 "requestBody": {
@@ -75,7 +75,7 @@
                 "tags": [
                     "Keywords"
                 ],
-                "summary": "Bulk update or insert data",
+                "summary": "Admin will use it to push Google Console query details",
                 "description": "Bulk update or insert data",
                 "operationId": "App\\Modules\\Keywords\\Controllers\\Api\\V1\\KeywordApiController::syncQueryDetails",
                 "requestBody": {
@@ -170,8 +170,8 @@
                 "tags": [
                     "Current Data"
                 ],
-                "summary": "Create a new current meta data entity",
-                "description": "Create a new current meta data entity",
+                "summary": "update meta data",
+                "description": "update meta data",
                 "operationId": "App\\Modules\\SeoAgent\\Controllers\\Api\\V1\\SeoAgentApiController::updateCurrentDataByHash",
                 "parameters": [
                     {
@@ -262,8 +262,8 @@
                 "tags": [
                     "Current Data"
                 ],
-                "summary": "Create a new current meta data entity",
-                "description": "Create a new current meta data entity",
+                "summary": "Admin call this API to approve/decline draft",
+                "description": "Admin call this API to approve/decline draft",
                 "operationId": "App\\Modules\\SeoAgent\\Controllers\\Api\\V1\\SeoAgentApiController::updateStatus",
                 "parameters": [
                     {
@@ -310,8 +310,8 @@
                 "tags": [
                     "Recovery"
                 ],
-                "summary": "Create a new current meta data entity",
-                "description": "Create a new current meta data entity",
+                "summary": "Delete all seo metas",
+                "description": "Delete all seo metas",
                 "operationId": "App\\Modules\\SeoAgent\\Controllers\\Api\\V1\\SeoAgentApiController::deleteAllData",
                 "requestBody": {
                     "description": "Data required to create it",
@@ -333,8 +333,8 @@
                 "tags": [
                     "Online User"
                 ],
-                "summary": "is any user online",
-                "description": "is any user online",
+                "summary": "Check if any user is online and return back last activity record",
+                "description": "Check if any user is online and return back last activity record",
                 "operationId": "App\\Modules\\SeoAgent\\Controllers\\Api\\V1\\SeoAgentApiController::isAnyUserOnline",
                 "responses": {
                     "200": {
@@ -349,7 +349,7 @@
                 "tags": [
                     "Setting"
                 ],
-                "summary": "Get resource",
+                "summary": "Get all settings",
                 "description": "Get resource",
                 "operationId": "App\\Modules\\Setting\\Controllers\\Api\\V1\\SettingApiController::getAllSettings",
                 "responses": {
@@ -365,7 +365,7 @@
                 "tags": [
                     "Setting"
                 ],
-                "summary": "Get resource",
+                "summary": "Get push setting",
                 "description": "Get resource",
                 "operationId": "App\\Modules\\Setting\\Controllers\\Api\\V1\\SettingApiController::getPushSettings",
                 "responses": {

@@ -55,6 +55,7 @@ class SettingRepository
     {
         $obj = GoogleSetting::query()->where('id', GoogleSetting::ID)->first();
         $obj->last_updated = $data['last_updated'];
+        $obj->meta = $data['meta'];
         $obj->save();
         return $obj;
     }

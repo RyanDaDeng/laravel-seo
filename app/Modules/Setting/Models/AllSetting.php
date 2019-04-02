@@ -13,10 +13,13 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|\App\Modules\Setting\Models\AllSetting query()
  * @mixin \Eloquent
  */
-class AllSetting extends Model 
+class AllSetting extends Model
 {
 
-    protected $table ='settings';
+    protected $table = 'settings';
 
+    protected $casts = [
+        'meta' => 'array'
+    ];
 }
 

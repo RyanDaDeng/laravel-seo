@@ -118004,6 +118004,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -118062,7 +118064,9 @@ var render = function() {
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(item["last_updated"]))]),
                     _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(item["timezone"]))])
+                    _c("td", [_vm._v(_vm._s(item["timezone"]))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(item["meta"]))])
                   ])
                 }),
                 0
@@ -118089,7 +118093,9 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", { attrs: { scope: "col" } }, [_vm._v("Last Updated")]),
         _vm._v(" "),
-        _c("th", { attrs: { scope: "col" } }, [_vm._v("Timezone")])
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Timezone")]),
+        _vm._v(" "),
+        _c("th", { attrs: { scope: "col" } }, [_vm._v("Meta")])
       ])
     ])
   }
