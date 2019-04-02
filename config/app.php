@@ -176,7 +176,8 @@ return [
         App\Providers\RouteServiceProvider::class,
         \App\Modules\FrontEnd\Providers\FrontendServiceProvider::class,
         \App\Modules\SeoAgent\Providers\SeoAgentServiceProvider::class,
-        \App\Modules\Setting\Providers\SettingServiceProvider::class
+        \App\Modules\Setting\Providers\SettingServiceProvider::class,
+        \App\Modules\Keywords\Providers\KeywordServiceProvider::class,
 
     ],
 

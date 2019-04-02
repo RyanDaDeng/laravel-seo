@@ -18,7 +18,7 @@ class SettingApiController extends Controller
      * @OA\Get(
      *     path="/setting/v1/all-settings",
      *     tags={"Setting"},
-     *     summary="Get resource",
+     *     summary="Get all settings",
      *     description="Get resource",
      *     deprecated=false,
      *     @OA\Response(
@@ -37,7 +37,7 @@ class SettingApiController extends Controller
      * @OA\Get(
      *     path="/setting/v1/push-settings",
      *     tags={"Setting"},
-     *     summary="Get resource",
+     *     summary="Get push setting",
      *     description="Get resource",
      *     deprecated=false,
      *     @OA\Response(
@@ -106,6 +106,60 @@ class SettingApiController extends Controller
         return SettingService::getPullSettings();
     }
 
+
+
+
+    /**
+     * @OA\Get(
+     *     path="/setting/v1/google-settings",
+     *     tags={"Setting"},
+     *     summary="Get only goole data",
+     *     description="Get only google data",
+     *     deprecated=false,
+     *     @OA\Response(
+     *         response=200,
+     *         description="get a resource"
+     *     )
+     * )
+     */
+    public function getGoogleSetting(Request $request)
+    {
+        return SettingService::getGoogleSettings();
+    }
+
+
+    /**
+     * @OA\Put(
+     *     path="/setting/v1/google-settings",
+     *     tags={"Setting"},
+     *     summary="update resource",
+     *     description="update resource",
+     *     deprecated=false,
+     *     @OA\RequestBody(
+     *          description="Data required to create it",
+     *          required=true,
+     *          @OA\MediaType(
+     *              mediaType="application/json",
+     *              @OA\Schema(type="object",
+     *                 @OA\Property(
+     *                     property="last_updated",
+     *                     description="last updated",
+     *                     type="string",
+     *                 )
+     *              )
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="update a resource"
+     *     )
+     * )
+     */
+    public function updateGoogleSettings(SettingUpdatePullSettingsRequest $request)
+    {
+        $request->validated();
+        return SettingService::updateGoogleSetting($request->only('last_updated'));
+    }
 
 
     /**

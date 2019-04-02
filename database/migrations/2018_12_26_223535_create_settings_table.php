@@ -38,6 +38,15 @@ class CreateSettingsTable extends Migration
         $obj->timezone = 'Australia/Sydney';
         $obj->description = 'The last updated date that agent site has pushed the latest draft meta to admin server.';
         $obj->save();
+
+
+        $obj = new \App\Modules\Setting\Models\GoogleSetting();
+        $obj->id = 2;
+        $obj->name = 'Google Console Setting';
+        $obj->last_updated = '2000-01-01 00:00:00';
+        $obj->timezone = 'Australia/Sydney';
+        $obj->description = 'The last updated date that admin site has pushed the latest Google Search Console data to agent server.';
+        $obj->save();
     }
 
     /**

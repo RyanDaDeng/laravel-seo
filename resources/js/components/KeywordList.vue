@@ -1,0 +1,650 @@
+<template>
+
+    <b-container fluid>
+
+        <b-card>
+
+
+            <b-row>
+
+                <b-col md="6" class="my-1">
+
+                    <label>Compare From</label>
+                    <VueCtkDateTimePicker v-model="compareFromRange" :range="true" :formatted="'ll'"/>
+
+                </b-col>
+
+
+                <b-col md="6" class="my-1">
+
+                    <label>Compare To</label>
+                    <VueCtkDateTimePicker v-model="compareToRange" :range="true" :formatted="'ll'"/>
+
+                </b-col>
+
+                <b-col md="6" class="my-1">
+
+                    <b-form-group label-cols-horizontal label="URL Search" class="mb-0">
+                        <b-input-group>
+                            <b-form-select v-model="paramFilter.url_filter" slot="prepend">
+                                <option v-for="item in compareFilterList" :value="item.key">{{item.value}}</option>
+                            </b-form-select>
+                            <b-form-input v-model="paramFilter.url" placeholder="Type to Search"/>
+                        </b-input-group>
+                    </b-form-group>
+                </b-col>
+
+                <b-col md="6" class="my-1">
+                    <b-form-group label-cols-horizontal label="keyword Search" class="mb-0">
+                        <b-input-group>
+                            <b-form-select v-model="paramFilter.keyword_filter" slot="prepend">
+                                <option v-for="item in compareFilterList" :value="item.key">{{item.value}}</option>
+                            </b-form-select>
+                            <b-form-input v-model="paramFilter.keyword" placeholder="Type to Search"/>
+                        </b-input-group>
+                    </b-form-group>
+                </b-col>
+
+                <b-col md="6" class="my-1">
+                    <b-form-group label-cols-horizontal label="Device" class="mb-0">
+                        <b-input-group>
+                            <b-form-select v-model="paramFilter.device" :options="deviceOptions">
+                                <option slot="first" :value="null">-- none --</option>
+                            </b-form-select>
+                        </b-input-group>
+                    </b-form-group>
+                </b-col>
+
+            </b-row>
+            <b-row class="mx-auto">
+                <div>
+                    <button type="button" class="btn btn-success btn-sm" @click.stop="searchNow()">Search</button>
+                    <button type="button" class="btn btn-dark btn-sm" @click.stop="resetNow()">Reset</button>
+                </div>
+
+            </b-row>
+        </b-card>
+
+
+        <b-row>
+
+            <b-col md="4" class="my-1">
+                <b-form-group label-cols-horizontal label="Per page" class="mb-0">
+                    <b-form-select :options="pageOptions" v-model="perPage"/>
+                </b-form-group>
+            </b-col>
+
+            <b-col md="8" class="my-1">
+                <div class="float-right">
+                    <b-pagination :total-rows="totalRows" :per-page="perPage"
+                                  v-model="currentPage"
+                                  class="my-0"/>
+                </div>
+                <div class="float-right">
+                    <b-form-group label-cols-horizontal class="mb-0 mr-3">
+                        <b-input-group>
+                            <b-form-select :options="currentPageOptions" v-model="currentPage"
+                                           slot="append"/>
+                        </b-input-group>
+                    </b-form-group>
+                </div>
+
+            </b-col>
+        </b-row>
+
+        <b-table
+                style="font-size:14px;"
+                ref="table"
+                responsive
+                :hover="true"
+                :small="true"
+                :bordered="true"
+                :items="myProvider"
+                :filter="filter"
+                :fields="fields"
+                :current-page="currentPage"
+                :per-page="perPage"
+                :sort-by.sync="sortBy"
+                :sort-desc.sync="sortDesc"
+                @filtered="onFiltered"
+        >
+
+            <template slot="ctr_benchmark" slot-scope="row">
+                <div v-if="profileMaps[row.item.map_id]">
+                    {{profileMaps[row.item.map_id].ctr_benchmark}}%
+                    <span v-if="row.item.avg_ctr*100 - profileMaps[row.item.map_id].ctr_benchmark >0"
+                          class="badge badge-pill badge-success">↑{{ Number(row.item.avg_ctr*100 - profileMaps[row.item.map_id].ctr_benchmark).toFixed(2)}}%</span>
+                    <span v-if="row.item.avg_ctr*100 - profileMaps[row.item.map_id].ctr_benchmark <0"
+                          class="badge badge-pill badge-danger">↓{{ Number(row.item.avg_ctr*100 - profileMaps[row.item.map_id].ctr_benchmark).toFixed(2)}}%</span>
+
+                </div>
+
+
+                <div>
+                    <b-button v-b-popover.hover="'Edit'" variant="info" size="sm"
+                              @click.stop="openCtrModal(row.item, row.index, $event.target)">
+                        <i class="fa fa-edit"></i>
+                    </b-button>
+                </div>
+            </template>
+            <template slot="keyword" slot-scope="row">
+
+
+                <div v-if="profileMaps[row.item.map_id]&&profileMaps[row.item.map_id].is_primary == true">
+                    {{row.value}}
+                    <b-badge
+                            variant="success">Primary
+                    </b-badge>
+                    <div>
+                        <b-button v-b-popover.hover="'Remove Primary'" variant="info" size="sm"
+                                  @click.stop="setPrimaryAlert(row.item, row.index, $event.target,false)"><i
+                                class="fa fa-times"></i>
+                        </b-button>
+                    </div>
+
+                </div>
+
+                <div v-else> {{row.value}}
+                    <div>
+                        <b-button v-b-popover.hover="'Set Primary'" variant="info" size="sm"
+                                  @click.stop="setPrimaryAlert(row.item, row.index, $event.target,true)"><i
+                                class="fa fa-check"></i>
+                        </b-button>
+                    </div>
+                </div>
+
+
+            </template>
+
+
+            <template slot="click_potential" slot-scope="row">
+                {{mySetAsList[row.item.map_id] ? mySetAsList[row.item.map_id].click_potential : ''}}
+                <div>
+                    <b-button v-b-popover.hover="'Edit'" variant="info" size="sm"
+                              @click.stop="openClickModal(row.item, row.index, $event.target)">
+                        <i class="fa fa-edit"></i>
+                    </b-button>
+                </div>
+            </template>
+
+
+            <!--<template slot="ctr_benchmark" slot-scope="row">-->
+            <!--{{row.value}}-->
+            <!--<div>-->
+            <!--222-->
+            <!--</div>-->
+            <!--</template>-->
+
+
+            <template slot="page" slot-scope="row">
+                <a :href="row.value" target="_blank">{{row.value}}</a>
+            </template>
+
+
+            <template slot="avg_positions" slot-scope="row">
+                {{row.value}}
+                <span v-if="row.item.trend && row.item.trend.positions_trend >0" class="badge badge-pill badge-success">↑{{row.item.trend.positions_trend}}</span>
+                <span v-if="row.item.trend && row.item.trend.positions_trend <0" class="badge badge-pill badge-danger">↓{{row.item.trend.positions_trend}}</span>
+            </template>
+
+
+            <template slot="avg_ctr" slot-scope="row">
+                {{Math.round(row.value * 100,2)}}%
+                <span v-if="row.item.trend && row.item.trend.ctr_trend >0" class="badge badge-pill badge-success">↑{{row.item.trend.ctr_trend}}%</span>
+                <span v-if="row.item.trend && row.item.trend.ctr_trend <0" class="badge badge-pill badge-danger">↓{{row.item.trend.ctr_trend}}%</span>
+                <span v-if="row.item.trend && row.item.trend.ctr_trend ==='∞'" class="badge badge-pill badge-warning">∞</span>
+            </template>
+
+
+            <template slot="actions" slot-scope="row">
+                <b-button variant="primary" size="sm"
+                          @click.stop="openViewUrlModal(row.item, row.index, $event.target)">
+                    View URL
+                </b-button>
+            </template>
+        </b-table>
+
+
+        <b-row class="float-right">
+            <div class="my-1">
+                <b-form-group label-cols-horizontal class="mb-0">
+                    <b-input-group>
+                        <b-form-select :options="currentPageOptions" v-model="currentPage"
+                                       slot="append"/>
+                    </b-input-group>
+                </b-form-group>
+            </div>
+            <b-col md="6" class="my-1">
+                <b-pagination :total-rows="totalRows" :per-page="perPage"
+                              v-model="currentPage"
+                              class="my-0"/>
+            </b-col>
+        </b-row>
+
+
+        <!-- Modal Component -->
+        <b-modal
+                id="modalPrevent"
+                ref="modal"
+                title="Update Click Potential"
+        >
+            <b-form @submit="updateClickPotential">
+                <b-form-group label-cols-horizontal
+                              :label-cols="2"
+                              label="Title"
+                              label-for="meta_title">
+                    <b-form-input v-model="clickPotentialForm.click" type="number"
+                                  placeholder="Enter your click potential"/>
+                </b-form-group>
+                <b-button type="submit" variant="primary" class="float-right">Submit
+                </b-button>
+            </b-form>
+            <div slot="modal-footer">
+            </div>
+        </b-modal>
+
+
+        <!-- Modal Component -->
+        <b-modal
+                id="ctrmodal"
+                ref="ctrModal"
+                title="Update CTR Benchmark"
+        >
+            <b-form @submit="updateCtrBenchmark">
+                <b-form-group label-cols-horizontal
+                              :label-cols="2"
+                              label="Title"
+                              label-for="meta_title">
+                    <b-form-input v-model="ctrBenchmarkForm.benchmark" type="text"
+                                  placeholder="Enter your click potential"/>
+                </b-form-group>
+                <b-button type="submit" variant="primary" class="float-right">Submit
+                </b-button>
+            </b-form>
+            <div slot="modal-footer">
+            </div>
+        </b-modal>
+
+
+        <!-- Modal Component -->
+        <b-modal
+                id="vieUrlModal"
+                ref="urlModal"
+                title="View URL"
+                size="lg"
+        >
+
+            <draft-data-simple-list :pathMd5="pathMd5"></draft-data-simple-list>
+        </b-modal>
+    </b-container>
+
+
+</template>
+
+<script>
+    import moment from 'moment';
+
+    export default {
+        data() {
+            return {
+                pathMd5: null,
+                clickPotentialForm: {
+                    click: '',
+                },
+                ctrBenchmarkForm: {
+                    benchmark: ''
+                },
+                curTime: null,
+                profileMaps: {},
+                compareFromRange: {start: '', end: ''},
+                compareToRange: {start: '', end: ''},
+                descriptionMaxLength: 160,
+                titleMaxLength: 55,
+                selected: 0,
+                selectedStatus: 0,
+                options: [
+                    {text: 'All', value: 0},
+                    {text: '<b class="text-primary">Draft Only</b>', value: 2},
+                ],
+                items: [],
+                compareFilterList: [
+                    {
+                        value: 'contains',
+                        key: 'contains'
+                    },
+                    {
+                        value: 'does not contain',
+                        key: 'does_not_contain'
+                    },
+                    {
+                        value: 'is exactly',
+                        key: 'is_exactly'
+                    },
+                ],
+                filter: null,
+                paramFilter: {
+                    url: '',
+                    url_filter: '',
+                    keyword: '',
+                    keyword_filter: '',
+                    device: '',
+                    sort_by: '',
+                    sort_order: ''
+                },
+                fields: [
+                    // {key: 'id', label: 'ID', class: 'id-table-wrap',sortable: true},
+
+                    {key: 'page', label: 'Path', 'class': 'path-table-wrap'},
+                    {key: 'meta.current_data.meta.defaults.title', label: 'Title', 'class': 'path-table-wrap'},
+                    {
+                        key: 'meta.current_data.meta.defaults.description',
+                        label: 'Description',
+                        'class': 'path-table-wrap'
+                    },
+                    {key: 'page', label: 'Path', 'class': 'path-table-wrap'},
+                    {key: 'keyword', label: 'Keyword', 'class': 'keywords-table-wrap'},
+                    {key: 'avg_positions', label: 'Avg. Rank Position (AU)', sortable: true, 'class': 'status-wrap'},
+                    {key: 'avg_ctr', label: 'CTR', sortable: true, 'class': 'date-wrap'},
+                    {key: 'sum_clicks', sortable: true, label: 'Total Clicks', 'class': 'path-table-wrap'},
+                    {key: 'ctr_benchmark', label: 'CTR Benchmark', 'class': 'path-table-wrap'},
+                    {key: 'click_potential', label: 'Click Potential', 'class': 'path-table-wrap'},
+                    {key: 'actions', label: 'Action(s)', 'class': 'path-table-wrap'}
+                ],
+                formItem: {
+                    canonical: '',
+                    title: '',
+                    description: '',
+                    keywords: []
+                },
+                selectedItem: {},
+                currentItem: {
+                    canonical: '',
+                    title: '',
+                    description: '',
+                    keywords: []
+                },
+                currentPage: 1,
+                currentPageOptions: [],
+                perPage: 20,
+                totalRows: 0,
+                pageOptions: [20, 50, 100, 200, 500],
+                modalInfo: {title: '', content: ''},
+                sortBy: 'sum_clicks',
+                sortDesc: true,
+                sortDirection: 'desc',
+                deviceOptions: ['desktop', 'mobile', 'tablet'],
+                checkChanged: 1
+            }
+        },
+        props: [
+            'externalKeyword'
+        ],
+        created() {
+            this.compareFromRange.start = moment().subtract(28, 'days').format('YYYY-MM-DD HH:MM:SS');
+            this.compareFromRange.end = moment().format('YYYY-MM-DD HH:MM:SS');
+
+            this.compareToRange.start = moment().subtract(57, 'days').format('YYYY-MM-DD HH:MM:SS');
+            this.compareToRange.end = moment().subtract(29, 'days').format('YYYY-MM-DD HH:MM:SS');
+        },
+        computed: {
+            mySetAsList:function() {
+                return this.checkChanged > 0?this.profileMaps:this.profileMaps;
+            },
+        },
+        watch: {
+            externalKeyword(newValue, OldValue) {
+                this.paramFilter.url = newValue;
+                this.paramFilter.url_filter = 'contains';
+                this.$refs.table.refresh();
+            },
+            compareFromRange(newValue, OldValue) {
+                console.log(newValue);
+            },
+            selected(newValue, OldValue) {
+                this.$refs.table.refresh();
+            },
+            selectedStatus(newValue, OldValue) {
+                this.$refs.table.refresh();
+            }
+        },
+        methods: {
+            compareCtrBenchmark(newValue, oldValue) {
+                return Math.round((Math.abs(newValue - oldValue) / oldValue * (newValue - oldValue)) * 100, 2);
+            },
+            setPrimaryAlert(item, index, button, isPrimary) {
+
+                if (confirm('Are you sure you want to set it as primary?')) {
+                    let app = this;
+                    let loader = this.$loading.show();
+                    axios.put('/keywords/web/keywords/' + item.map_id + '/primary', {is_primary: isPrimary}).then(function (resp) {
+                        app.$refs.table.refresh();
+                        loader.hide();
+                    }).catch(function (resp) {
+                        console.log(resp);
+                        app.$notify({
+                            type: 'error',
+                            title: 'ERROR',
+                            text: 'Cannot update data, please check your data format.',
+                            duration: -1
+                        });
+                        loader.hide();
+                    });
+                }
+            },
+            openCtrModal(item, index, button) {
+                this.$refs.ctrModal.show();
+                this.selectedItem = item;
+                this.ctrBenchmarkForm.benchmark = '';
+            },
+
+            openViewUrlModal(item, index, button) {
+                this.$refs.urlModal.show();
+                this.pathMd5 = item.path_md5;
+            },
+            openClickModal(item, index, button) {
+                this.$refs.modal.show();
+                this.selectedItem = item;
+                this.clickPotentialForm.click = '';
+            },
+            updateCtrBenchmark(evt) {
+                evt.preventDefault();
+
+                let app = this;
+                let loader = this.$loading.show();
+                axios.put('/keywords/web/keywords/' + this.selectedItem.map_id + '/benchmark', this.ctrBenchmarkForm).then(function (resp) {
+                    app.checkChanged++;
+                    app.profileMaps[app.selectedItem.map_id] = resp.data
+                    app.$notify({
+                        type: 'success',
+                        title: 'SUCCESS',
+                        text: 'Data updated'
+                    });
+                    app.$refs.ctrModal.hide();
+                    loader.hide();
+                }).catch(function (resp) {
+                    console.log(resp);
+                    app.$notify({
+                        type: 'error',
+                        title: 'ERROR',
+                        text: 'Cannot update data, please check your data format.',
+                        duration: -1
+                    });
+                    loader.hide();
+                });
+            },
+            updateClickPotential(evt) {
+                evt.preventDefault();
+
+                let app = this;
+                let loader = this.$loading.show();
+                axios.put('/keywords/web/keywords/' + this.selectedItem.map_id + '/click', this.clickPotentialForm).then(function (resp) {
+                    app.checkChanged++;
+                    app.profileMaps[app.selectedItem.map_id] = resp.data
+                    app.$notify({
+                        type: 'success',
+                        title: 'SUCCESS',
+                        text: 'Data updated'
+                    });
+                    app.$refs.modal.hide();
+                    loader.hide();
+                }).catch(function (resp) {
+                    console.log(resp);
+                    app.$notify({
+                        type: 'error',
+                        title: 'ERROR',
+                        text: 'Cannot update data, please check your data format.',
+                        duration: -1
+                    });
+                    loader.hide();
+                });
+            },
+            searchNow() {
+                this.currentPage = 1;
+                this.$refs.table.refresh();
+            },
+            resetNow() {
+                this.paramFilter = {
+                    url: '',
+                    url_filter: '',
+                    keyword: '',
+                    keyword_filter: '',
+                    device: '',
+                    sort_by: '',
+                    sort_order: '',
+                    a_date_from: '',
+                    a_date_to: '',
+                    b_date_from: '',
+                    b_date_to: '',
+                    per_page: '',
+                    path_md5: ''
+                };
+            },
+            onFiltered(filteredItems) {
+                // Trigger pagination to update the number of buttons/pages due to filtering
+                this.totalRows = filteredItems.length
+                this.currentPage = 1
+            },
+
+            getSortByName(value) {
+                switch (value) {
+                    case 'avg_positions':
+                        return 'sum_positions';
+                    default:
+                        return value;
+                }
+            },
+            myProvider(ctx) {
+                let app = this;
+                let promise = axios.get('keywords/web/keywords', {
+                    params: {
+                        page: this.currentPage,
+                        per_page: this.perPage,
+                        url: this.paramFilter.url,
+                        url_filter: this.paramFilter.url_filter,
+                        keyword: this.paramFilter.keyword,
+                        keyword_filter: this.paramFilter.keyword_filter,
+                        device: this.paramFilter.device,
+                        sort_by: this.getSortByName(ctx.sortBy),
+                        sort_order: ctx.sortDesc === true ? 'desc' : 'asc',
+                        a_date_from: this.compareFromRange.start,
+                        a_date_to: this.compareFromRange.end,
+                        b_date_from: this.compareToRange.start,
+                        b_date_to: this.compareToRange.end,
+                        path_md5: this.paramFilter.path_md5
+                    }
+                });
+
+                // Must return a promise that resolves to an array of items
+                return promise.then((resp) => {
+                    // Pluck the array of items off our axios response
+                    app.profileMaps = resp.data.map;
+                    app.items = resp.data.data;
+                    ctx.currentPage = resp.data.currentPage;
+                    ctx.perPage = resp.data.perPage;
+                    app.totalRows = resp.data.total;
+                    app.currentPageOptions = [];
+                    for (let i = 1; i <= resp.data.last_page; i++) {
+                        app.currentPageOptions.push(i)
+                    }
+                    app.$notify({
+                        type: 'success',
+                        title: 'SUCCESS',
+                        text: 'Keywords retrieved'
+                    });
+                    // Must return an array of items or an empty array if an error occurred
+                    return (app.items || [])
+                }).catch(function (resp) {
+                    console.log(resp);
+                    app.$notify({
+                        type: 'error',
+                        title: 'ERROR',
+                        text: 'Cannot retrieve data, please contact system manager.',
+                        duration: -1
+                    });
+                });
+
+
+            }
+        }
+    }
+</script>
+
+<style>
+    .title-wrap {
+        word-break: break-word;
+        width: 8%;
+    }
+
+    .desc-wrap {
+        word-break: break-word;
+        width: 20%;
+    }
+
+    .action-wrap {
+        word-break: break-word;
+        width: 2%;
+    }
+
+    .date-wrap {
+        word-break: break-word;
+        width: 4.2%;
+    }
+
+    .status-wrap {
+        word-break: break-word;
+        width: 2.2%;
+    }
+
+    .nested-table-wrap {
+        word-break: break-word;
+        width: 2%;
+    }
+
+    .id-table-wrap {
+        word-break: break-word;
+        width: 0.8%;
+    }
+
+    .path-table-wrap {
+        word-break: break-word;
+        width: 4%;
+    }
+
+    .button-table-wrap {
+        word-break: break-word;
+        width: 4%;
+    }
+
+    .keywords-table-wrap {
+        word-break: break-word;
+        width: 3%;
+    }
+
+    .vld-overlay.is-full-page {
+        z-index: 9999 !important;
+    }
+
+    .modal-lg {
+        max-width: 80%;
+    }
+</style>

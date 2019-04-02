@@ -6,10 +6,100 @@
     },
     "servers": [
         {
-            "url": "http://seomanager.inkstation.com.au/api"
+            "url": "http://seoagent.test/api"
         }
     ],
     "paths": {
+        "/keywords/v1/pages": {
+            "patch": {
+                "tags": [
+                    "Keywords"
+                ],
+                "summary": "Bulk update or insert data",
+                "description": "Bulk update or insert data",
+                "operationId": "App\\Modules\\Keywords\\Controllers\\Api\\V1\\KeywordApiController::syncPages",
+                "requestBody": {
+                    "description": "Data required to create it",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Page"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "create a resource"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/keywords/v1/keywords": {
+            "patch": {
+                "tags": [
+                    "Keywords"
+                ],
+                "summary": "Bulk update or insert data",
+                "description": "Bulk update or insert data",
+                "operationId": "App\\Modules\\Keywords\\Controllers\\Api\\V1\\KeywordApiController::syncKeywords",
+                "requestBody": {
+                    "description": "Data required to create it",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/Keyword"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "create a resource"
+                    }
+                },
+                "deprecated": false
+            }
+        },
+        "/keywords/v1/query-details": {
+            "patch": {
+                "tags": [
+                    "Keywords"
+                ],
+                "summary": "Bulk update or insert data",
+                "description": "Bulk update or insert data",
+                "operationId": "App\\Modules\\Keywords\\Controllers\\Api\\V1\\KeywordApiController::syncQueryDetails",
+                "requestBody": {
+                    "description": "Data required to create it",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "array",
+                                "items": {
+                                    "$ref": "#/components/schemas/QueryDetails"
+                                }
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "create a resource"
+                    }
+                },
+                "deprecated": false
+            }
+        },
         "/seoagent/v1/draft-data": {
             "get": {
                 "tags": [
@@ -363,10 +453,162 @@
                 },
                 "deprecated": false
             }
+        },
+        "/setting/v1/google-settings": {
+            "get": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "Get only goole data",
+                "description": "Get only google data",
+                "operationId": "App\\Modules\\Setting\\Controllers\\Api\\V1\\SettingApiController::getGoogleSetting",
+                "responses": {
+                    "200": {
+                        "description": "get a resource"
+                    }
+                },
+                "deprecated": false
+            },
+            "put": {
+                "tags": [
+                    "Setting"
+                ],
+                "summary": "update resource",
+                "description": "update resource",
+                "operationId": "App\\Modules\\Setting\\Controllers\\Api\\V1\\SettingApiController::updateGoogleSettings",
+                "requestBody": {
+                    "description": "Data required to create it",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "last_updated": {
+                                        "description": "last updated",
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "update a resource"
+                    }
+                },
+                "deprecated": false
+            }
         }
     },
     "components": {
         "schemas": {
+            "Keyword": {
+                "properties": {
+                    "id": {
+                        "schema": "Keyword",
+                        "description": "App\\Modules\\Keywords\\Models\\Keyword",
+                        "type": "integer"
+                    },
+                    "md5": {
+                        "schema": "Keyword",
+                        "description": "App\\Modules\\Keywords\\Models\\Keyword",
+                        "type": "string"
+                    },
+                    "keyword": {
+                        "schema": "Keyword",
+                        "description": "App\\Modules\\Keywords\\Models\\Keyword",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "schema": "Keyword",
+                        "description": "App\\Modules\\Keywords\\Models\\Keyword",
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "schema": "Keyword",
+                        "description": "App\\Modules\\Keywords\\Models\\Keyword",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "Page": {
+                "properties": {
+                    "id": {
+                        "schema": "Page",
+                        "description": "App\\Modules\\Keywords\\Models\\Page",
+                        "type": "integer"
+                    },
+                    "url": {
+                        "schema": "Page",
+                        "description": "App\\Modules\\Keywords\\Models\\Page",
+                        "type": "string"
+                    },
+                    "created_at": {
+                        "schema": "Page",
+                        "description": "App\\Modules\\Keywords\\Models\\Page",
+                        "type": "string"
+                    },
+                    "updated_at": {
+                        "schema": "Page",
+                        "description": "App\\Modules\\Keywords\\Models\\Page",
+                        "type": "string"
+                    },
+                    "md5": {
+                        "schema": "Page",
+                        "description": "App\\Modules\\Keywords\\Models\\Page",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "QueryDetails": {
+                "properties": {
+                    "id": {
+                        "schema": "QueryDetails",
+                        "description": "App\\Modules\\Keywords\\Models\\Page",
+                        "type": "integer"
+                    },
+                    "page": {
+                        "schema": "QueryDetails",
+                        "description": "App\\Modules\\Keywords\\Models\\Page",
+                        "type": "string"
+                    },
+                    "keyword": {
+                        "schema": "QueryDetails",
+                        "description": "App\\Modules\\Keywords\\Models\\Page",
+                        "type": "string"
+                    },
+                    "device": {
+                        "schema": "QueryDetails",
+                        "description": "App\\Modules\\Keywords\\Models\\Page",
+                        "type": "string"
+                    },
+                    "clicks": {
+                        "schema": "QueryDetails",
+                        "description": "App\\Modules\\Keywords\\Models\\Page",
+                        "type": "string"
+                    },
+                    "ctr": {
+                        "schema": "QueryDetails",
+                        "description": "App\\Modules\\Keywords\\Models\\Page",
+                        "type": "string"
+                    },
+                    "impressions": {
+                        "schema": "QueryDetails",
+                        "description": "App\\Modules\\Keywords\\Models\\Page",
+                        "type": "string"
+                    },
+                    "position": {
+                        "schema": "QueryDetails",
+                        "description": "App\\Modules\\Keywords\\Models\\Page",
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
             "MetaSchemaEloquent": {
                 "properties": {
                     "title": {

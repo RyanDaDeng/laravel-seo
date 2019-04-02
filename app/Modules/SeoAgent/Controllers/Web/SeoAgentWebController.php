@@ -24,7 +24,8 @@ class SeoAgentWebController extends Controller
             $request->query('order_desc'),
             $request->query('wild_search'),
             $request->query('type'),
-            $request->query('status')
+            $request->query('status'),
+            $request->query('path_md5')
         );
     }
 

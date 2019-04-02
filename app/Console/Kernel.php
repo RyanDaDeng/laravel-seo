@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Console\Commands\PathMD5Command;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -14,6 +15,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         //
+        PathMD5Command::class
     ];
 
     /**
