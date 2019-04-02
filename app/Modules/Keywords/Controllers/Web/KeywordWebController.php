@@ -3,15 +3,13 @@
 namespace App\Modules\Keywords\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use App\Modules\Keywords\Models\Keyword;
 use App\Modules\Keywords\Models\Page;
 use App\Modules\Keywords\Models\QueryDetails;
 use App\Modules\Keywords\Models\QueryProfile;
 use App\Modules\SeoAgent\Models\SeoAgentCurrentData;
-use App\Modules\SeoAgent\Services\KeywordQueries;
+use App\Modules\Keywords\Services\KeywordQueries;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 
 class KeywordWebController extends Controller

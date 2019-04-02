@@ -1,7 +1,6 @@
 <?php
 
-namespace App\Modules\SeoAgent\Services;
-
+namespace App\Modules\Keywords\Services;
 
 use App\Modules\Keywords\Models\Keyword;
 use App\Modules\Keywords\Models\Page;

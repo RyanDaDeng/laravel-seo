@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Modules\SeoAgent\Services;
+namespace App\Modules\Keywords\Services;
 
 
 class KeywordService
