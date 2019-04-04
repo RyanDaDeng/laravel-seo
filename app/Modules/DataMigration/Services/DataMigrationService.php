@@ -44,7 +44,6 @@ class DataMigrationService
         while ($data->count() >0) {
             foreach ($data as $datum) {
                 $datum->average_weight_ranking = round($datum->impressions * $datum->position, 6);
-                $datum->index = $datum->page . '_' . $datum->keyword;
                 $datum->save();
             }
             $offset += $limit;
