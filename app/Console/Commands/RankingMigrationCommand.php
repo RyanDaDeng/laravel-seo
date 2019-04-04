@@ -5,14 +5,14 @@ namespace App\Console\Commands;
 use App\Modules\DataMigration\Services\DataMigrationService;
 use Illuminate\Console\Command;
 
-class QueryDetailsIndexMigrationCommand extends Command
+class RankingMigrationCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'query:index';
+    protected $signature = 'query:ranking';
 
     /**
      * The console command description.
@@ -41,7 +41,7 @@ class QueryDetailsIndexMigrationCommand extends Command
         //
 
         $migration = new DataMigrationService();
-        $migration->queryDetailsIndexMigration();
+        $migration->queryRankingMigration();
 
     }
 }

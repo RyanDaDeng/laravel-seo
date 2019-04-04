@@ -35,14 +35,20 @@ class DataMigrationService
     }
 
 
-    public function queryDetailsIndexMigration()
+    public function queryRankingMigration()
     {
-        $data = QueryDetails::query()->whereNull('average_weight_ranking')->get();
+        $limit = 50000;
+        $offset = 0;
+        $data = QueryDetails::query()->whereNull('average_weight_ranking')->offset($offset)->limit($limit)->get();
 
-        foreach ($data as $datum) {
-            $datum->average_weight_ranking = round($datum->impressions * $datum->position, 6);
-            $datum->index = $datum->page . '_' . $datum->keyword;
-            $datum->save();
+        while ($data->count() >0) {
+            foreach ($data as $datum) {
+                $datum->average_weight_ranking = round($datum->impressions * $datum->position, 6);
+                $datum->index = $datum->page . '_' . $datum->keyword;
+                $datum->save();
+            }
+            $offset += $limit;
+            $data = QueryDetails::query()->whereNull('average_weight_ranking')->offset($offset)->limit($limit)->get();
         }
     }
 
@@ -54,6 +60,25 @@ class DataMigrationService
             $datum->keyword = explode('_', $datum->index)[1];
             $datum->save();
         }
+    }
+
+
+    public function indexMigration()
+    {
+
+        $limit = 50000;
+        $offset = 0;
+        $data = QueryDetails::query()->whereNull('index')->offset($offset)->limit($limit)->get();
+
+        while ($data->count() >0) {
+            foreach ($data as $datum) {
+                $datum->index = $datum->page . '_' . $datum->keyword;
+                $datum->save();
+            }
+            $offset += $limit;
+            $data = QueryDetails::query()->whereNull('index')->offset($offset)->limit($limit)->get();
+        }
+
     }
 
 }
