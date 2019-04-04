@@ -85,6 +85,7 @@ class KeywordWebController extends Controller
         $request->query('sort_order');
         $perPage = $request->query('per_page');
         $sortOrder = $request->query('sort_order');
+        $isPrimary = $request->query('is_primary');
         list($aRangeKeys, $aRangeData) = KeywordQueries::getKeywordList(
             $aDateFrom,
             $aDateTo,
@@ -96,7 +97,8 @@ class KeywordWebController extends Controller
             $sortBy,
             $sortOrder,
             $perPage,
-            $pathMd5);
+            $pathMd5,
+            $isPrimary);
 
         list($bRangeKeys, $bRangeData) = KeywordQueries::getKeywordList(
             $bDateFrom,
@@ -109,12 +111,12 @@ class KeywordWebController extends Controller
             $sortBy,
             $sortOrder,
             $perPage,
-            $pathMd5);
+            $pathMd5,
+            $isPrimary);
 
-        $profileIds = [];
         foreach ($aRangeData['data'] as $key => $row) {
-            $index = $row['page_id'] . '_' . $row['keyword_id'];
-            if(isset($row['page'])){
+            $index = $row['index_id'];
+            if (isset($row['page'])) {
                 $aRangeData['data'][$key]['path'] = parse_url($row['page'])['path'];
                 if (isset($bRangeKeys[$index])) {
 
@@ -129,17 +131,8 @@ class KeywordWebController extends Controller
                     $aRangeData['data'][$key]['compare'] = [];
                     $aRangeData['data'][$key]['trend'] = [];
                 }
-                $aRangeData['data'][$key]['map_id'] = $index;
             }
-
-            $profileIds[] = $index;
         }
-
-
-        $queryProfiles = QueryProfile::query()->whereIn('index', $profileIds)->get()->keyBy('index');
-
-        $aRangeData['map'] = $queryProfiles;
-
         return $aRangeData;
 
     }
@@ -175,22 +168,14 @@ class KeywordWebController extends Controller
 
     public function setPrimary(Request $request, $index)
     {
-
         $obj = QueryProfile::get($index);
         $isPrimary = $request->input('is_primary');
 
         if ($obj) {
-
-            if ($isPrimary === true) {
-                QueryProfile::query()->where('page', QueryProfile::getPageId($index))
-                    ->update([
-                        'is_primary' => !$isPrimary
-                    ]);
-            }
             $obj->is_primary = $isPrimary;
             $obj->save();
         }
-
+        return $obj;
     }
 
 

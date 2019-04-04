@@ -35,9 +35,9 @@ class QueryProfile extends Model
 
         $pageId = self::getPageId($index);
         $keywordId = self::getKeywordId($index);
+
         $page = Page::query()->where('id', $pageId)->first();
         $keyword = Keyword::query()->where('id', $keywordId)->first();
-
         if ($page && $keyword) {
             Log::info('1');
             $obj =  QueryProfile::query()->where('index', $index)->first();
