@@ -15,4 +15,4 @@ mix.js('resources/js/app.js', 'public/js')
    .sass('resources/sass/app.scss', 'public/css');
 
 
-mix.browserSync('http://seoagent.test:8888/');
+mix.browserSync('http://seoagent.test/');

@@ -3,8 +3,6 @@
     <b-container fluid>
 
 
-
-
         <div v-if="checkHasData === true">
             <!-- Using modifiers -->
             <b-button v-b-toggle.collapse2 class="m-1" variant="primary">Search Filters</b-button>
@@ -31,24 +29,22 @@
 
                         </b-col>
 
-                        <!--<b-col md="6" class="my-1">-->
+                        <b-col md="6" class="my-1">
 
-                        <!--<b-form-group label-cols-horizontal label="URL Search" class="mb-0">-->
-                        <!--<b-input-group>-->
-                        <!--<b-form-select v-model="paramFilter.url_filter" slot="prepend">-->
-                        <!--<option v-for="item in compareFilterList" :value="item.key">{{item.value}}</option>-->
-                        <!--</b-form-select>-->
-                        <!--<b-form-input v-model="paramFilter.url" placeholder="Type to Search"/>-->
-                        <!--</b-input-group>-->
-                        <!--</b-form-group>-->
-                        <!--</b-col>-->
+                            <b-form-group label-cols-horizontal label="URL Search" class="mb-0">
+                                <b-input-group>
+                                    <b-form-select v-model="paramFilter.url_filter" :options="compareFilterList"
+                                                   slot="prepend"></b-form-select>
+                                    <b-form-input v-model="paramFilter.url" placeholder="Type to Search"/>
+                                </b-input-group>
+                            </b-form-group>
+                        </b-col>
 
                         <b-col md="6" class="my-1">
                             <b-form-group label-cols-horizontal label="keyword Search" class="mb-0">
                                 <b-input-group>
-                                    <b-form-select v-model="paramFilter.keyword_filter" slot="prepend">
-                                        <option v-for="item in compareFilterList" :value="item.key">{{item.value}}</option>
-                                    </b-form-select>
+                                    <b-form-select v-model="paramFilter.keyword_filter" :options="compareFilterList"
+                                                   slot="prepend"></b-form-select>
                                     <b-form-input v-model="paramFilter.keyword" placeholder="Type to Search"/>
                                 </b-input-group>
                             </b-form-group>
@@ -64,10 +60,16 @@
                             </b-form-group>
                         </b-col>
 
+                        <b-col md="6" class="my-1">
+                            <b-form-group label-cols-horizontal label="Per page" class="mb-0">
+                                <b-form-select :options="pageOptions" v-model="perPage"/>
+                            </b-form-group>
+                        </b-col>
                     </b-row>
                     <b-row class="mx-auto">
                         <div>
-                            <button type="button" class="btn btn-success btn-sm" @click.stop="searchNow()">Search</button>
+                            <button type="button" class="btn btn-success btn-sm" @click.stop="searchNow()">Search
+                            </button>
                             <button type="button" class="btn btn-dark btn-sm" @click.stop="resetNow()">Reset</button>
                         </div>
 
@@ -75,14 +77,22 @@
                 </b-card>
 
             </b-collapse>
-
-
+            <br>
+            <b-card>
+                <b-col md="6" class="my-1">
+                    <b-form-checkbox
+                            v-model="paramFilter.is_primary"
+                            value="1"
+                            unchecked-value="0"
+                            @change="searchPrimary($event)"
+                    >
+                        Only Primary
+                    </b-form-checkbox>
+                </b-col>
+            </b-card>
             <b-row>
-
                 <b-col md="4" class="my-1">
-                    <b-form-group label-cols-horizontal label="Per page" class="mb-0">
-                        <b-form-select :options="pageOptions" v-model="perPage"/>
-                    </b-form-group>
+                    <label>Total Items: {{itemTo}}/{{itemTotal}}</label>
                 </b-col>
 
                 <b-col md="8" class="my-1">
@@ -121,24 +131,22 @@
             >
 
                 <template slot="ctr_benchmark" slot-scope="row">
-                    <div v-if="profileMaps[row.item.map_id]">
-                        {{profileMaps[row.item.map_id].ctr_benchmark}}%
-                        <span v-if="row.item.avg_ctr*100 - profileMaps[row.item.map_id].ctr_benchmark >0"
-                              class="badge badge-pill badge-success">↑{{ row.item.avg_ctr*100 - profileMaps[row.item.map_id].ctr_benchmark}}%</span>
-                        <span v-if="row.item.avg_ctr*100 - profileMaps[row.item.map_id].ctr_benchmark <0"
-                              class="badge badge-pill badge-danger">↓{{ row.item.avg_ctr*100 - profileMaps[row.item.map_id].ctr_benchmark}}%</span>
+                    <div v-if="row.item.profile">
+                        {{row.item.profile.ctr_benchmark}}%
+                        <span v-if="row.item.avg_ctr*100 - row.item.profile.ctr_benchmark >0"
+                              class="badge badge-pill badge-success">↑{{ Number(row.item.avg_ctr*100 - row.item.profile.ctr_benchmark).toFixed(2)}}%</span>
+                        <span v-if="row.item.avg_ctr*100 - row.item.profile.ctr_benchmark <0"
+                              class="badge badge-pill badge-danger">↓{{ Number(row.item.avg_ctr*100 - row.item.profile.ctr_benchmark).toFixed(2)}}%</span>
 
                     </div>
                 </template>
                 <template slot="keyword" slot-scope="row">
 
-
-                    <div v-if="profileMaps[row.item.map_id]&&profileMaps[row.item.map_id].is_primary == true">
+                    <div v-if="row.item.profile&&row.item.profile.is_primary == true">
                         {{row.value}}
                         <b-badge
                                 variant="success">Primary
                         </b-badge>
-
                     </div>
 
                     <div v-else> {{row.value}}
@@ -150,7 +158,7 @@
 
 
                 <template slot="click_potential" slot-scope="row">
-                    {{profileMaps[row.item.map_id] ? profileMaps[row.item.map_id].click_potential : 'Undefined'}}
+                    {{row.item.profile ? row.item.profile.click_potential : ''}}
 
                 </template>
 
@@ -169,18 +177,21 @@
 
 
                 <template slot="avg_positions" slot-scope="row">
-                    {{Math.round(row.value * 100,2)}}%
-                    <span v-if="row.item.trend && row.item.trend.positions_trend >0" class="badge badge-pill badge-success">↑{{row.item.trend.positions_trend}}</span>
-                    <span v-if="row.item.trend && row.item.trend.positions_trend <0" class="badge badge-pill badge-danger">↓{{row.item.trend.positions_trend}}</span>
+                    {{Number(row.value).toFixed(2)}}
+                    <span v-if="row.item.trend && row.item.trend.positions_trend >0"
+                          class="badge badge-pill badge-success">↑{{row.item.trend.positions_trend}}</span>
+                    <span v-if="row.item.trend && row.item.trend.positions_trend <0"
+                          class="badge badge-pill badge-danger">↓{{row.item.trend.positions_trend}}</span>
                 </template>
 
 
                 <template slot="avg_ctr" slot-scope="row">
-                    {{Math.round(row.value * 100,2)}}%
+                    {{Number(row.value * 100).toFixed(2)}}%
                     <span v-if="row.item.trend && row.item.trend.ctr_trend >0" class="badge badge-pill badge-success">↑{{row.item.trend.ctr_trend}}%</span>
                     <span v-if="row.item.trend && row.item.trend.ctr_trend <0" class="badge badge-pill badge-danger">↓{{row.item.trend.ctr_trend}}%</span>
+                    <span v-if="row.item.trend && row.item.trend.ctr_trend ==='∞'"
+                          class="badge badge-pill badge-warning">∞</span>
                 </template>
-
 
             </b-table>
 
@@ -218,6 +229,8 @@
     export default {
         data() {
             return {
+                itemTo: 0,
+                itemTotal: 0,
                 checkHasData: false,
                 externalUrl: null,
                 clickPotentialForm: {
@@ -241,27 +254,28 @@
                 items: [],
                 compareFilterList: [
                     {
-                        value: 'contains',
-                        key: 'contains'
+                        text: 'contains',
+                        value: 'contains'
                     },
                     {
-                        value: 'does not contain',
-                        key: 'does_not_contain'
+                        text: 'does not contain',
+                        value: 'does_not_contain'
                     },
                     {
-                        value: 'is exactly',
-                        key: 'is_exactly'
+                        text: 'is exactly',
+                        value: 'is_exactly'
                     },
                 ],
                 filter: null,
                 paramFilter: {
                     url: '',
-                    url_filter: '',
+                    url_filter: 'contains',
                     keyword: '',
-                    keyword_filter: '',
+                    keyword_filter: 'contains',
                     device: '',
                     sort_by: '',
-                    sort_order: ''
+                    sort_order: '',
+                    is_primary:''
                 },
                 fields: [
                     // {key: 'id', label: 'ID', class: 'id-table-wrap',sortable: true},
@@ -313,7 +327,7 @@
         watch: {
             pathMd5(newValue, OldValue) {
                 console.log('view keyword changed');
-               this.checkMd5();
+                this.checkMd5();
             },
             compareFromRange(newValue, OldValue) {
                 console.log(newValue);
@@ -326,14 +340,14 @@
             }
         },
         methods: {
-            checkMd5(){
+            checkMd5() {
                 let app = this;
                 axios.get('/keywords/web/keywords/' + this.pathMd5 + '/md5').then(function (resp) {
 
-                    if(resp.data.success === true){
+                    if (resp.data.success === true) {
                         app.checkHasData = true;
                         app.$refs.table.refresh();
-                    }else{
+                    } else {
                         app.checkHasData = false;
                     }
 
@@ -347,12 +361,15 @@
                 this.currentPage = 1;
                 this.$refs.table.refresh();
             },
+            searchPrimary($event){
+                this.searchNow();
+            },
             resetNow() {
                 this.paramFilter = {
                     url: '',
-                    url_filter: '',
+                    url_filter: 'contains',
                     keyword: '',
-                    keyword_filter: '',
+                    keyword_filter: 'contains',
                     device: '',
                     sort_by: '',
                     sort_order: '',
@@ -361,7 +378,8 @@
                     b_date_from: '',
                     b_date_to: '',
                     per_page: '',
-                    path_md5: ''
+                    path_md5: '',
+                    is_primary:''
                 };
             },
             onFiltered(filteredItems) {
@@ -395,19 +413,21 @@
                         a_date_to: this.compareFromRange.end,
                         b_date_from: this.compareToRange.start,
                         b_date_to: this.compareToRange.end,
-                        path_md5: this.pathMd5
+                        path_md5: this.pathMd5,
+                        is_primary:this.paramFilter.is_primary
                     }
                 });
 
                 // Must return a promise that resolves to an array of items
                 return promise.then((resp) => {
                     // Pluck the array of items off our axios response
-                    app.profileMaps = resp.data.map;
                     app.items = resp.data.data;
                     ctx.currentPage = resp.data.currentPage;
                     ctx.perPage = resp.data.perPage;
                     app.totalRows = resp.data.total;
                     app.currentPageOptions = [];
+                    app.itemTo = resp.data.to;
+                    app.itemTotal = resp.data.total;
                     for (let i = 1; i <= resp.data.last_page; i++) {
                         app.currentPageOptions.push(i)
                     }

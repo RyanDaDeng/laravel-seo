@@ -116776,12 +116776,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
+            itemTo: 0,
+            itemTotal: 0,
             checkHasData: false,
             externalUrl: null,
             clickPotentialForm: {
@@ -116801,24 +116814,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             options: [{ text: 'All', value: 0 }, { text: '<b class="text-primary">Draft Only</b>', value: 2 }],
             items: [],
             compareFilterList: [{
-                value: 'contains',
-                key: 'contains'
+                text: 'contains',
+                value: 'contains'
             }, {
-                value: 'does not contain',
-                key: 'does_not_contain'
+                text: 'does not contain',
+                value: 'does_not_contain'
             }, {
-                value: 'is exactly',
-                key: 'is_exactly'
+                text: 'is exactly',
+                value: 'is_exactly'
             }],
             filter: null,
             paramFilter: {
                 url: '',
-                url_filter: '',
+                url_filter: 'contains',
                 keyword: '',
-                keyword_filter: '',
+                keyword_filter: 'contains',
                 device: '',
                 sort_by: '',
-                sort_order: ''
+                sort_order: '',
+                is_primary: ''
             },
             fields: [
             // {key: 'id', label: 'ID', class: 'id-table-wrap',sortable: true},
@@ -116895,12 +116909,15 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             this.currentPage = 1;
             this.$refs.table.refresh();
         },
+        searchPrimary: function searchPrimary($event) {
+            this.searchNow();
+        },
         resetNow: function resetNow() {
             this.paramFilter = {
                 url: '',
-                url_filter: '',
+                url_filter: 'contains',
                 keyword: '',
-                keyword_filter: '',
+                keyword_filter: 'contains',
                 device: '',
                 sort_by: '',
                 sort_order: '',
@@ -116909,7 +116926,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 b_date_from: '',
                 b_date_to: '',
                 per_page: '',
-                path_md5: ''
+                path_md5: '',
+                is_primary: ''
             };
         },
         onFiltered: function onFiltered(filteredItems) {
@@ -116942,19 +116960,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     a_date_to: this.compareFromRange.end,
                     b_date_from: this.compareToRange.start,
                     b_date_to: this.compareToRange.end,
-                    path_md5: this.pathMd5
+                    path_md5: this.pathMd5,
+                    is_primary: this.paramFilter.is_primary
                 }
             });
 
             // Must return a promise that resolves to an array of items
             return promise.then(function (resp) {
                 // Pluck the array of items off our axios response
-                app.profileMaps = resp.data.map;
                 app.items = resp.data.data;
                 ctx.currentPage = resp.data.currentPage;
                 ctx.perPage = resp.data.perPage;
                 app.totalRows = resp.data.total;
                 app.currentPageOptions = [];
+                app.itemTo = resp.data.to;
+                app.itemTotal = resp.data.total;
                 for (var i = 1; i <= resp.data.last_page; i++) {
                     app.currentPageOptions.push(i);
                 }
@@ -117339,6 +117359,62 @@ var render = function() {
                                 staticClass: "mb-0",
                                 attrs: {
                                   "label-cols-horizontal": "",
+                                  label: "URL Search"
+                                }
+                              },
+                              [
+                                _c(
+                                  "b-input-group",
+                                  [
+                                    _c("b-form-select", {
+                                      attrs: {
+                                        slot: "prepend",
+                                        options: _vm.compareFilterList
+                                      },
+                                      slot: "prepend",
+                                      model: {
+                                        value: _vm.paramFilter.url_filter,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.paramFilter,
+                                            "url_filter",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "paramFilter.url_filter"
+                                      }
+                                    }),
+                                    _vm._v(" "),
+                                    _c("b-form-input", {
+                                      attrs: { placeholder: "Type to Search" },
+                                      model: {
+                                        value: _vm.paramFilter.url,
+                                        callback: function($$v) {
+                                          _vm.$set(_vm.paramFilter, "url", $$v)
+                                        },
+                                        expression: "paramFilter.url"
+                                      }
+                                    })
+                                  ],
+                                  1
+                                )
+                              ],
+                              1
+                            )
+                          ],
+                          1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "b-col",
+                          { staticClass: "my-1", attrs: { md: "6" } },
+                          [
+                            _c(
+                              "b-form-group",
+                              {
+                                staticClass: "mb-0",
+                                attrs: {
+                                  "label-cols-horizontal": "",
                                   label: "keyword Search"
                                 }
                               },
@@ -117346,35 +117422,24 @@ var render = function() {
                                 _c(
                                   "b-input-group",
                                   [
-                                    _c(
-                                      "b-form-select",
-                                      {
-                                        attrs: { slot: "prepend" },
+                                    _c("b-form-select", {
+                                      attrs: {
                                         slot: "prepend",
-                                        model: {
-                                          value: _vm.paramFilter.keyword_filter,
-                                          callback: function($$v) {
-                                            _vm.$set(
-                                              _vm.paramFilter,
-                                              "keyword_filter",
-                                              $$v
-                                            )
-                                          },
-                                          expression:
-                                            "paramFilter.keyword_filter"
-                                        }
+                                        options: _vm.compareFilterList
                                       },
-                                      _vm._l(_vm.compareFilterList, function(
-                                        item
-                                      ) {
-                                        return _c(
-                                          "option",
-                                          { domProps: { value: item.key } },
-                                          [_vm._v(_vm._s(item.value))]
-                                        )
-                                      }),
-                                      0
-                                    ),
+                                      slot: "prepend",
+                                      model: {
+                                        value: _vm.paramFilter.keyword_filter,
+                                        callback: function($$v) {
+                                          _vm.$set(
+                                            _vm.paramFilter,
+                                            "keyword_filter",
+                                            $$v
+                                          )
+                                        },
+                                        expression: "paramFilter.keyword_filter"
+                                      }
+                                    }),
                                     _vm._v(" "),
                                     _c("b-form-input", {
                                       attrs: { placeholder: "Type to Search" },
@@ -117453,6 +117518,37 @@ var render = function() {
                             )
                           ],
                           1
+                        ),
+                        _vm._v(" "),
+                        _c(
+                          "b-col",
+                          { staticClass: "my-1", attrs: { md: "6" } },
+                          [
+                            _c(
+                              "b-form-group",
+                              {
+                                staticClass: "mb-0",
+                                attrs: {
+                                  "label-cols-horizontal": "",
+                                  label: "Per page"
+                                }
+                              },
+                              [
+                                _c("b-form-select", {
+                                  attrs: { options: _vm.pageOptions },
+                                  model: {
+                                    value: _vm.perPage,
+                                    callback: function($$v) {
+                                      _vm.perPage = $$v
+                                    },
+                                    expression: "perPage"
+                                  }
+                                })
+                              ],
+                              1
+                            )
+                          ],
+                          1
                         )
                       ],
                       1
@@ -117472,7 +117568,7 @@ var render = function() {
                               }
                             }
                           },
-                          [_vm._v("Search")]
+                          [_vm._v("Search\n                        ")]
                         ),
                         _vm._v(" "),
                         _c(
@@ -117498,39 +117594,58 @@ var render = function() {
               1
             ),
             _vm._v(" "),
+            _c("br"),
+            _vm._v(" "),
             _c(
-              "b-row",
+              "b-card",
               [
                 _c(
                   "b-col",
-                  { staticClass: "my-1", attrs: { md: "4" } },
+                  { staticClass: "my-1", attrs: { md: "6" } },
                   [
                     _c(
-                      "b-form-group",
+                      "b-form-checkbox",
                       {
-                        staticClass: "mb-0",
-                        attrs: {
-                          "label-cols-horizontal": "",
-                          label: "Per page"
+                        attrs: { value: "1", "unchecked-value": "0" },
+                        on: {
+                          change: function($event) {
+                            return _vm.searchPrimary($event)
+                          }
+                        },
+                        model: {
+                          value: _vm.paramFilter.is_primary,
+                          callback: function($$v) {
+                            _vm.$set(_vm.paramFilter, "is_primary", $$v)
+                          },
+                          expression: "paramFilter.is_primary"
                         }
                       },
                       [
-                        _c("b-form-select", {
-                          attrs: { options: _vm.pageOptions },
-                          model: {
-                            value: _vm.perPage,
-                            callback: function($$v) {
-                              _vm.perPage = $$v
-                            },
-                            expression: "perPage"
-                          }
-                        })
-                      ],
-                      1
+                        _vm._v(
+                          "\n                    Only Primary\n                "
+                        )
+                      ]
                     )
                   ],
                   1
-                ),
+                )
+              ],
+              1
+            ),
+            _vm._v(" "),
+            _c(
+              "b-row",
+              [
+                _c("b-col", { staticClass: "my-1", attrs: { md: "4" } }, [
+                  _c("label", [
+                    _vm._v(
+                      "Total Items: " +
+                        _vm._s(_vm.itemTo) +
+                        "/" +
+                        _vm._s(_vm.itemTotal)
+                    )
+                  ])
+                ]),
                 _vm._v(" "),
                 _c("b-col", { staticClass: "my-1", attrs: { md: "8" } }, [
                   _c(
@@ -117634,18 +117749,15 @@ var render = function() {
                     key: "ctr_benchmark",
                     fn: function(row) {
                       return [
-                        _vm.profileMaps[row.item.map_id]
+                        row.item.profile
                           ? _c("div", [
                               _vm._v(
                                 "\n                    " +
-                                  _vm._s(
-                                    _vm.profileMaps[row.item.map_id]
-                                      .ctr_benchmark
-                                  ) +
+                                  _vm._s(row.item.profile.ctr_benchmark) +
                                   "%\n                    "
                               ),
                               row.item.avg_ctr * 100 -
-                                _vm.profileMaps[row.item.map_id].ctr_benchmark >
+                                row.item.profile.ctr_benchmark >
                               0
                                 ? _c(
                                     "span",
@@ -117657,9 +117769,10 @@ var render = function() {
                                       _vm._v(
                                         "↑" +
                                           _vm._s(
-                                            row.item.avg_ctr * 100 -
-                                              _vm.profileMaps[row.item.map_id]
-                                                .ctr_benchmark
+                                            Number(
+                                              row.item.avg_ctr * 100 -
+                                                row.item.profile.ctr_benchmark
+                                            ).toFixed(2)
                                           ) +
                                           "%"
                                       )
@@ -117668,7 +117781,7 @@ var render = function() {
                                 : _vm._e(),
                               _vm._v(" "),
                               row.item.avg_ctr * 100 -
-                                _vm.profileMaps[row.item.map_id].ctr_benchmark <
+                                row.item.profile.ctr_benchmark <
                               0
                                 ? _c(
                                     "span",
@@ -117680,9 +117793,10 @@ var render = function() {
                                       _vm._v(
                                         "↓" +
                                           _vm._s(
-                                            row.item.avg_ctr * 100 -
-                                              _vm.profileMaps[row.item.map_id]
-                                                .ctr_benchmark
+                                            Number(
+                                              row.item.avg_ctr * 100 -
+                                                row.item.profile.ctr_benchmark
+                                            ).toFixed(2)
                                           ) +
                                           "%"
                                       )
@@ -117698,8 +117812,7 @@ var render = function() {
                     key: "keyword",
                     fn: function(row) {
                       return [
-                        _vm.profileMaps[row.item.map_id] &&
-                        _vm.profileMaps[row.item.map_id].is_primary == true
+                        row.item.profile && row.item.profile.is_primary == true
                           ? _c(
                               "div",
                               [
@@ -117731,10 +117844,9 @@ var render = function() {
                         _vm._v(
                           "\n                " +
                             _vm._s(
-                              _vm.profileMaps[row.item.map_id]
-                                ? _vm.profileMaps[row.item.map_id]
-                                    .click_potential
-                                : "Undefined"
+                              row.item.profile
+                                ? row.item.profile.click_potential
+                                : ""
                             ) +
                             "\n\n            "
                         )
@@ -117759,8 +117871,8 @@ var render = function() {
                       return [
                         _vm._v(
                           "\n                " +
-                            _vm._s(Math.round(row.value * 100, 2)) +
-                            "%\n                "
+                            _vm._s(Number(row.value).toFixed(2)) +
+                            "\n                "
                         ),
                         row.item.trend && row.item.trend.positions_trend > 0
                           ? _c(
@@ -117794,7 +117906,7 @@ var render = function() {
                       return [
                         _vm._v(
                           "\n                " +
-                            _vm._s(Math.round(row.value * 100, 2)) +
+                            _vm._s(Number(row.value * 100).toFixed(2)) +
                             "%\n                "
                         ),
                         row.item.trend && row.item.trend.ctr_trend > 0
@@ -117819,6 +117931,14 @@ var render = function() {
                                 )
                               ]
                             )
+                          : _vm._e(),
+                        _vm._v(" "),
+                        row.item.trend && row.item.trend.ctr_trend === "∞"
+                          ? _c(
+                              "span",
+                              { staticClass: "badge badge-pill badge-warning" },
+                              [_vm._v("∞")]
+                            )
                           : _vm._e()
                       ]
                     }
@@ -117826,7 +117946,7 @@ var render = function() {
                 ],
                 null,
                 false,
-                3795712552
+                586619512
               )
             }),
             _vm._v(" "),
@@ -120777,12 +120897,33 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
         return {
+            itemTo: 0,
+            itemTotal: 0,
             pathMd5: null,
             clickPotentialForm: {
                 click: ''
@@ -120801,24 +120942,25 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             options: [{ text: 'All', value: 0 }, { text: '<b class="text-primary">Draft Only</b>', value: 2 }],
             items: [],
             compareFilterList: [{
-                value: 'contains',
-                key: 'contains'
+                text: 'contains',
+                value: 'contains'
             }, {
-                value: 'does not contain',
-                key: 'does_not_contain'
+                text: 'does not contain',
+                value: 'does_not_contain'
             }, {
-                value: 'is exactly',
-                key: 'is_exactly'
+                text: 'is exactly',
+                value: 'is_exactly'
             }],
             filter: null,
             paramFilter: {
                 url: '',
-                url_filter: '',
+                url_filter: 'contains',
                 keyword: '',
-                keyword_filter: '',
+                keyword_filter: 'contains',
                 device: '',
                 sort_by: '',
-                sort_order: ''
+                sort_order: '',
+                is_primary: ''
             },
             fields: [
             // {key: 'id', label: 'ID', class: 'id-table-wrap',sortable: true},
@@ -120827,7 +120969,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 key: 'meta.current_data.meta.defaults.description',
                 label: 'Description',
                 'class': 'path-table-wrap'
-            }, { key: 'page', label: 'Path', 'class': 'path-table-wrap' }, { key: 'keyword', label: 'Keyword', 'class': 'keywords-table-wrap' }, { key: 'avg_positions', label: 'Avg. Rank Position (AU)', sortable: true, 'class': 'status-wrap' }, { key: 'avg_ctr', label: 'CTR', sortable: true, 'class': 'date-wrap' }, { key: 'sum_clicks', sortable: true, label: 'Total Clicks', 'class': 'path-table-wrap' }, { key: 'ctr_benchmark', label: 'CTR Benchmark', 'class': 'path-table-wrap' }, { key: 'click_potential', label: 'Click Potential', 'class': 'path-table-wrap' }, { key: 'actions', label: 'Action(s)', 'class': 'path-table-wrap' }],
+            }, { key: 'page', label: 'Path', 'class': 'path-table-wrap' }, { key: 'keyword', label: 'Keyword', 'class': 'keywords-table-wrap' }, { key: 'sum_clicks', sortable: true, label: 'Total Clicks', 'class': 'path-table-wrap' }, { key: 'avg_positions', label: 'Avg. Rank Position (AU)', sortable: true, 'class': 'status-wrap' }, { key: 'avg_ctr', label: 'CTR', sortable: true, 'class': 'date-wrap' }, { key: 'ctr_benchmark', label: 'CTR Benchmark', 'class': 'path-table-wrap' }, { key: 'click_potential', label: 'Click Potential', 'class': 'path-table-wrap' }, { key: 'actions', label: 'Action(s)', 'class': 'path-table-wrap' }],
             formItem: {
                 canonical: '',
                 title: '',
@@ -120851,7 +120993,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             sortDesc: true,
             sortDirection: 'desc',
             deviceOptions: ['desktop', 'mobile', 'tablet'],
-            checkChanged: 1
+            selectedItemIndex: null
         };
     },
 
@@ -120864,11 +121006,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         this.compareToRange.end = __WEBPACK_IMPORTED_MODULE_0_moment___default()().subtract(29, 'days').format('YYYY-MM-DD HH:MM:SS');
     },
 
-    computed: {
-        mySetAsList: function mySetAsList() {
-            return this.checkChanged > 0 ? this.profileMaps : this.profileMaps;
-        }
-    },
+    computed: {},
     watch: {
         externalKeyword: function externalKeyword(newValue, OldValue) {
             this.paramFilter.url = newValue;
@@ -120891,11 +121029,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
         },
         setPrimaryAlert: function setPrimaryAlert(item, index, button, isPrimary) {
 
+            if (!item.keyword || !item.page) {
+                alert('This record does not have proper keyword or page mapping in system database.');
+                return;
+            }
+
             if (confirm('Are you sure you want to set it as primary?')) {
                 var app = this;
                 var loader = this.$loading.show();
-                axios.put('/keywords/web/keywords/' + item.map_id + '/primary', { is_primary: isPrimary }).then(function (resp) {
-                    app.$refs.table.refresh();
+                axios.put('/keywords/web/keywords/' + item.index_id + '/primary', { is_primary: isPrimary }).then(function (resp) {
+                    app.items[index].profile = resp.data;
                     loader.hide();
                 }).catch(function (resp) {
                     console.log(resp);
@@ -120910,27 +121053,36 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
             }
         },
         openCtrModal: function openCtrModal(item, index, button) {
+            if (!item.keyword || !item.page) {
+                alert('This record does not have proper keyword or page mapping in system database.');
+                return;
+            }
             this.$refs.ctrModal.show();
             this.selectedItem = item;
-            this.ctrBenchmarkForm.benchmark = '';
+            this.selectedItemIndex = index;
+            this.ctrBenchmarkForm.benchmark = item.profile ? item.profile.ctr_benchmark : 0;
         },
         openViewUrlModal: function openViewUrlModal(item, index, button) {
             this.$refs.urlModal.show();
             this.pathMd5 = item.path_md5;
         },
         openClickModal: function openClickModal(item, index, button) {
+            if (!item.keyword || !item.page) {
+                alert('This record does not have proper keyword or page mapping in system database.');
+                return;
+            }
             this.$refs.modal.show();
             this.selectedItem = item;
-            this.clickPotentialForm.click = '';
+            this.selectedItemIndex = index;
+            this.clickPotentialForm.click = item.profile ? item.profile.click_potential : 0;
         },
         updateCtrBenchmark: function updateCtrBenchmark(evt) {
             evt.preventDefault();
-
             var app = this;
             var loader = this.$loading.show();
-            axios.put('/keywords/web/keywords/' + this.selectedItem.map_id + '/benchmark', this.ctrBenchmarkForm).then(function (resp) {
-                app.checkChanged++;
-                app.profileMaps[app.selectedItem.map_id] = resp.data;
+            axios.put('/keywords/web/keywords/' + this.selectedItem.index_id + '/benchmark', this.ctrBenchmarkForm).then(function (resp) {
+                app.items[app.selectedItemIndex].profile = resp.data;
+                console.log(app.items[app.selectedItemIndex]);
                 app.$notify({
                     type: 'success',
                     title: 'SUCCESS',
@@ -120954,9 +121106,8 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 
             var app = this;
             var loader = this.$loading.show();
-            axios.put('/keywords/web/keywords/' + this.selectedItem.map_id + '/click', this.clickPotentialForm).then(function (resp) {
-                app.checkChanged++;
-                app.profileMaps[app.selectedItem.map_id] = resp.data;
+            axios.put('/keywords/web/keywords/' + this.selectedItem.index_id + '/click', this.clickPotentialForm).then(function (resp) {
+                app.items[app.selectedItemIndex].profile = resp.data;
                 app.$notify({
                     type: 'success',
                     title: 'SUCCESS',
@@ -120975,16 +121126,19 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 loader.hide();
             });
         },
+        searchPrimary: function searchPrimary($event) {
+            this.searchNow();
+        },
         searchNow: function searchNow() {
             this.currentPage = 1;
             this.$refs.table.refresh();
         },
-        resetNow: function resetNow() {
+        viewAllKeyword: function viewAllKeyword(item, index, button) {
             this.paramFilter = {
                 url: '',
-                url_filter: '',
+                url_filter: 'contains',
                 keyword: '',
-                keyword_filter: '',
+                keyword_filter: 'contains',
                 device: '',
                 sort_by: '',
                 sort_order: '',
@@ -120993,8 +121147,29 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                 b_date_from: '',
                 b_date_to: '',
                 per_page: '',
-                path_md5: ''
+                path_md5: item.path_md5,
+                is_primary: ''
             };
+            this.searchNow();
+        },
+        resetNow: function resetNow() {
+            this.paramFilter = {
+                url: '',
+                url_filter: 'contains',
+                keyword: '',
+                keyword_filter: 'contains',
+                device: '',
+                sort_by: '',
+                sort_order: '',
+                a_date_from: '',
+                a_date_to: '',
+                b_date_from: '',
+                b_date_to: '',
+                per_page: '',
+                path_md5: '',
+                is_primary: ''
+            };
+            this.searchNow();
         },
         onFiltered: function onFiltered(filteredItems) {
             // Trigger pagination to update the number of buttons/pages due to filtering
@@ -121026,19 +121201,21 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
                     a_date_to: this.compareFromRange.end,
                     b_date_from: this.compareToRange.start,
                     b_date_to: this.compareToRange.end,
-                    path_md5: this.paramFilter.path_md5
+                    path_md5: this.paramFilter.path_md5,
+                    is_primary: this.paramFilter.is_primary
                 }
             });
 
             // Must return a promise that resolves to an array of items
             return promise.then(function (resp) {
                 // Pluck the array of items off our axios response
-                app.profileMaps = resp.data.map;
                 app.items = resp.data.data;
                 ctx.currentPage = resp.data.currentPage;
                 ctx.perPage = resp.data.perPage;
                 app.totalRows = resp.data.total;
                 app.currentPageOptions = [];
+                app.itemTo = resp.data.to;
+                app.itemTotal = resp.data.total;
                 for (var i = 1; i <= resp.data.last_page; i++) {
                     app.currentPageOptions.push(i);
                 }
@@ -121137,28 +121314,20 @@ var render = function() {
                       _c(
                         "b-input-group",
                         [
-                          _c(
-                            "b-form-select",
-                            {
-                              attrs: { slot: "prepend" },
+                          _c("b-form-select", {
+                            attrs: {
                               slot: "prepend",
-                              model: {
-                                value: _vm.paramFilter.url_filter,
-                                callback: function($$v) {
-                                  _vm.$set(_vm.paramFilter, "url_filter", $$v)
-                                },
-                                expression: "paramFilter.url_filter"
-                              }
+                              options: _vm.compareFilterList
                             },
-                            _vm._l(_vm.compareFilterList, function(item) {
-                              return _c(
-                                "option",
-                                { domProps: { value: item.key } },
-                                [_vm._v(_vm._s(item.value))]
-                              )
-                            }),
-                            0
-                          ),
+                            slot: "prepend",
+                            model: {
+                              value: _vm.paramFilter.url_filter,
+                              callback: function($$v) {
+                                _vm.$set(_vm.paramFilter, "url_filter", $$v)
+                              },
+                              expression: "paramFilter.url_filter"
+                            }
+                          }),
                           _vm._v(" "),
                           _c("b-form-input", {
                             attrs: { placeholder: "Type to Search" },
@@ -121197,32 +121366,20 @@ var render = function() {
                       _c(
                         "b-input-group",
                         [
-                          _c(
-                            "b-form-select",
-                            {
-                              attrs: { slot: "prepend" },
+                          _c("b-form-select", {
+                            attrs: {
                               slot: "prepend",
-                              model: {
-                                value: _vm.paramFilter.keyword_filter,
-                                callback: function($$v) {
-                                  _vm.$set(
-                                    _vm.paramFilter,
-                                    "keyword_filter",
-                                    $$v
-                                  )
-                                },
-                                expression: "paramFilter.keyword_filter"
-                              }
+                              options: _vm.compareFilterList
                             },
-                            _vm._l(_vm.compareFilterList, function(item) {
-                              return _c(
-                                "option",
-                                { domProps: { value: item.key } },
-                                [_vm._v(_vm._s(item.value))]
-                              )
-                            }),
-                            0
-                          ),
+                            slot: "prepend",
+                            model: {
+                              value: _vm.paramFilter.keyword_filter,
+                              callback: function($$v) {
+                                _vm.$set(_vm.paramFilter, "keyword_filter", $$v)
+                              },
+                              expression: "paramFilter.keyword_filter"
+                            }
+                          }),
                           _vm._v(" "),
                           _c("b-form-input", {
                             attrs: { placeholder: "Type to Search" },
@@ -121290,6 +121447,34 @@ var render = function() {
                   )
                 ],
                 1
+              ),
+              _vm._v(" "),
+              _c(
+                "b-col",
+                { staticClass: "my-1", attrs: { md: "6" } },
+                [
+                  _c(
+                    "b-form-group",
+                    {
+                      staticClass: "mb-0",
+                      attrs: { "label-cols-horizontal": "", label: "Per page" }
+                    },
+                    [
+                      _c("b-form-select", {
+                        attrs: { options: _vm.pageOptions },
+                        model: {
+                          value: _vm.perPage,
+                          callback: function($$v) {
+                            _vm.perPage = $$v
+                          },
+                          expression: "perPage"
+                        }
+                      })
+                    ],
+                    1
+                  )
+                ],
+                1
               )
             ],
             1
@@ -121332,36 +121517,54 @@ var render = function() {
         1
       ),
       _vm._v(" "),
+      _c("br"),
+      _vm._v(" "),
       _c(
-        "b-row",
+        "b-card",
         [
           _c(
             "b-col",
-            { staticClass: "my-1", attrs: { md: "4" } },
+            { staticClass: "my-1", attrs: { md: "6" } },
             [
               _c(
-                "b-form-group",
+                "b-form-checkbox",
                 {
-                  staticClass: "mb-0",
-                  attrs: { "label-cols-horizontal": "", label: "Per page" }
-                },
-                [
-                  _c("b-form-select", {
-                    attrs: { options: _vm.pageOptions },
-                    model: {
-                      value: _vm.perPage,
-                      callback: function($$v) {
-                        _vm.perPage = $$v
-                      },
-                      expression: "perPage"
+                  attrs: { value: "1", "unchecked-value": "0" },
+                  on: {
+                    change: function($event) {
+                      return _vm.searchPrimary($event)
                     }
-                  })
-                ],
-                1
+                  },
+                  model: {
+                    value: _vm.paramFilter.is_primary,
+                    callback: function($$v) {
+                      _vm.$set(_vm.paramFilter, "is_primary", $$v)
+                    },
+                    expression: "paramFilter.is_primary"
+                  }
+                },
+                [_vm._v("\n                Only Primary\n            ")]
               )
             ],
             1
-          ),
+          )
+        ],
+        1
+      ),
+      _vm._v(" "),
+      _c(
+        "b-row",
+        [
+          _c("b-col", { staticClass: "my-1", attrs: { md: "4" } }, [
+            _c("label", [
+              _vm._v(
+                "Total Items: " +
+                  _vm._s(_vm.itemTo) +
+                  "/" +
+                  _vm._s(_vm.itemTotal)
+              )
+            ])
+          ]),
           _vm._v(" "),
           _c("b-col", { staticClass: "my-1", attrs: { md: "8" } }, [
             _c(
@@ -121464,17 +121667,14 @@ var render = function() {
             key: "ctr_benchmark",
             fn: function(row) {
               return [
-                _vm.profileMaps[row.item.map_id]
+                row.item.profile
                   ? _c("div", [
                       _vm._v(
                         "\n                " +
-                          _vm._s(
-                            _vm.profileMaps[row.item.map_id].ctr_benchmark
-                          ) +
+                          _vm._s(row.item.profile.ctr_benchmark) +
                           "%\n                "
                       ),
-                      row.item.avg_ctr * 100 -
-                        _vm.profileMaps[row.item.map_id].ctr_benchmark >
+                      row.item.avg_ctr * 100 - row.item.profile.ctr_benchmark >
                       0
                         ? _c(
                             "span",
@@ -121485,8 +121685,7 @@ var render = function() {
                                   _vm._s(
                                     Number(
                                       row.item.avg_ctr * 100 -
-                                        _vm.profileMaps[row.item.map_id]
-                                          .ctr_benchmark
+                                        row.item.profile.ctr_benchmark
                                     ).toFixed(2)
                                   ) +
                                   "%"
@@ -121495,8 +121694,7 @@ var render = function() {
                           )
                         : _vm._e(),
                       _vm._v(" "),
-                      row.item.avg_ctr * 100 -
-                        _vm.profileMaps[row.item.map_id].ctr_benchmark <
+                      row.item.avg_ctr * 100 - row.item.profile.ctr_benchmark <
                       0
                         ? _c(
                             "span",
@@ -121507,8 +121705,7 @@ var render = function() {
                                   _vm._s(
                                     Number(
                                       row.item.avg_ctr * 100 -
-                                        _vm.profileMaps[row.item.map_id]
-                                          .ctr_benchmark
+                                        row.item.profile.ctr_benchmark
                                     ).toFixed(2)
                                   ) +
                                   "%"
@@ -121558,8 +121755,7 @@ var render = function() {
             key: "keyword",
             fn: function(row) {
               return [
-                _vm.profileMaps[row.item.map_id] &&
-                _vm.profileMaps[row.item.map_id].is_primary == true
+                row.item.profile && row.item.profile.is_primary == true
                   ? _c(
                       "div",
                       [
@@ -121654,9 +121850,7 @@ var render = function() {
                 _vm._v(
                   "\n            " +
                     _vm._s(
-                      _vm.mySetAsList[row.item.map_id]
-                        ? _vm.mySetAsList[row.item.map_id].click_potential
-                        : ""
+                      row.item.profile ? row.item.profile.click_potential : ""
                     ) +
                     "\n            "
                 ),
@@ -121709,7 +121903,11 @@ var render = function() {
             key: "avg_positions",
             fn: function(row) {
               return [
-                _vm._v("\n            " + _vm._s(row.value) + "\n            "),
+                _vm._v(
+                  "\n            " +
+                    _vm._s(Number(row.value).toFixed(2)) +
+                    "\n            "
+                ),
                 row.item.trend && row.item.trend.positions_trend > 0
                   ? _c(
                       "span",
@@ -121734,7 +121932,7 @@ var render = function() {
               return [
                 _vm._v(
                   "\n            " +
-                    _vm._s(Math.round(row.value * 100, 2)) +
+                    _vm._s(Number(row.value * 100).toFixed(2)) +
                     "%\n            "
                 ),
                 row.item.trend && row.item.trend.ctr_trend > 0
@@ -121768,21 +121966,53 @@ var render = function() {
             fn: function(row) {
               return [
                 _c(
-                  "b-button",
-                  {
-                    attrs: { variant: "primary", size: "sm" },
-                    on: {
-                      click: function($event) {
-                        $event.stopPropagation()
-                        return _vm.openViewUrlModal(
-                          row.item,
-                          row.index,
-                          $event.target
+                  "b-button-group",
+                  [
+                    _c(
+                      "b-button",
+                      {
+                        attrs: { variant: "primary", size: "sm" },
+                        on: {
+                          click: function($event) {
+                            $event.stopPropagation()
+                            return _vm.openViewUrlModal(
+                              row.item,
+                              row.index,
+                              $event.target
+                            )
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                    View URL\n                "
                         )
-                      }
-                    }
-                  },
-                  [_vm._v("\n                View URL\n            ")]
+                      ]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "b-button",
+                      {
+                        attrs: { variant: "info", size: "sm" },
+                        on: {
+                          click: function($event) {
+                            $event.stopPropagation()
+                            return _vm.viewAllKeyword(
+                              row.item,
+                              row.index,
+                              $event.target
+                            )
+                          }
+                        }
+                      },
+                      [
+                        _vm._v(
+                          "\n                    View Keywords\n                "
+                        )
+                      ]
+                    )
+                  ],
+                  1
                 )
               ]
             }
@@ -121868,7 +122098,7 @@ var render = function() {
                   attrs: {
                     "label-cols-horizontal": "",
                     "label-cols": 2,
-                    label: "Title",
+                    label: "Click Potential",
                     "label-for": "meta_title"
                   }
                 },
@@ -121924,7 +122154,7 @@ var render = function() {
                   attrs: {
                     "label-cols-horizontal": "",
                     "label-cols": 2,
-                    label: "Title",
+                    label: "CTR Benchmark",
                     "label-for": "meta_title"
                   }
                 },

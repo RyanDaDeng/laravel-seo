@@ -124,6 +124,8 @@ class KeywordApiController
     {
         try{
             QueryDetails::insertOnDuplicateKey(array_values($request->all()['data']), ['id', 'date', 'keyword', 'device', 'clicks','ctr','impressions','position']);
+            $migration = new DataMigrationService();
+            $migration->queryDetailsIndexMigration();
             return ['success' => true];
         }catch(\Exception $e){
             Log::error($e);

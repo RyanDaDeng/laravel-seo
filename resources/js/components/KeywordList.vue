@@ -26,9 +26,8 @@
 
                     <b-form-group label-cols-horizontal label="URL Search" class="mb-0">
                         <b-input-group>
-                            <b-form-select v-model="paramFilter.url_filter" slot="prepend">
-                                <option v-for="item in compareFilterList" :value="item.key">{{item.value}}</option>
-                            </b-form-select>
+                            <b-form-select v-model="paramFilter.url_filter" :options="compareFilterList"
+                                           slot="prepend"></b-form-select>
                             <b-form-input v-model="paramFilter.url" placeholder="Type to Search"/>
                         </b-input-group>
                     </b-form-group>
@@ -37,9 +36,8 @@
                 <b-col md="6" class="my-1">
                     <b-form-group label-cols-horizontal label="keyword Search" class="mb-0">
                         <b-input-group>
-                            <b-form-select v-model="paramFilter.keyword_filter" slot="prepend">
-                                <option v-for="item in compareFilterList" :value="item.key">{{item.value}}</option>
-                            </b-form-select>
+                            <b-form-select v-model="paramFilter.keyword_filter" :options="compareFilterList"
+                                           slot="prepend"></b-form-select>
                             <b-form-input v-model="paramFilter.keyword" placeholder="Type to Search"/>
                         </b-input-group>
                     </b-form-group>
@@ -55,6 +53,11 @@
                     </b-form-group>
                 </b-col>
 
+                <b-col md="6" class="my-1">
+                    <b-form-group label-cols-horizontal label="Per page" class="mb-0">
+                        <b-form-select :options="pageOptions" v-model="perPage"/>
+                    </b-form-group>
+                </b-col>
             </b-row>
             <b-row class="mx-auto">
                 <div>
@@ -64,16 +67,23 @@
 
             </b-row>
         </b-card>
-
-
-        <b-row>
-
-            <b-col md="4" class="my-1">
-                <b-form-group label-cols-horizontal label="Per page" class="mb-0">
-                    <b-form-select :options="pageOptions" v-model="perPage"/>
-                </b-form-group>
+        <br>
+        <b-card>
+            <b-col md="6" class="my-1">
+                <b-form-checkbox
+                        v-model="paramFilter.is_primary"
+                        value="1"
+                        unchecked-value="0"
+                        @change="searchPrimary($event)"
+                >
+                    Only Primary
+                </b-form-checkbox>
             </b-col>
-
+        </b-card>
+        <b-row>
+            <b-col md="4" class="my-1">
+                <label>Total Items: {{itemTo}}/{{itemTotal}}</label>
+            </b-col>
             <b-col md="8" class="my-1">
                 <div class="float-right">
                     <b-pagination :total-rows="totalRows" :per-page="perPage"
@@ -110,12 +120,12 @@
         >
 
             <template slot="ctr_benchmark" slot-scope="row">
-                <div v-if="profileMaps[row.item.map_id]">
-                    {{profileMaps[row.item.map_id].ctr_benchmark}}%
-                    <span v-if="row.item.avg_ctr*100 - profileMaps[row.item.map_id].ctr_benchmark >0"
-                          class="badge badge-pill badge-success">↑{{ Number(row.item.avg_ctr*100 - profileMaps[row.item.map_id].ctr_benchmark).toFixed(2)}}%</span>
-                    <span v-if="row.item.avg_ctr*100 - profileMaps[row.item.map_id].ctr_benchmark <0"
-                          class="badge badge-pill badge-danger">↓{{ Number(row.item.avg_ctr*100 - profileMaps[row.item.map_id].ctr_benchmark).toFixed(2)}}%</span>
+                <div v-if="row.item.profile">
+                    {{row.item.profile.ctr_benchmark}}%
+                    <span v-if="row.item.avg_ctr*100 - row.item.profile.ctr_benchmark >0"
+                          class="badge badge-pill badge-success">↑{{ Number(row.item.avg_ctr*100 - row.item.profile.ctr_benchmark).toFixed(2)}}%</span>
+                    <span v-if="row.item.avg_ctr*100 - row.item.profile.ctr_benchmark <0"
+                          class="badge badge-pill badge-danger">↓{{ Number(row.item.avg_ctr*100 - row.item.profile.ctr_benchmark).toFixed(2)}}%</span>
 
                 </div>
 
@@ -130,7 +140,7 @@
             <template slot="keyword" slot-scope="row">
 
 
-                <div v-if="profileMaps[row.item.map_id]&&profileMaps[row.item.map_id].is_primary == true">
+                <div v-if="row.item.profile&&row.item.profile.is_primary == true">
                     {{row.value}}
                     <b-badge
                             variant="success">Primary
@@ -158,7 +168,7 @@
 
 
             <template slot="click_potential" slot-scope="row">
-                {{mySetAsList[row.item.map_id] ? mySetAsList[row.item.map_id].click_potential : ''}}
+                {{row.item.profile ? row.item.profile.click_potential : ''}}
                 <div>
                     <b-button v-b-popover.hover="'Edit'" variant="info" size="sm"
                               @click.stop="openClickModal(row.item, row.index, $event.target)">
@@ -182,25 +192,34 @@
 
 
             <template slot="avg_positions" slot-scope="row">
-                {{row.value}}
+                {{Number(row.value).toFixed(2)}}
                 <span v-if="row.item.trend && row.item.trend.positions_trend >0" class="badge badge-pill badge-success">↑{{row.item.trend.positions_trend}}</span>
                 <span v-if="row.item.trend && row.item.trend.positions_trend <0" class="badge badge-pill badge-danger">↓{{row.item.trend.positions_trend}}</span>
             </template>
 
 
             <template slot="avg_ctr" slot-scope="row">
-                {{Math.round(row.value * 100,2)}}%
+                {{Number(row.value * 100).toFixed(2)}}%
                 <span v-if="row.item.trend && row.item.trend.ctr_trend >0" class="badge badge-pill badge-success">↑{{row.item.trend.ctr_trend}}%</span>
                 <span v-if="row.item.trend && row.item.trend.ctr_trend <0" class="badge badge-pill badge-danger">↓{{row.item.trend.ctr_trend}}%</span>
-                <span v-if="row.item.trend && row.item.trend.ctr_trend ==='∞'" class="badge badge-pill badge-warning">∞</span>
+                <span v-if="row.item.trend && row.item.trend.ctr_trend ==='∞'"
+                      class="badge badge-pill badge-warning">∞</span>
             </template>
 
 
             <template slot="actions" slot-scope="row">
-                <b-button variant="primary" size="sm"
-                          @click.stop="openViewUrlModal(row.item, row.index, $event.target)">
-                    View URL
-                </b-button>
+                <b-button-group>
+                    <b-button variant="primary" size="sm"
+                              @click.stop="openViewUrlModal(row.item, row.index, $event.target)">
+                        View URL
+                    </b-button>
+                    <b-button variant="info" size="sm"
+                              @click.stop="viewAllKeyword(row.item, row.index, $event.target)">
+                        View Keywords
+                    </b-button>
+
+                </b-button-group>
+
             </template>
         </b-table>
 
@@ -231,7 +250,7 @@
             <b-form @submit="updateClickPotential">
                 <b-form-group label-cols-horizontal
                               :label-cols="2"
-                              label="Title"
+                              label="Click Potential"
                               label-for="meta_title">
                     <b-form-input v-model="clickPotentialForm.click" type="number"
                                   placeholder="Enter your click potential"/>
@@ -253,7 +272,7 @@
             <b-form @submit="updateCtrBenchmark">
                 <b-form-group label-cols-horizontal
                               :label-cols="2"
-                              label="Title"
+                              label="CTR Benchmark"
                               label-for="meta_title">
                     <b-form-input v-model="ctrBenchmarkForm.benchmark" type="text"
                                   placeholder="Enter your click potential"/>
@@ -287,6 +306,8 @@
     export default {
         data() {
             return {
+                itemTo: 0,
+                itemTotal: 0,
                 pathMd5: null,
                 clickPotentialForm: {
                     click: '',
@@ -309,27 +330,28 @@
                 items: [],
                 compareFilterList: [
                     {
-                        value: 'contains',
-                        key: 'contains'
+                        text: 'contains',
+                        value: 'contains'
                     },
                     {
-                        value: 'does not contain',
-                        key: 'does_not_contain'
+                        text: 'does not contain',
+                        value: 'does_not_contain'
                     },
                     {
-                        value: 'is exactly',
-                        key: 'is_exactly'
+                        text: 'is exactly',
+                        value: 'is_exactly'
                     },
                 ],
                 filter: null,
                 paramFilter: {
                     url: '',
-                    url_filter: '',
+                    url_filter: 'contains',
                     keyword: '',
-                    keyword_filter: '',
+                    keyword_filter: 'contains',
                     device: '',
                     sort_by: '',
-                    sort_order: ''
+                    sort_order: '',
+                    is_primary: ''
                 },
                 fields: [
                     // {key: 'id', label: 'ID', class: 'id-table-wrap',sortable: true},
@@ -343,9 +365,9 @@
                     },
                     {key: 'page', label: 'Path', 'class': 'path-table-wrap'},
                     {key: 'keyword', label: 'Keyword', 'class': 'keywords-table-wrap'},
+                    {key: 'sum_clicks', sortable: true, label: 'Total Clicks', 'class': 'path-table-wrap'},
                     {key: 'avg_positions', label: 'Avg. Rank Position (AU)', sortable: true, 'class': 'status-wrap'},
                     {key: 'avg_ctr', label: 'CTR', sortable: true, 'class': 'date-wrap'},
-                    {key: 'sum_clicks', sortable: true, label: 'Total Clicks', 'class': 'path-table-wrap'},
                     {key: 'ctr_benchmark', label: 'CTR Benchmark', 'class': 'path-table-wrap'},
                     {key: 'click_potential', label: 'Click Potential', 'class': 'path-table-wrap'},
                     {key: 'actions', label: 'Action(s)', 'class': 'path-table-wrap'}
@@ -373,7 +395,7 @@
                 sortDesc: true,
                 sortDirection: 'desc',
                 deviceOptions: ['desktop', 'mobile', 'tablet'],
-                checkChanged: 1
+                selectedItemIndex: null
             }
         },
         props: [
@@ -386,11 +408,7 @@
             this.compareToRange.start = moment().subtract(57, 'days').format('YYYY-MM-DD HH:MM:SS');
             this.compareToRange.end = moment().subtract(29, 'days').format('YYYY-MM-DD HH:MM:SS');
         },
-        computed: {
-            mySetAsList:function() {
-                return this.checkChanged > 0?this.profileMaps:this.profileMaps;
-            },
-        },
+        computed: {},
         watch: {
             externalKeyword(newValue, OldValue) {
                 this.paramFilter.url = newValue;
@@ -413,11 +431,16 @@
             },
             setPrimaryAlert(item, index, button, isPrimary) {
 
+                if (!item.keyword || !item.page) {
+                    alert('This record does not have proper keyword or page mapping in system database.')
+                    return;
+                }
+
                 if (confirm('Are you sure you want to set it as primary?')) {
                     let app = this;
                     let loader = this.$loading.show();
-                    axios.put('/keywords/web/keywords/' + item.map_id + '/primary', {is_primary: isPrimary}).then(function (resp) {
-                        app.$refs.table.refresh();
+                    axios.put('/keywords/web/keywords/' + item.index_id + '/primary', {is_primary: isPrimary}).then(function (resp) {
+                        app.items[index].profile = resp.data;
                         loader.hide();
                     }).catch(function (resp) {
                         console.log(resp);
@@ -432,9 +455,14 @@
                 }
             },
             openCtrModal(item, index, button) {
+                if (!item.keyword || !item.page) {
+                    alert('This record does not have proper keyword or page mapping in system database.')
+                    return;
+                }
                 this.$refs.ctrModal.show();
                 this.selectedItem = item;
-                this.ctrBenchmarkForm.benchmark = '';
+                this.selectedItemIndex = index;
+                this.ctrBenchmarkForm.benchmark = item.profile ? item.profile.ctr_benchmark : 0;
             },
 
             openViewUrlModal(item, index, button) {
@@ -442,18 +470,22 @@
                 this.pathMd5 = item.path_md5;
             },
             openClickModal(item, index, button) {
+                if (!item.keyword || !item.page) {
+                    alert('This record does not have proper keyword or page mapping in system database.')
+                    return;
+                }
                 this.$refs.modal.show();
                 this.selectedItem = item;
-                this.clickPotentialForm.click = '';
+                this.selectedItemIndex = index;
+                this.clickPotentialForm.click = item.profile ? item.profile.click_potential : 0;
             },
             updateCtrBenchmark(evt) {
                 evt.preventDefault();
-
                 let app = this;
                 let loader = this.$loading.show();
-                axios.put('/keywords/web/keywords/' + this.selectedItem.map_id + '/benchmark', this.ctrBenchmarkForm).then(function (resp) {
-                    app.checkChanged++;
-                    app.profileMaps[app.selectedItem.map_id] = resp.data
+                axios.put('/keywords/web/keywords/' + this.selectedItem.index_id + '/benchmark', this.ctrBenchmarkForm).then(function (resp) {
+                    app.items[app.selectedItemIndex].profile = resp.data;
+                    console.log(app.items[app.selectedItemIndex]);
                     app.$notify({
                         type: 'success',
                         title: 'SUCCESS',
@@ -477,9 +509,8 @@
 
                 let app = this;
                 let loader = this.$loading.show();
-                axios.put('/keywords/web/keywords/' + this.selectedItem.map_id + '/click', this.clickPotentialForm).then(function (resp) {
-                    app.checkChanged++;
-                    app.profileMaps[app.selectedItem.map_id] = resp.data
+                axios.put('/keywords/web/keywords/' + this.selectedItem.index_id + '/click', this.clickPotentialForm).then(function (resp) {
+                    app.items[app.selectedItemIndex].profile = resp.data;
                     app.$notify({
                         type: 'success',
                         title: 'SUCCESS',
@@ -498,16 +529,19 @@
                     loader.hide();
                 });
             },
+            searchPrimary($event){
+                this.searchNow();
+            },
             searchNow() {
                 this.currentPage = 1;
                 this.$refs.table.refresh();
             },
-            resetNow() {
+            viewAllKeyword(item, index, button) {
                 this.paramFilter = {
                     url: '',
-                    url_filter: '',
+                    url_filter: 'contains',
                     keyword: '',
-                    keyword_filter: '',
+                    keyword_filter: 'contains',
                     device: '',
                     sort_by: '',
                     sort_order: '',
@@ -516,8 +550,29 @@
                     b_date_from: '',
                     b_date_to: '',
                     per_page: '',
-                    path_md5: ''
+                    path_md5: item.path_md5,
+                    is_primary: ''
                 };
+                this.searchNow();
+            },
+            resetNow() {
+                this.paramFilter = {
+                    url: '',
+                    url_filter: 'contains',
+                    keyword: '',
+                    keyword_filter: 'contains',
+                    device: '',
+                    sort_by: '',
+                    sort_order: '',
+                    a_date_from: '',
+                    a_date_to: '',
+                    b_date_from: '',
+                    b_date_to: '',
+                    per_page: '',
+                    path_md5: '',
+                    is_primary: ''
+                };
+                this.searchNow();
             },
             onFiltered(filteredItems) {
                 // Trigger pagination to update the number of buttons/pages due to filtering
@@ -550,19 +605,21 @@
                         a_date_to: this.compareFromRange.end,
                         b_date_from: this.compareToRange.start,
                         b_date_to: this.compareToRange.end,
-                        path_md5: this.paramFilter.path_md5
+                        path_md5: this.paramFilter.path_md5,
+                        is_primary: this.paramFilter.is_primary
                     }
                 });
 
                 // Must return a promise that resolves to an array of items
                 return promise.then((resp) => {
                     // Pluck the array of items off our axios response
-                    app.profileMaps = resp.data.map;
                     app.items = resp.data.data;
                     ctx.currentPage = resp.data.currentPage;
                     ctx.perPage = resp.data.perPage;
                     app.totalRows = resp.data.total;
                     app.currentPageOptions = [];
+                    app.itemTo = resp.data.to;
+                    app.itemTotal = resp.data.total;
                     for (let i = 1; i <= resp.data.last_page; i++) {
                         app.currentPageOptions.push(i)
                     }
