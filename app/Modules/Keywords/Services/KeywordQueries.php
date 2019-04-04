@@ -115,7 +115,7 @@ class KeywordQueries
             $query = $query->orderBy($sortBy, $sortOrder);
         }
 
-        $res = $query->groupBy(['tbl_gw_query_details.index','tbl_gw_query_details.keyword','tbl_gw_query_details.page'])->paginate($perPage);
+        $res = $query->groupBy(['tbl_gw_query_details.index','tbl_gw_query_details.page','tbl_gw_query_details.keyword'])->paginate($perPage);
 
         $keywordIds = $res->getCollection()->pluck('keyword_id')->unique();
         $pageIds = $res->getCollection()->pluck('page_id')->unique();
