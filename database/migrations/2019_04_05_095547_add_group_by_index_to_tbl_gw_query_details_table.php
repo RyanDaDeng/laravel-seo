@@ -15,7 +15,6 @@ class AddGroupByIndexToTblGwQueryDetailsTable extends Migration
     {
         Schema::table('tbl_gw_query_details', function (Blueprint $table) {
             //
-            $table->dropIndex('group_by_index_keyword_page_index');
             $table->dropIndex('tbl_gw_query_details_index');
             $table->dropIndex('keyword_page_date_index');
             $table->dropIndex('date_index');
