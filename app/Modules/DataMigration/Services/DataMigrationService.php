@@ -65,7 +65,7 @@ class DataMigrationService
     public function indexMigration()
     {
 
-        $limit = 50000;
+        $limit = 10000;
         $offset = 0;
         $data = QueryDetails::query()->whereNull('index')->offset($offset)->limit($limit)->get();
 
