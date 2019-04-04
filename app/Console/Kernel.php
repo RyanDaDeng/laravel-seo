@@ -2,10 +2,10 @@
 
 namespace App\Console;
 
-use App\Console\Commands\CalAvgRankingCommand;
+use App\Console\Commands\IndexIdMigrationCommand;
 use App\Console\Commands\MigrateQueryProfileKeywordField;
 use App\Console\Commands\PathMD5Command;
-use App\Console\Commands\QueryDetailsIndexMigrationCommand;
+use App\Console\Commands\RankingMigrationCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -20,7 +20,8 @@ class Kernel extends ConsoleKernel
         //
         PathMD5Command::class,
         MigrateQueryProfileKeywordField::class,
-        QueryDetailsIndexMigrationCommand::class,
+        RankingMigrationCommand::class,
+        IndexIdMigrationCommand::class
     ];
 
     /**
