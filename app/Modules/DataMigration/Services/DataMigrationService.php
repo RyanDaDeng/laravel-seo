@@ -46,7 +46,7 @@ class DataMigrationService
         }
     }
 
-    public function migrateQueryProfileUrlField()
+    public function migrateQueryProfileKeywordField()
     {
         $data = QueryProfile::query()->whereNotNull('index')->get();
 

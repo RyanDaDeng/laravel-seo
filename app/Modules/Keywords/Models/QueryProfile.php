@@ -46,8 +46,10 @@ class QueryProfile extends Model
                 $obj = new QueryProfile();
                 $obj->ctr_benchmark = 0;
                 $obj->click_potential = 0;
+                $obj->is_primary = 0;
                 $obj->index = $index;
                 $obj->page = $pageId;
+                $obj->keyword = $keywordId;
                 $obj->save();
                 return $obj;
             }

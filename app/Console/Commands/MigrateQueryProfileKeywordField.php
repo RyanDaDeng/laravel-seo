@@ -41,7 +41,7 @@ class MigrateQueryProfileKeywordField extends Command
         //
 
         $migration = new DataMigrationService();
-        $migration->migrateQueryProfileUrlField();
+        $migration->migrateQueryProfileKeywordField();
 
     }
 }
