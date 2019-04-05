@@ -21,7 +21,7 @@ class AddGroupByIndexToTblGwQueryDetailsTable extends Migration
             $table->dropIndex('page_keyword_index');
             $table->dropIndex('covering_index');
 
-            $table->index(['index', 'keyword', 'page'], 'group_by_index_keyword_page_index');
+            $table->index(['index', 'page', 'keyword'], 'group_by_index_keyword_page_index');
             $table->index(['index', 'page', 'keyword', 'date', 'device'], 'tbl_gw_query_details_index');
             $table->index(['index', 'page', 'keyword', 'date'], 'keyword_page_date_index');
             $table->index(['date'], 'date_index');
