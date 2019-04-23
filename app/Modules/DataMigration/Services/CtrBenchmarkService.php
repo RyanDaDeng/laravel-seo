@@ -32,7 +32,6 @@ class CtrBenchmarkService
     }
 
 
-
     /**
      * calculate initial avg position and ctr value and impressions for each profile
      * @param bool $reCal
@@ -43,45 +42,27 @@ class CtrBenchmarkService
             $this->resetInitial();
         }
 
-
         $from = Carbon::parse('2019-03-04')->subDay(28);
         $to = Carbon::parse('2019-03-04');
-        $result = KeywordQueries::summarize($from, $to);
+        $result = KeywordQueries::getMonthlyBaseQueryForCtr($from, $to)->get()->toArray();
 
-        $prepare = [];
         foreach ($result as $datum) {
-            $avgPosition = round($datum['sum_average_weight_ranking'] / $datum['sum_impressions'], 4);
+            $avgPosition = round($datum->sum_average_weight_ranking / $datum->sum_impressions, 4);
             QueryProfile::query()->updateOrInsert(
                 [
-                    'page' => $datum['page_id'],
-                    'keyword' => $datum['keyword_id']
+                    'page' => $datum->page_id,
+                    'keyword' => $datum->keyword_id
                 ],
                 [
 
-                    'page' => $datum['page_id'],
-                    'keyword' => $datum['keyword_id'],
+                    'page' => $datum->page_id,
+                    'keyword' => $datum->keyword_id,
                     'initial_avg_position' => $avgPosition,
-                    'initial_ctr_value' => $datum['avg_ctr'],
-                    'initial_impressions' => $datum['sum_impressions']
+                    'initial_ctr_value' => $datum->avg_ctr,
+                    'initial_impressions' => $datum->sum_impressions
                 ]
             );
         }
-
-        QueryProfile::insertOnDuplicateKey(array_values($prepare),
-            [
-                'id',
-                'ctr_benchmark',
-                'click_potential',
-                'page',
-                'keyword',
-                'initial_impressions',
-                'initial_ctr_value',
-                'initial_avg_position',
-                'created_at',
-                'updated_at']
-        );
-
-        dd($result);
     }
 
 

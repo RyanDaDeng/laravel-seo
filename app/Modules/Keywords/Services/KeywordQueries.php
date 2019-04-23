@@ -168,6 +168,30 @@ class KeywordQueries
         return $baseQuery;
     }
 
+    /**
+     * @param Carbon $dateFrom
+     * @param Carbon $dateTo
+     * @return \Illuminate\Database\Query\Builder
+     */
+    public static function getMonthlyBaseQueryForCtr(Carbon $dateFrom, Carbon $dateTo)
+    {
+
+        $unionQuery = self::monthlyUnionQuery($dateFrom, $dateTo);
+        $baseQuery = \DB::table(\DB::raw("({$unionQuery->toSql()}) as summary"))->selectRaw(
+            '
+                summary.page as page_id,
+                summary.keyword as keyword_id,
+	sum(summary.sum_clicks) as sum_clicks,
+	round(sum(summary.sum_impressions),2) as sum_impressions, 
+	round(sum(summary.sum_positions),2) as sum_positions,
+	round(sum(summary.sum_average_weight_ranking),2) as sum_average_weight_ranking,
+    round(sum(summary.sum_clicks)/sum(summary.sum_impressions),4) as avg_ctr'
+        )
+            ->groupBy(['summary.page', 'summary.keyword']);
+
+        return $baseQuery;
+    }
+
     public static function monthlyUnionQuery(Carbon $dateFrom, Carbon $dateTo)
     {
 
