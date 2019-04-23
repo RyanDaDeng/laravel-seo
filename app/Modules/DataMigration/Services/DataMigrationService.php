@@ -10,8 +10,8 @@ namespace App\Modules\DataMigration\Services;
 
 
 use App\Modules\Keywords\Models\Page;
-use App\Modules\Keywords\Models\QueryDetails;
 use App\Modules\Keywords\Models\QueryProfile;
+use Illuminate\Support\Facades\DB;
 
 class DataMigrationService
 {
@@ -35,42 +35,15 @@ class DataMigrationService
     }
 
 
-    public function queryRankingMigration()
-    {
-        $limit = 10000;
-        $data = QueryDetails::query()->whereNull('average_weight_ranking')->limit($limit)->get();
+//    public function queryRankingMigration()
+//    {
+//
+//        DB::query()->selectRaw('SET SQL_SAFE_UPDATES = 0;');
+//        QueryProfile::query()->where('id', '>', 0)
+//            ->update(['average_weight_ranking' => DB::raw('impressions* position')]);
+//        DB::query()->selectRaw('SET SQL_SAFE_UPDATES = 1;');
+//
+//    }
 
-        while ($data->count() > 0) {
-            foreach ($data as $datum) {
-                $datum->average_weight_ranking = round($datum->impressions * $datum->position, 6);
-                $datum->save();
-            }
-            $data = QueryDetails::query()->whereNull('average_weight_ranking')->limit($limit)->get();
-        }
-    }
-
-    public function migrateQueryProfileKeywordField()
-    {
-        $data = QueryProfile::query()->whereNotNull('index')->get();
-
-        foreach ($data as $datum) {
-            $datum->keyword = explode('_', $datum->index)[1];
-            $datum->save();
-        }
-    }
-
-
-    public function indexMigration()
-    {
-        $limit = 10000;
-        $data = QueryDetails::query()->whereNull('index')->limit($limit)->get();
-        while ($data->count() > 0) {
-            foreach ($data as $datum) {
-                $datum->index = $datum->page . '_' . $datum->keyword;
-                $datum->save();
-            }
-            $data = QueryDetails::query()->whereNull('index')->limit($limit)->get();
-        }
-    }
 
 }

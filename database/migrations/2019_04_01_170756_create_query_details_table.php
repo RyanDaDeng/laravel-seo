@@ -24,10 +24,10 @@ class CreateQueryDetailsTable extends Migration
             $table->float('impressions', 12, 6)->nullable();
             $table->float('position', 12, 6)->nullable();
             $table->index(['page', 'keyword', 'date', 'device'], 'tbl_gw_query_details_index');
-            $table->index(['page', 'date', 'keyword'], 'keyword_page_date_index');
-            $table->index(['date'], 'date_index');
             $table->index(['page', 'keyword'], 'page_keyword_index');
-            $table->index(['page', 'keyword', 'date', 'clicks', 'impressions', 'position'], 'covering_index');
+            $table->index(['page', 'keyword', 'clicks'], 'page_keyword_clicks_index');
+            $table->index(['keyword'], 'keyword_index');
+
         });
     }
 

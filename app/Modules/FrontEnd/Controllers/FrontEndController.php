@@ -4,6 +4,8 @@ namespace App\Modules\FrontEnd\Controllers;
 
 
 use App\Http\Controllers\Controller;
+use App\Modules\Keywords\Models\PageRanking;
+use Carbon\Carbon;
 
 class FrontEndController extends Controller
 {
@@ -27,13 +29,21 @@ class FrontEndController extends Controller
         return view('ui::index');
     }
 
+
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function apiManagement()
     {
         return view('ui::api-management');
     }
 
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
     public function setting()
     {
         return view('ui::setting');
     }
+
 }

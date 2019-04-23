@@ -17,10 +17,16 @@ class CreateQueryProfile extends Migration
             $table->increments('id');
             $table->float('ctr_benchmark')->default(0);
             $table->integer('click_potential')->default(0);
-            $table->string('index',45)->nullable();
-            $table->boolean('is_primary')->nullable();
+            $table->boolean('is_primary')->default(0);
             $table->integer('page')->nullable();
+            $table->integer('keyword')->nullable();
+            $table->integer('initial_impressions')->default(0);
+            $table->float('initial_ctr_value')->default(0);
+            $table->float('initial_avg_position')->default(0);
             $table->timestamps();
+
+            $table->index(['click_potential'], 'click_potential_index');
+            $table->index(['ctr_benchmark'], 'ctr_benchmark_index');
         });
     }
 
