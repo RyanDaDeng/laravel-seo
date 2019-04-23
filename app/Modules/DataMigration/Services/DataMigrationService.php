@@ -34,16 +34,4 @@ class DataMigrationService
         return $path === '' ? '/' : $path;
     }
 
-
-//    public function queryRankingMigration()
-//    {
-//
-//        DB::query()->selectRaw('SET SQL_SAFE_UPDATES = 0;');
-//        QueryProfile::query()->where('id', '>', 0)
-//            ->update(['average_weight_ranking' => DB::raw('impressions* position')]);
-//        DB::query()->selectRaw('SET SQL_SAFE_UPDATES = 1;');
-//
-//    }
-
-
 }
