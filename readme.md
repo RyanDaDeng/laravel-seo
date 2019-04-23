@@ -22,7 +22,7 @@ create an .env file (do not include APP_NAME and APP_DEBUG should be false) and 
 
 
 
-### env file
+### .env file
 
 ````
 BROADCAST_DRIVER=pusher
@@ -36,3 +36,16 @@ PUSHER_APP_CLUSTER=
 ````
 
 Please register an account on Pusher website and fill in up with the above value.
+
+
+
+### Queue server
+
+1. Install supervisor, Read through: https://laravel.com/docs/5.7/queues#supervisor-configuration
+
+````
+command=php artisan queue:work database --queue=high,default --sleep=3 --tries=3
+````
+note: change your artisan location
+
+2. start supervisor
