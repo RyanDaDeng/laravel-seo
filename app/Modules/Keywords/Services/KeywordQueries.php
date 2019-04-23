@@ -59,38 +59,6 @@ class KeywordQueries
         return $pageIds;
     }
 
-
-    public static function calculateTodayData(Carbon $dateFrom, Carbon $dateTo, $pageIds)
-    {
-
-        $dataCollect = QueryDetails::query()
-            ->selectRaw(
-                '
-                tbl_gw_query_details.page as page_id,
-                tbl_gw_query_details.keyword as keyword_id,
-	sum(tbl_gw_query_details.clicks) as sum_clicks,
-	round(sum(tbl_gw_query_details.impressions),2) as sum_impressions, 
-	round(sum(tbl_gw_query_details.position),2) as sum_positions,
-	round(sum(tbl_gw_query_details.impressions*tbl_gw_query_details.position),2) as sum_average_weight_ranking,
-    round(sum(tbl_gw_query_details.clicks)/sum(tbl_gw_query_details.impressions),4) as avg_ctr')
-            ->whereBetween('date',
-                [
-                    $dateFrom->format('Y-m-d'),
-                    $dateTo->format('Y-m-d')
-                ])
-            ->groupBy(
-                [
-                    'tbl_gw_query_details.page',
-                    'tbl_gw_query_details.keyword',
-                    'tbl_gw_query_details.date',
-                    'tbl_gw_query_details.device'
-                ]
-            )
-            ->get();
-        return $dataCollect;
-    }
-
-
     public static function summarize(Carbon $dateFrom, Carbon $dateTo)
     {
 
