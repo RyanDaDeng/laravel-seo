@@ -17,6 +17,9 @@
 
                     <b-tab>
                         <template slot="title">
+
+                            <b-spinner v-if="newJobCreated" type="grow" small></b-spinner>
+
                             Job Histories
                             <b-badge v-if="notificationCounter>0" variant="danger">{{notificationCounter}}</b-badge>
                         </template>
@@ -38,19 +41,21 @@
         data() {
             return {
                 keywordActive: false,
+                newJobCreated: false,
                 notificationCounter: 0
             }
         },
         created() {
         },
         computed: {},
-        watch: {
-        },
-        methods: {
-        },
+        watch: {},
+        methods: {},
         mounted() {
             window.Echo.channel("job-completed-channel").listen(".job-completed-event", data => {
                 this.notificationCounter++;
+            });
+            EventBus.$on('newJobCreated', () => {
+                this.newJobCreated = true;
             });
         }
     }

@@ -123,16 +123,16 @@ class KeywordQueries
             '
                 summary.page as page_id,
                 summary.keyword as keyword_id,
-                summary.device as device_type,
 	sum(summary.sum_clicks) as sum_clicks,
 	round(sum(summary.sum_impressions),2) as sum_impressions, 
 	round(sum(summary.sum_positions),2) as sum_positions,
 	round(sum(summary.sum_average_weight_ranking),2) as sum_average_weight_ranking,
     round(sum(summary.sum_clicks)/sum(summary.sum_impressions),4) as avg_ctr'
         )
-            ->groupBy(['summary.page', 'summary.keyword', 'summary.device']);
+            ->groupBy(['summary.page', 'summary.keyword']);
         return $baseQuery;
     }
+
 
     /**
      * @param Carbon $dateFrom
@@ -148,7 +148,6 @@ class KeywordQueries
             '
                 summary.page as page_id,
                 summary.keyword as keyword_id,
-                summary.device as device_type,
                 profile.is_primary as is_primary,
                 profile.click_potential as click_potential,
                 profile.ctr_benchmark as ctr_benchmark,
@@ -164,7 +163,7 @@ class KeywordQueries
                 $join->on('summary.keyword', '=', 'profile.keyword');
 
             })
-            ->groupBy(['summary.page', 'summary.keyword', 'summary.device']);
+            ->groupBy(['summary.page', 'summary.keyword']);
         return $baseQuery;
     }
 
@@ -192,10 +191,13 @@ class KeywordQueries
 
         $query = self::getCompareToRangeBaseQuery($aDateFrom, $aDateTo)
             ->where('summary.page', '=', $pageId)
-            ->where('summary.keyword', '=', $keywordId)
-            ->where('summary.device', '=', $deviceType)->first();
+            ->where('summary.keyword', '=', $keywordId);
 
-        return $query;
+        // device filter
+        if (!empty($deviceType)) {
+            $query = $query->where('summary.device', '=', QueryDetails::getDeviceTypeByName($deviceType));
+        }
+        return $query->first();
 
 
     }
@@ -233,7 +235,7 @@ class KeywordQueries
 
         // device filter
         if (!empty($device)) {
-            $query = $query->where('device', '=', QueryDetails::getDeviceTypeByName($device));
+            $query = $query->where('summary.device', '=', QueryDetails::getDeviceTypeByName($device));
         }
 
         // md5 filter

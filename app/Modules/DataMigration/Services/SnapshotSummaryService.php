@@ -129,8 +129,8 @@ class SnapshotSummaryService
                 $table->float('avg_ctr');
                 $table->float('avg_positions');
                 $table->timestamps();
-                $table->index(['to_date', 'device', 'page', 'keyword'], 'to_date_page_keyword_device_index');
                 $table->index(['page', 'keyword', 'device'], 'page_keyword_device_index');
+                $table->index(['page', 'keyword'], 'page_keyword_index');
             });
         }
     }

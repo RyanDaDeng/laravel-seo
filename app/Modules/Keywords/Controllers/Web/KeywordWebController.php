@@ -113,11 +113,10 @@ class KeywordWebController extends Controller
                 $aRangeData['data'][$key]->path = parse_url($row->page)['path'];
                 $aRangeData['data'][$key]->avg_ctr = round($row->avg_ctr, 4);
                 $aRangeData['data'][$key]->avg_positions = round($row->sum_average_weight_ranking / $row->sum_impressions, 4);
-                $aRangeData['data'][$key]->device_name = QueryDetails::getDeviceNameById($row->device_type);
                 $aRangeData['data'][$key]->trend = [];
-                // has compare to data, then appending compare resulr
+                // has compare to data, then appending compare result
                 if ($hasCompareTo) {
-                    $compareTo = KeywordQueries::getCompareToData($bDateFromCarbon, $bDateToCarbon, $row->page_id, $row->keyword_id, $row->device_type);
+                    $compareTo = KeywordQueries::getCompareToData($bDateFromCarbon, $bDateToCarbon, $row->page_id, $row->keyword_id, $device);
                     if($compareTo){
                         $compareTo->avg_positions = round($compareTo->sum_average_weight_ranking / $compareTo->sum_impressions, 4);
                         $aRangeData['data'][$key]->trend = [

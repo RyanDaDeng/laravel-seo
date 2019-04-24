@@ -44,7 +44,7 @@ class CtrBenchmarkService
 
         $from = Carbon::parse('2019-03-04')->subDay(28);
         $to = Carbon::parse('2019-03-04');
-        $result = KeywordQueries::getMonthlyBaseQueryForCtr($from, $to)->get()->toArray();
+        $result = KeywordQueries::getCompareToRangeBaseQuery($from, $to)->get()->toArray();
 
         foreach ($result as $datum) {
             $avgPosition = round($datum->sum_average_weight_ranking / $datum->sum_impressions, 4);

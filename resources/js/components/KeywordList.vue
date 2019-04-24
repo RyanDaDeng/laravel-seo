@@ -316,7 +316,7 @@
                 size="lg"
         >
 
-            <draft-data-list :pathMd5="pathMd5"></draft-data-list>
+            <draft-data-list v-if="pathMd5" :pathMd5="pathMd5"></draft-data-list>
         </b-modal>
     </b-container>
 
@@ -378,7 +378,6 @@
                 },
                 fields: [
                     // {key: 'id', label: 'ID', class: 'id-table-wrap',sortable: true},
-                    {key: 'device_name', label: 'Device', 'class': 'device-wrap'},
                     {key: 'page', label: 'Path', 'class': 'path-table-wrap'},
                     {key: 'meta.current_data.meta.defaults.title', label: 'Title', 'class': 'path-table-wrap'},
                     {
@@ -466,8 +465,8 @@
                 if (confirm('Are you sure you want to set it as primary?')) {
                     let app = this;
                     let loader = this.$loading.show();
-                    axios.put('/keywords/web/pages/' + item.page_id + '/keywords/' + item.keyword_id + '/primary', {is_primary: isPrimary}).then(function (resp) {
-                        app.items[index].profile = resp.data;
+                    axios.put('keywords/web/pages/' + item.page_id + '/keywords/' + item.keyword_id + '/primary', {is_primary: isPrimary}).then(function (resp) {
+                        app.items[index].is_primary = resp.data.is_primary;
                         loader.hide();
                     }).catch(function (resp) {
                         console.log(resp);
@@ -677,6 +676,9 @@
                             text: error.response.data.message,
                             duration: -1
                         });
+
+                        // send emit to JobHistory component to refresh the list
+                         EventBus.$emit('newJobCreated');
                     } else {
                         app.$notify({
                             type: 'error',

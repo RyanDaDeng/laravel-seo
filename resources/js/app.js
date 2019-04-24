@@ -45,6 +45,8 @@ Vue.component('keyword-list', require('./components/KeywordList.vue'));
 Vue.component('keyword-layout', require('./components/KeywordLayout.vue'));
 Vue.component('job-history', require('./components/JobHistory.vue'));
 
+// event bus
+ window.EventBus = new Vue;
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key)))

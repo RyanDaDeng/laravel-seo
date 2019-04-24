@@ -495,7 +495,7 @@
             toggleMetaHistory(row) {
                 let app = this;
                 if (!row.detailsShowing) {
-                    axios.get('/seoagent/web/draft-data/' + row.item.hash + '/histories').then(function (resp) {
+                    axios.get('seoagent/web/draft-data/' + row.item.hash + '/histories').then(function (resp) {
                         app.items[row.index].histories = resp.data;
                         row.toggleDetails();
                     }).catch(function (resp) {
@@ -511,7 +511,7 @@
 
                 if (confirm('Are you sure you want to delete this draft?')) {
                     let app = this;
-                    axios.delete('/seoagent/web/draft-data/' + item.id).then(function (resp) {
+                    axios.delete('seoagent/web/draft-data/' + item.id).then(function (resp) {
                         console.log(resp.data);
                         item.type = 0;
                         item._rowVariant = '';
@@ -584,7 +584,7 @@
                     if (typeof this.formItem.keywords === 'string') {
                         this.formItem.keywords = this.formItem.keywords.split(',')
                     }
-                axios.put('/seoagent/web/draft-data/' + this.formItem.id, this.formItem).then(function (resp) {
+                axios.put('seoagent/web/draft-data/' + this.formItem.id, this.formItem).then(function (resp) {
                     app.selectedItem.draft_data.meta.defaults.keywords = resp.data.draft_data.meta.defaults.keywords;
                     app.selectedItem.draft_data.meta.defaults.description = resp.data.draft_data.meta.defaults.description;
                     app.selectedItem.draft_data.meta.defaults.canonical = resp.data.draft_data.meta.defaults.canonical;
@@ -656,7 +656,7 @@
                     app.$notify({
                         type: 'success',
                         title: 'SUCCESS',
-                        text: 'Data retrieved'
+                        text: 'URL Data retrieved'
                     });
                     // Must return an array of items or an empty array if an error occurred
                     return (app.items || [])

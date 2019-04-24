@@ -111,8 +111,6 @@
 </template>
 
 <script>
-    import moment from 'moment';
-
     export default {
         data() {
             return {
@@ -184,6 +182,10 @@
                     group:'job',
                     duration: -1
                 });
+                this.$refs.table.refresh();
+            });
+
+            EventBus.$on('newJobCreated', () => {
                 this.$refs.table.refresh();
             });
         },
