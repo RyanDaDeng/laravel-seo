@@ -1,7 +1,7 @@
 <template>
 
     <div>
-        <b-card>
+        <b-card v-if="!pathMd5">
             <b-row>
                 <b-col md="6" class="my-1">
                     <b-form-group label-cols-horizontal label="Search" class="mb-0">
@@ -24,17 +24,17 @@
                     </b-form-group>
                 </b-col>
                 <!--<b-col md="6" class="my-1">-->
-                    <!--<b-form-group label-cols-horizontal label="Sort" class="mb-0">-->
-                        <!--<b-input-group>-->
-                            <!--<b-form-select v-model="sortBy" :options="sortOptions">-->
-                                <!--<option slot="first" :value="null">&#45;&#45; none &#45;&#45;</option>-->
-                            <!--</b-form-select>-->
-                            <!--<b-form-select :disabled="!sortBy" v-model="sortDesc" slot="append">-->
-                                <!--<option :value="false">Asc</option>-->
-                                <!--<option :value="true">Desc</option>-->
-                            <!--</b-form-select>-->
-                        <!--</b-input-group>-->
-                    <!--</b-form-group>-->
+                <!--<b-form-group label-cols-horizontal label="Sort" class="mb-0">-->
+                <!--<b-input-group>-->
+                <!--<b-form-select v-model="sortBy" :options="sortOptions">-->
+                <!--<option slot="first" :value="null">&#45;&#45; none &#45;&#45;</option>-->
+                <!--</b-form-select>-->
+                <!--<b-form-select :disabled="!sortBy" v-model="sortDesc" slot="append">-->
+                <!--<option :value="false">Asc</option>-->
+                <!--<option :value="true">Desc</option>-->
+                <!--</b-form-select>-->
+                <!--</b-input-group>-->
+                <!--</b-form-group>-->
                 <!--</b-col>-->
 
 
@@ -248,9 +248,9 @@
                             </b-button>
 
                             <!--<b-button v-b-popover.hover="'View keywords'" size="sm"-->
-                                      <!--@click.stop="viewKeywords(row.item, row.index, $event.target)"-->
-                                      <!--variant="info">-->
-                                <!--<i class="fa fa-tag"></i>-->
+                            <!--@click.stop="viewKeywords(row.item, row.index, $event.target)"-->
+                            <!--variant="info">-->
+                            <!--<i class="fa fa-tag"></i>-->
                             <!--</b-button>-->
 
                         </b-button-group>
@@ -364,10 +364,6 @@
                     </b-form>
                 </b-card>
                 <br>
-                <b-card>
-                    <h5>Search Keywords</h5>
-                    <keyword-simple-list :pathMd5="externalPathMd5"></keyword-simple-list>
-                </b-card>
                 <div slot="modal-footer">
 
                 </div>

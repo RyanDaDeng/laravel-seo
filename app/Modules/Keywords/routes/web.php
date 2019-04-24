@@ -1,6 +1,6 @@
 <?php
 
-Route::prefix('keywords/web')->namespace('App\Modules\Keywords\Controllers\Web')->group(function () {
+Route::prefix('app/keywords/web')->namespace('App\Modules\Keywords\Controllers\Web')->group(function () {
     Route::get('keywords', 'KeywordWebController@getSearchKeyword')->name('getSearchKeyword');
     Route::put('pages/{pageId}/keywords/{keywordId}/click', 'KeywordWebController@updateClickPotential')->name('updateClickPotential');
     Route::put('pages/{pageId}/keywords/{keywordId}/benchmark', 'KeywordWebController@updateCtrBenchmark')->name('updateCtrBenchmark');

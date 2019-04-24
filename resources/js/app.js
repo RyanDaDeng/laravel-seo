@@ -39,12 +39,10 @@ import VoerroTagsInput from '@voerro/vue-tagsinput';
 Vue.component('tags-input', VoerroTagsInput);
 Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 Vue.component('draft-data-list', require('./components/DraftDataList.vue'));
-Vue.component('draft-data-simple-list', require('./components/DraftDataSimpleList.vue'));
-Vue.component('keyword-simple-list', require('./components/KeywordSimpleList.vue'));
 Vue.component('setting', require('./components/Setting.vue'));
 Vue.component('api-passport', require('./components/ApiPassport.vue'));
 Vue.component('keyword-list', require('./components/KeywordList.vue'));
-Vue.component('seo-layout', require('./components/SeoLayout.vue'));
+Vue.component('keyword-layout', require('./components/KeywordLayout.vue'));
 Vue.component('job-history', require('./components/JobHistory.vue'));
 
 

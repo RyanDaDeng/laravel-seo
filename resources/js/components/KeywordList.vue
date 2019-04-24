@@ -316,7 +316,7 @@
                 size="lg"
         >
 
-            <draft-data-simple-list :pathMd5="pathMd5"></draft-data-simple-list>
+            <draft-data-list :pathMd5="pathMd5"></draft-data-list>
         </b-modal>
     </b-container>
 

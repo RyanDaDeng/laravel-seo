@@ -24,7 +24,27 @@ class FrontEndController extends Controller
      */
     public function index()
     {
-        return view('ui::index');
+        return redirect()->route('FrontEnd.urls');
+    }
+
+
+    /**
+     * Show the application dashboard.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function urls()
+    {
+        return view('ui::urls');
+    }
+
+
+    /**
+     * @return \Illuminate\Contracts\View\Factory|\Illuminate\View\View
+     */
+    public function keywords()
+    {
+        return view('ui::keywords');
     }
 
 
