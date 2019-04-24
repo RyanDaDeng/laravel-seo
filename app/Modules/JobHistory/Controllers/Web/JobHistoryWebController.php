@@ -26,12 +26,13 @@ class JobHistoryWebController
 
         $query = JobHistory::query();
 
-        if ($dateFrom) {
-            $query = $query->where('date_from', '<=', $dateFrom);
-        }
 
-
-        if ($dateTo) {
+        if ($dateFrom && $dateTo) {
+            $query = $query->where('date_from', '<=', $dateFrom)
+                ->where('date_to', '>=', $dateTo);
+        } else if ($dateFrom) {
+            $query = $query->where('date_from', '=', $dateFrom);
+        } else if ($dateTo) {
             $query = $query->where('date_to', '>=', $dateTo);
         }
 
@@ -49,7 +50,7 @@ class JobHistoryWebController
     }
 
 
-    public function deleteJobById(Request $request, $id,JobHistoryService $jobHistoryService)
+    public function deleteJobById(Request $request, $id, JobHistoryService $jobHistoryService)
     {
         $jobHistoryService->deleteJobById($id);
 

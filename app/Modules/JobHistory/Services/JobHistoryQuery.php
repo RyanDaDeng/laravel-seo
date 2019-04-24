@@ -54,7 +54,6 @@ class JobHistoryQuery
     }
 
 
-
     /**
      * @param $dateFrom
      * @param $dateTo
@@ -92,6 +91,7 @@ class JobHistoryQuery
     }
 
     /**
+     * Create job history on monthly basis
      * @param Carbon $dateRangeFrom
      * @param Carbon $dateTo
      * @return bool
@@ -111,4 +111,46 @@ class JobHistoryQuery
         }
         return $isReady;
     }
+
+
+    public static function createAndValidateCustomDateRange(Carbon $dateFrom, Carbon $dateTo)
+    {
+        $dateRange = self::getDateRangeArray($dateFrom, $dateTo);
+        $isReady = true;
+        foreach ($dateRange as $range) {
+            $obj = self::createOrGetByDateRange($range['start'], $range['end']);
+            if ($obj->status !== JobHistory::FINISHED) {
+                $isReady = false;
+            }
+        }
+        return $isReady;
+    }
+
+
+    public static function getDateRangeArray(Carbon $dateFrom, Carbon $dateTo)
+    {
+        $res = [];
+        $start = $dateFrom->copy();
+        while ($start <= $dateTo) {
+
+            // base condition: if the current month, then just return
+            if ($start->year === $dateTo->year && $start->month === $dateTo->month) {
+                $row = [
+                    'start' => $start->copy(),
+                    'end' => $dateTo,
+                ];
+                $res[] = $row;
+                break;
+            }
+            $row = [
+                'start' => $start->copy(),
+                'end' => $start->copy()->endOfMonth()
+            ];
+            $res[] = $row;
+            $start->startOfMonth()->addMonth();
+        }
+        return $res;
+    }
+
+
 }

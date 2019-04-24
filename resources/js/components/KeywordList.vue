@@ -9,15 +9,19 @@
 
                 <b-col md="6" class="my-1">
 
-                    <label>Compare From <small style="color:red;">(required)</small></label>
-                    <VueCtkDateTimePicker v-model="compareFromRange" :range="true" :format="'YYYY-MM-DD'" :formatted="'ll'"/>
+                    <label>Compare From
+                        <small style="color:red;">(required)</small>
+                    </label>
+                    <VueCtkDateTimePicker v-model="compareFromRange" :range="true" :format="'YYYY-MM-DD'"
+                                          :formatted="'ll'"/>
 
                 </b-col>
 
                 <b-col md="6" class="my-1">
 
                     <label>Compare To</label>
-                    <VueCtkDateTimePicker v-model="compareToRange"  :format="'YYYY-MM-DD'" :range="true" :formatted="'ll'"/>
+                    <VueCtkDateTimePicker v-model="compareToRange" :format="'YYYY-MM-DD'" :range="true"
+                                          :formatted="'ll'"/>
 
                 </b-col>
 
@@ -53,9 +57,13 @@
                 </b-col>
 
                 <b-col md="6" class="my-1">
-                    <b-form-group label-cols-horizontal label="Device" class="mb-0">
+                    <b-form-group label-cols-horizontal label="Sort by" class="mb-0">
                         <b-input-group>
-                            <b-form-select v-model="paramFilter.device" :options="deviceOptions">
+                            <b-form-select v-model="paramFilter.sort_order" :options="sortOrderOptions"
+                                           slot="prepend">
+                                <option slot="first" :value="null">-- none --</option>
+                            </b-form-select>
+                            <b-form-select v-model="paramFilter.sort_by" :options="sortOptions">
                                 <option slot="first" :value="null">-- none --</option>
                             </b-form-select>
                         </b-input-group>
@@ -63,16 +71,17 @@
                 </b-col>
 
 
-
                 <b-col md="6" class="my-1">
                     <b-form-group label-cols-horizontal label="ID Search" class="mb-0">
-                        <b-form-input v-model="pathMd5" placeholder="Search Page ID"/>
+                        <b-form-input v-model="paramFilter.path_md5" placeholder="Search Page ID"/>
                     </b-form-group>
                 </b-col>
             </b-row>
             <b-row class="mx-auto">
                 <div>
-                    <button type="button" class="btn btn-success btn-sm" @click.stop="searchNow()" :disabled="searchButtonDisabled">Search</button>
+                    <button type="button" class="btn btn-success btn-sm" @click.stop="searchNow()"
+                            :disabled="searchButtonDisabled">Search
+                    </button>
                 </div>
 
             </b-row>
@@ -138,16 +147,12 @@
         >
 
             <template slot="ctr_benchmark" slot-scope="row">
-                <div v-if="row.item.profile">
-                    {{row.item.profile.ctr_benchmark}}%
-                    <span v-if="row.item.avg_ctr*100 - row.item.profile.ctr_benchmark >0"
-                          class="badge badge-pill badge-success">↑{{ Number(row.item.avg_ctr*100 - row.item.profile.ctr_benchmark).toFixed(2)}}%</span>
-                    <span v-if="row.item.avg_ctr*100 - row.item.profile.ctr_benchmark <0"
-                          class="badge badge-pill badge-danger">↓{{ Number(row.item.avg_ctr*100 - row.item.profile.ctr_benchmark).toFixed(2)}}%</span>
 
-                </div>
-
-
+                {{row.item.ctr_benchmark}}%
+                <span v-if="row.item.ctr_difference>0"
+                      class="badge badge-pill badge-success">↑{{ Number( row.item.ctr_difference).toFixed(2)}}%</span>
+                <span v-if="row.item.avg_ctr*100 - row.item.ctr_benchmark <0"
+                      class="badge badge-pill badge-danger">↓{{ Number( row.item.ctr_difference).toFixed(2)}}%</span>
                 <div>
                     <b-button v-b-popover.hover="'Edit'" variant="info" size="sm"
                               @click.stop="openCtrModal(row.item, row.index, $event.target)">
@@ -158,7 +163,7 @@
             <template slot="keyword" slot-scope="row">
 
 
-                <div v-if="row.item.profile&&row.item.profile.is_primary == true">
+                <div v-if="row.item.is_primary == true">
                     {{row.value}}
                     <b-badge
                             variant="success">Primary
@@ -186,7 +191,7 @@
 
 
             <template slot="click_potential" slot-scope="row">
-                {{row.item.profile ? row.item.profile.click_potential : ''}}
+                {{row.item.click_potential}}
                 <div>
                     <b-button v-b-popover.hover="'Edit'" variant="info" size="sm"
                               @click.stop="openClickModal(row.item, row.index, $event.target)">
@@ -319,8 +324,6 @@
 </template>
 
 <script>
-    import moment from 'moment';
-
     export default {
         data() {
             return {
@@ -370,7 +373,8 @@
                     device: '',
                     sort_by: '',
                     sort_order: '',
-                    is_primary: ''
+                    is_primary: '',
+                    path_md5:''
                 },
                 fields: [
                     // {key: 'id', label: 'ID', class: 'id-table-wrap',sortable: true},
@@ -387,8 +391,8 @@
                     {key: 'sum_clicks', label: 'Total Clicks', 'class': 'path-table-wrap'},
                     {key: 'avg_positions', label: 'Avg. Rank Position (AU)', 'class': 'status-wrap'},
                     {key: 'avg_ctr', label: 'CTR', 'class': 'date-wrap'},
-                    {key: 'ctr_benchmark', label: 'CTR Benchmark', 'class': 'path-table-wrap',sortable: true},
-                    {key: 'click_potential', label: 'Click Potential', 'class': 'path-table-wrap', sortable: true},
+                    {key: 'ctr_benchmark', label: 'CTR Benchmark', 'class': 'path-table-wrap'},
+                    {key: 'click_potential', label: 'Click Potential', 'class': 'path-table-wrap'},
                     {key: 'actions', label: 'Action(s)', 'class': 'path-table-wrap'}
                 ],
                 formItem: {
@@ -414,6 +418,8 @@
                 sortDesc: true,
                 sortDirection: '',
                 deviceOptions: ['desktop', 'mobile', 'tablet'],
+                sortOptions: ['ctr_difference', 'click_potential', 'ctr_benchmark'],
+                sortOrderOptions: ['asc', 'desc'],
                 selectedItemIndex: null,
                 isFirstInit: false
             }
@@ -483,7 +489,7 @@
                 this.$refs.ctrModal.show();
                 this.selectedItem = item;
                 this.selectedItemIndex = index;
-                this.ctrBenchmarkForm.benchmark = item.profile ? item.profile.ctr_benchmark : 0;
+                this.ctrBenchmarkForm.benchmark = item.ctr_benchmark;
             },
 
             openViewUrlModal(item, index, button) {
@@ -498,14 +504,16 @@
                 this.$refs.modal.show();
                 this.selectedItem = item;
                 this.selectedItemIndex = index;
-                this.clickPotentialForm.click = item.profile ? item.profile.click_potential : 0;
+                this.clickPotentialForm.click = item.click_potential;
             },
             updateCtrBenchmark(evt) {
                 evt.preventDefault();
                 let app = this;
                 let loader = this.$loading.show();
                 axios.put('/keywords/web/pages/' + this.selectedItem.page_id + '/keywords/' + this.selectedItem.keyword_id + '/benchmark', this.ctrBenchmarkForm).then(function (resp) {
-                    app.items[app.selectedItemIndex].profile = resp.data;
+
+                    app.items[app.selectedItemIndex].ctr_difference = app.items[app.selectedItemIndex].avg_ctr * 100 - resp.data.ctr_benchmark;
+                    app.items[app.selectedItemIndex].ctr_benchmark = resp.data.ctr_benchmark;
                     console.log(app.items[app.selectedItemIndex]);
                     app.$notify({
                         type: 'success',
@@ -532,7 +540,7 @@
                 let loader = this.$loading.show();
 
                 axios.put('/keywords/web/pages/' + this.selectedItem.page_id + '/keywords/' + this.selectedItem.keyword_id + '/click', this.clickPotentialForm).then(function (resp) {
-                    app.items[app.selectedItemIndex].profile = resp.data;
+                    app.items[app.selectedItemIndex].click_potential = resp.data.click_potential;
                     app.$notify({
                         type: 'success',
                         title: 'SUCCESS',
@@ -615,7 +623,7 @@
             myProvider(ctx) {
 
                 let app = this;
-                if(app.isFirstInit === true){
+                if (app.isFirstInit === true) {
                     return;
                 }
                 let promise = axios.get('keywords/web/keywords', {
@@ -627,13 +635,13 @@
                         keyword: this.paramFilter.keyword,
                         keyword_filter: this.paramFilter.keyword_filter,
                         device: this.paramFilter.device,
-                        sort_by: this.getSortByName(ctx.sortBy),
-                        sort_order: ctx.sortDesc === true ? 'desc' : 'asc',
+                        sort_by: this.paramFilter.sort_by,
+                        sort_order: this.paramFilter.sort_order,
                         a_date_from: this.compareFromRange.start,
                         a_date_to: this.compareFromRange.end,
                         b_date_from: this.compareToRange.start,
                         b_date_to: this.compareToRange.end,
-                        path_md5: this.pathMd5,
+                        path_md5: this.paramFilter.path_md5,
                         is_primary: this.paramFilter.is_primary
                     }
                 });
@@ -662,18 +670,18 @@
                 }).catch(function (error) {
                     console.log(error.response);
                     app.searchButtonDisabled = false;
-                    if(error.response.data &&  error.response.data.warning){
+                    if (error.response.data && error.response.data.warning) {
                         app.$notify({
                             type: 'warn',
                             title: 'Warning',
                             text: error.response.data.message,
                             duration: -1
                         });
-                    }else{
+                    } else {
                         app.$notify({
                             type: 'error',
                             title: 'ERROR',
-                            text: error.response.data &&  error.response.data .message ? error.response.data.message :'Cannot retrieve data, please contact system manager.',
+                            text: error.response.data && error.response.data.message ? error.response.data.message : 'Cannot retrieve data, please contact system manager.',
                             duration: -1
                         });
                     }
@@ -726,10 +734,12 @@
         word-break: break-word;
         width: 4%;
     }
+
     .device-wrap {
         word-break: break-word;
         width: 2%;
     }
+
     .button-table-wrap {
         word-break: break-word;
         width: 4%;

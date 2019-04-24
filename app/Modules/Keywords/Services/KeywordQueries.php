@@ -3,10 +3,10 @@
 namespace App\Modules\Keywords\Services;
 
 use App\Modules\DataMigration\Services\SnapshotSummaryService;
+use App\Modules\JobHistory\Services\JobHistoryQuery;
 use App\Modules\Keywords\Models\Keyword;
 use App\Modules\Keywords\Models\Page;
 use App\Modules\Keywords\Models\QueryDetails;
-use App\Modules\Keywords\Models\QueryProfile;
 use App\Modules\SeoAgent\Models\SeoAgentCurrentData;
 use Carbon\Carbon;
 
@@ -116,10 +116,9 @@ class KeywordQueries
      * @param Carbon $dateTo
      * @return \Illuminate\Database\Query\Builder
      */
-    public static function getMonthlyBaseQuery(Carbon $dateFrom, Carbon $dateTo)
+    public static function getCompareToRangeBaseQuery(Carbon $dateFrom, Carbon $dateTo)
     {
-
-        $unionQuery = self::monthlyUnionQuery($dateFrom, $dateTo);
+        $unionQuery = self::customRangeUnionQuery($dateFrom, $dateTo);
         $baseQuery = \DB::table(\DB::raw("({$unionQuery->toSql()}) as summary"))->selectRaw(
             '
                 summary.page as page_id,
@@ -132,7 +131,6 @@ class KeywordQueries
     round(sum(summary.sum_clicks)/sum(summary.sum_impressions),4) as avg_ctr'
         )
             ->groupBy(['summary.page', 'summary.keyword', 'summary.device']);
-
         return $baseQuery;
     }
 
@@ -141,42 +139,65 @@ class KeywordQueries
      * @param Carbon $dateTo
      * @return \Illuminate\Database\Query\Builder
      */
-    public static function getMonthlyBaseQueryForCtr(Carbon $dateFrom, Carbon $dateTo)
+    public static function getCustomRangeBaseQuery(Carbon $dateFrom, Carbon $dateTo)
     {
 
-        $unionQuery = self::monthlyUnionQuery($dateFrom, $dateTo);
+
+        $unionQuery = self::customRangeUnionQuery($dateFrom, $dateTo);
         $baseQuery = \DB::table(\DB::raw("({$unionQuery->toSql()}) as summary"))->selectRaw(
             '
                 summary.page as page_id,
                 summary.keyword as keyword_id,
+                summary.device as device_type,
+                profile.is_primary as is_primary,
+                profile.click_potential as click_potential,
+                profile.ctr_benchmark as ctr_benchmark,
 	sum(summary.sum_clicks) as sum_clicks,
 	round(sum(summary.sum_impressions),2) as sum_impressions, 
 	round(sum(summary.sum_positions),2) as sum_positions,
 	round(sum(summary.sum_average_weight_ranking),2) as sum_average_weight_ranking,
-    round(sum(summary.sum_clicks)/sum(summary.sum_impressions),4) as avg_ctr'
+    round(sum(summary.sum_clicks)/sum(summary.sum_impressions),4) as avg_ctr,
+    round((sum(summary.sum_clicks)/sum(summary.sum_impressions))*100-profile.ctr_benchmark,4) as ctr_difference'
         )
-            ->groupBy(['summary.page', 'summary.keyword']);
+            ->join('tbl_gw_query_profiles as profile', function ($join) {
+                $join->on('summary.page', '=', 'profile.page');
+                $join->on('summary.keyword', '=', 'profile.keyword');
 
+            })
+            ->groupBy(['summary.page', 'summary.keyword', 'summary.device']);
         return $baseQuery;
     }
 
-    public static function monthlyUnionQuery(Carbon $dateFrom, Carbon $dateTo)
+
+
+
+
+    public static function customRangeUnionQuery(Carbon $dateFrom, Carbon $dateTo)
     {
+        $dateRange = JobHistoryQuery::getDateRangeArray($dateFrom, $dateTo);
 
-        $startDateCarbon = $dateFrom->copy()->startOfMonth();
-        $endDateCarbon = $dateTo->copy()->endOfMonth();
-
-        // create initial first table sub query
-        $tableName = SnapshotSummaryService::getTableNameByMonthlyRange($startDateCarbon);
+        $tableName = SnapshotSummaryService::getTableName($dateRange[0]['start'], $dateRange[0]['end']);
         $query = \DB::table("$tableName");
-
-        // loop and generate sub-query
-        while ($endDateCarbon->greaterThan($startDateCarbon->addMonth())) {
-            $tableName = SnapshotSummaryService::getTableNameByMonthlyRange($startDateCarbon);
+        array_shift($dateRange);
+        foreach ($dateRange as $range) {
+            $tableName = SnapshotSummaryService::getTableName($range['start'], $range['end']);
             $query->unionAll(\DB::table("$tableName"));
         }
+        return $query;
+    }
+
+
+    public static function getCompareToData(Carbon $aDateFrom, Carbon $aDateTo, $pageId, $keywordId, $deviceType)
+    {
+
+        $query = self::getCompareToRangeBaseQuery($aDateFrom, $aDateTo)
+            ->where('summary.page', '=', $pageId)
+            ->where('summary.keyword', '=', $keywordId)
+            ->where('summary.device', '=', $deviceType)->first();
 
         return $query;
+
+
     }
 
     public static function getKeywordList($aDateFrom,
@@ -197,23 +218,17 @@ class KeywordQueries
         $aDateFrom = Carbon::parse($aDateFrom);
         $aDateTo = Carbon::parse($aDateTo);
 
-        $query = self::getMonthlyBaseQuery($aDateFrom, $aDateTo);
+        $query = self::getCustomRangeBaseQuery($aDateFrom, $aDateTo);
+
+
         $page = null;
         if ($pathMd5) {
             $page = Page::query()->where('path_md5', $pathMd5)->first();
         }
 
-        $query = $query->whereBetween('summary.to_date', [$aDateFrom->format('Y-m-d'), $aDateTo->format('Y-m-d')]);
-
         // is primary filter
         if (!empty($isPrimary) && $isPrimary == '1') {
-            $query = $query
-                ->join('tbl_gw_query_profiles', function ($join) {
-                    $join->on('summary.page', '=', 'tbl_gw_query_profiles.page');
-                    $join->on('summary.keyword', '=', 'tbl_gw_query_profiles.keyword');
-
-                })
-                ->where('tbl_gw_query_profiles.is_primary', '=', 1);
+            $query = $query->where('is_primary', '=', 1);
         }
 
         // device filter
@@ -240,33 +255,10 @@ class KeywordQueries
             $query = $query->whereIn('summary.keyword', $keywordData->pluck('id'));
         }
 
-        // sort filter
-//        if ($sortBy) {
-//            $sortOrder = $sortOrder === 'asc' ? 'asc' : 'desc';
-//            $query = $query->orderBy($sortBy, $sortOrder);
-//        }
 
-
-        if ($sortBy === 'click_potential') {
+        if (in_array($sortBy, ['ctr_difference','click_potential', 'ctr_benchmark'])) {
             $sortOrder = $sortOrder === 'asc' ? 'asc' : 'desc';
-            $query = $query
-                ->join('tbl_gw_query_profiles', function ($join) {
-                    $join->on('summary.page', '=', 'tbl_gw_query_profiles.page');
-                    $join->on('summary.keyword', '=', 'tbl_gw_query_profiles.keyword');
-
-                })
-                ->orderBy($sortBy, $sortOrder);
-        }
-
-        if ($sortBy === 'ctr_benchmark') {
-            $sortOrder = $sortOrder === 'asc' ? 'asc' : 'desc';
-            $query = $query
-                ->join('tbl_gw_query_profiles', function ($join) {
-                    $join->on('summary.page', '=', 'tbl_gw_query_profiles.page');
-                    $join->on('summary.keyword', '=', 'tbl_gw_query_profiles.keyword');
-
-                })
-                ->orderBy($sortBy, $sortOrder);
+            $query = $query->orderBy($sortBy, $sortOrder);
         }
 
 
@@ -279,7 +271,6 @@ class KeywordQueries
         $pages = !empty($urlData) ? $urlData : Page::query()->whereIn('id', $pageIds)->get();
         $metaMaps = SeoAgentCurrentData::query()->whereIn('hash', $pages->pluck('path_md5'))->get()->keyBy('hash');
         $pageMaps = $pages->keyBy('id')->toArray();
-        $keyMaps = [];
 
         $data = [];
         foreach ($dataCollect as $row) {
@@ -301,32 +292,12 @@ class KeywordQueries
                 $row->keyword = $keywordMaps[$row->keyword_id];
             }
 
-            // re-format the data number and calculate extra average
-            $row->avg_ctr = round($row->avg_ctr, 4);
-            $row->avg_positions = round($row->sum_average_weight_ranking / $row->sum_impressions, 4);
-
-            $row->device_name = QueryDetails::getDeviceNameById($row->device_type);
-            // create profile map
-            $row->profile = QueryProfile::query()
-                ->where('page', $row->page_id)
-                ->select('is_primary', 'ctr_benchmark', 'click_potential', 'id')
-                ->where('keyword', $row->keyword_id)
-                ->first();
-            if (isset($keywordMaps[$row->keyword_id]) && isset($pageMaps[$row->page_id])) {
-                $row->index_id = $row->page_id . '_' . $row->keyword_id;
-                // put hash mapping into maps for the reference of page+keyword
-                $keyMaps[$row->index_id] = (array)$row;
-            } else {
-                $row->index_id = null;
-            }
             $data[] = $row;
         }
 
         $res['data'] = $data;
 
-        return [$keyMaps, $res];
+        return  $res;
     }
-
-
 }
 

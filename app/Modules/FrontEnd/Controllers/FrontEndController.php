@@ -4,8 +4,6 @@ namespace App\Modules\FrontEnd\Controllers;
 
 
 use App\Http\Controllers\Controller;
-use App\Modules\Keywords\Models\PageRanking;
-use Carbon\Carbon;
 
 class FrontEndController extends Controller
 {
