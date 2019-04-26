@@ -4,6 +4,16 @@
 
         <b-card>
 
+            <b-row>
+                <b-col md="12" class="my-1">
+
+                    <small>
+                        *Sometimes the google search data might not be synced entirely because of potential sync delay.
+                        You might need to re-run the job again.
+                        Also, use settings page to see what the latest updated date is.
+                    </small>
+                </b-col>
+            </b-row>
 
             <b-row>
 
@@ -131,7 +141,7 @@
                     {key: 'date_from', label: 'Date From'},
                     {key: 'date_to', label: 'Date To'},
                     {key: 'status_name', label: 'Status Name'},
-                    {key: 'actions', label: 'Action(s)','class': 'action-wrap'}
+                    {key: 'actions', label: 'Action(s)', 'class': 'action-wrap'}
                 ],
                 formItem: {
                     canonical: '',
@@ -173,13 +183,13 @@
             // this.compareToRange.start = moment().subtract(57, 'days').format('YYYY-MM-DD HH:MM:SS');
             // this.compareToRange.end = moment().subtract(29, 'days').format('YYYY-MM-DD HH:MM:SS');
         },
-        mounted(){
+        mounted() {
             window.Echo.channel("job-completed-channel").listen(".job-completed-event", data => {
                 this.$notify({
                     type: 'warn',
                     title: 'SUCCESS',
                     text: data.message,
-                    group:'job',
+                    group: 'job',
                     duration: -1
                 });
                 this.$refs.table.refresh();
@@ -201,11 +211,11 @@
                 this.totalRows = filteredItems.length
                 this.currentPage = 1
             },
-            deleteAllData(item, index, target){
+            deleteAllData(item, index, target) {
                 if (confirm('Are you sure you want to delete all data for this job?')) {
                     let app = this;
                     let loader = this.$loading.show();
-                    axios.delete('job-history/web/job-histories/' + item.id ).then(function (resp) {
+                    axios.delete('job-history/web/job-histories/' + item.id).then(function (resp) {
                         console.log(resp);
                         console.log(index);
                         app.$refs.table.refresh();

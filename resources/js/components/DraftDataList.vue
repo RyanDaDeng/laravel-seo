@@ -1,6 +1,6 @@
 <template>
 
-    <div>
+    <b-container fluid>
         <b-card v-if="!pathMd5">
             <b-row>
                 <b-col md="6" class="my-1">
@@ -371,7 +371,7 @@
             </b-modal>
         </div>
 
-    </div>
+    </b-container>
 </template>
 
 <script>
