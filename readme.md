@@ -34,6 +34,7 @@ PUSHER_APP_CLUSTER=mt1
 2. Open a new terminal and go to your project and run: 
 
 `php artisan up`
+
 `php artisan queue:work database --queue=high,default`
 
 (If you make any changes to job or file, you have to run queue:restart to re-compile the files and re-run the command above, if you want it to be real time, please use queue:listen instead)
