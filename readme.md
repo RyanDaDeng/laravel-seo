@@ -65,7 +65,7 @@ Any time you make changes to any file of project, the front-end UI will be auto-
 
 ## Some common questions:
 1. The module can only be accessed by a few staff, the logic is defined under SeoManagerController -> checkAuthUser
-2. `token.txt` has the API key that is used to connect with Sea Agent site.
+2. `token.txt` has the API key that is used to connect with Sea Agent site, NEVER COMMIT THIS FILE
 3. If you encounter any auth issue, you can try to comment out middleware in routes.php
 
 
