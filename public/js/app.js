@@ -107551,7 +107551,8 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c(
-    "div",
+    "b-container",
+    { attrs: { fluid: "" } },
     [
       !_vm.pathMd5
         ? _c(
@@ -113297,6 +113298,16 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
     data: function data() {
@@ -113485,6 +113496,20 @@ var render = function() {
       _c(
         "b-card",
         [
+          _c(
+            "b-row",
+            [
+              _c("b-col", { staticClass: "my-1", attrs: { md: "12" } }, [
+                _c("small", [
+                  _vm._v(
+                    "\n                    *Sometimes the google search data might not be synced entirely because of potential sync delay.\n                    You might need to re-run the job again.\n                    Also, use settings page to see what the latest updated date is.\n                "
+                  )
+                ])
+              ])
+            ],
+            1
+          ),
+          _vm._v(" "),
           _c(
             "b-row",
             [
