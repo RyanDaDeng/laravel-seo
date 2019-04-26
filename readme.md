@@ -1,8 +1,4 @@
 
-## Code Structure and Essential information reference:
-
-Resource: https://docs.google.com/document/d/1K33oV26y1N963cxYPK7f6nvJlM4i_fM-l6qde3LZy7E/edit
-
 
 ## SeoAgent Site Installation
 
@@ -54,31 +50,6 @@ Any time you make changes to any file of project, the front-end UI will be auto-
 `mix.browserSync('http://seoagent.test/');`  to your own host
 
 2. Run `npm run watch` (a browser tab should be opened automatically)
-
-
-
-## Admin Site Installation
-
-1. Set up `NewSeoTagManager` module first
-2. Dump mysql data (You can check related tables through `/Models` directory within the module
-3. Ensure your model connection Base class is correct for `/Models/InkStationDatabase`, `/Models/LaravelDatabase` and `/Models/LogThirdPartyDatabase`
-
-## Some common questions:
-1. The module can only be accessed by a few staff, the logic is defined under SeoManagerController -> checkAuthUser
-2. `token.txt` has the API key that is used to connect with Sea Agent site, NEVER COMMIT THIS FILE
-3. If you encounter any auth issue, you can try to comment out middleware in routes.php
-
-
-## Connecting Admin with Agent site
-1. Open your agent site host and got to route `/app/api-management`
-2. Create `Personal Access Tokens`
-3. Copy the pop-up token
-4. Go to your admin panel source code and find token.txt and paste the token you just generated (never commit this file!), double check it does not include new extra new line
-5. Go to your admin panel source code and find SeoAgentApiService under Services directory, change the serve api to your local SEO Agent site url
-6. Now, go to your admin panel host and go to SEO tab and click SEO Config, you should be able to see the last sync time settings which retrieved from your local SEO Agent site by API calls.
-7. Now, click `Push data to agent` button to push the SEO meta data to your local SEO Agent site, wait the spinner to be finished. Once its done, go to your SEO Agent site host in `/app/seoagent`, you should see a list of synced meta data.
-8. Now, click the Push button in `Google Search Keyword section` in admin panel. (This takes a while to finish sync), Once its finished, go to your SEO Agent Site -> View Keywords page to query data for 2019-03-25
-
 
 
 ## Queue on production server
