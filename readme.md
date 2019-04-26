@@ -80,12 +80,7 @@ Any time you make changes to any file of project, the front-end UI will be auto-
 
 
 
-
-##Default users
-
-
-
-### Queue on production server
+## Queue on production server
 
 1. Install supervisor, Read through: https://laravel.com/docs/5.7/queues#supervisor-configuration
 
@@ -97,7 +92,7 @@ note: change your artisan location
 2. start supervisor
 
 
-### Scheduler on production server
+## Scheduler on production server
 
 1. read through cron set-up: https://laravel.com/docs/5.7/scheduling#introduction
 2. The current scheduler is defined in `app/Console/Kernel.php`, `ReRunCurrentDateSummaryCommand` this is used to be run on every end of day.
