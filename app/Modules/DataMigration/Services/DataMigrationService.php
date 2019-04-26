@@ -16,6 +16,9 @@ use Illuminate\Support\Facades\DB;
 class DataMigrationService
 {
 
+    /**
+     * Generate path md5 to match our md5 data
+     */
     public function generatePathMd5ForGooglePage()
     {
         $data = Page::query()->whereNull('path_md5')->get();

@@ -12,14 +12,14 @@ class CalculateClickPotential extends Command
      *
      * @var string
      */
-    protected $signature = 'query:click';
+    protected $signature = 'calculate:click';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Step 3';
 
     /**
      * Create a new command instance.

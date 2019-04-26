@@ -12,14 +12,14 @@ class CtrBenchmark extends Command
      *
      * @var string
      */
-    protected $signature = 'query:benchmark';
+    protected $signature = 'calculate:benchmark';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Step 2';
 
     /**
      * Create a new command instance.

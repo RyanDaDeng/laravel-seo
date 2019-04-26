@@ -91,29 +91,13 @@ class JobHistoryService
         return $obj->status === JobHistory::FINISHED;
     }
 
+
     /**
-     * Create job history on monthly basis
-     * @param Carbon $dateRangeFrom
+     * Check if all date range have been finished jobs
+     * @param Carbon $dateFrom
      * @param Carbon $dateTo
      * @return bool
      */
-    public static function createAndValidateDateRangeOnMonthly(Carbon $dateRangeFrom, Carbon $dateTo)
-    {
-        $startOfFromMonth = $dateRangeFrom->startOfMonth();
-        $startOfToMonth = $dateTo->startOfMonth();
-
-        $isReady = true;
-        while ($startOfFromMonth <= $startOfToMonth) {
-            $obj = self::createOrGetByDateRange($startOfFromMonth, $startOfFromMonth->copy()->endOfMonth());
-            if ($obj->status !== JobHistory::FINISHED) {
-                $isReady = false;
-            }
-            $startOfFromMonth->addMonth();
-        }
-        return $isReady;
-    }
-
-
     public static function createAndValidateCustomDateRange(Carbon $dateFrom, Carbon $dateTo)
     {
         $dateRange = self::getDateRangeArray($dateFrom, $dateTo);
@@ -128,6 +112,12 @@ class JobHistoryService
     }
 
 
+    /**
+     * Get date range chunks
+     * @param Carbon $dateFrom
+     * @param Carbon $dateTo
+     * @return array
+     */
     public static function getDateRangeArray(Carbon $dateFrom, Carbon $dateTo)
     {
         $res = [];
@@ -167,6 +157,9 @@ class JobHistoryService
         return JobHistoryService::findJobById($job->id);
     }
 
+    /**
+     * @param $id
+     */
     public function deleteJobById($id)
     {
         $job = JobHistoryService::findJobById($id);

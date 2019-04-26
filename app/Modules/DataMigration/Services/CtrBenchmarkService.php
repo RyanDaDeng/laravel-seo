@@ -36,14 +36,12 @@ class CtrBenchmarkService
      * calculate initial avg position and ctr value and impressions for each profile
      * @param bool $reCal
      */
-    public function calculateInitial($reCal = false)
+    public function calculateInitial($reCal = false, Carbon $from, Carbon $to)
     {
         if ($reCal === true) {
             $this->resetInitial();
         }
 
-        $from = Carbon::parse('2019-03-04')->subDay(28);
-        $to = Carbon::parse('2019-03-04');
         $result = KeywordService::getCompareToRangeBaseQuery($from, $to)->get()->toArray();
 
         foreach ($result as $datum) {

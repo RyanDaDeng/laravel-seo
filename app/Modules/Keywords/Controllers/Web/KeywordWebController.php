@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Modules\JobHistory\Services\JobHistoryService;
 use App\Modules\Keywords\Models\Page;
 use App\Modules\Keywords\Models\QueryDetails;
-use App\Modules\Keywords\Services\QueryProfileQueries;
+use App\Modules\Keywords\Services\QueryProfileService;
 use App\Modules\Keywords\Services\KeywordService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -147,7 +147,7 @@ class KeywordWebController extends Controller
 
     public function updateClickPotential(Request $request, $pageId, $keywordId)
     {
-        $obj = QueryProfileQueries::getById($pageId, $keywordId);
+        $obj = QueryProfileService::getById($pageId, $keywordId);
         $obj->click_potential = $request->input('click');
         $obj->save();
 
@@ -157,7 +157,7 @@ class KeywordWebController extends Controller
 
     public function updateCtrBenchmark(Request $request, $pageId, $keywordId)
     {
-        $obj = QueryProfileQueries::getById($pageId, $keywordId);
+        $obj = QueryProfileService::getById($pageId, $keywordId);
         $obj->ctr_benchmark = floatval($request->input('benchmark'));
         $obj->save();
 
@@ -166,7 +166,7 @@ class KeywordWebController extends Controller
 
     public function setPrimary(Request $request, $pageId, $keywordId)
     {
-        $obj = QueryProfileQueries::getById($pageId, $keywordId);
+        $obj = QueryProfileService::getById($pageId, $keywordId);
         $isPrimary = $request->input('is_primary');
         if ($obj) {
             $obj->is_primary = $isPrimary;
