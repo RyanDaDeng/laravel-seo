@@ -76,7 +76,7 @@ Any time you make changes to any file of project, the front-end UI will be auto-
 4. Go to your admin panel source code and find token.txt and paste the token you just generated (never commit this file!), double check it does not include new extra new line
 5. Go to your admin panel source code and find SeoAgentApiService under Services directory, change the serve api to your local SEO Agent site url
 6. Now, go to your admin panel host and go to SEO tab and click SEO Config, you should be able to see the last sync time settings which retrieved from your local SEO Agent site by API calls.
-7. Now, click Push data to agent button to push the sea meta data to your local SEO Agent site, wait the spinner to be finished. Once its done, go to your SEO Agent site host in `/app/seoagent`, you should see a list of synced meta data.
+7. Now, click `Push data to agent` button to push the sea meta data to your local SEO Agent site, wait the spinner to be finished. Once its done, go to your SEO Agent site host in `/app/seoagent`, you should see a list of synced meta data.
 8. Now, click the Push button in Google Search Keyword section in admin panel. (This takes a while to finish sync), Once its finished, go to your SEO Agent Site -> View Keywords page to query data for 2019-03-25
 
 
