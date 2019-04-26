@@ -29,7 +29,7 @@ PUSHER_APP_KEY=
 PUSHER_APP_SECRET=
 PUSHER_APP_CLUSTER=mt1
 ````
-(Confirm PUSHER details from Stephen)
+(Register a PUSHER account via https://pusher.com/)
 
 2. Open a new terminal and go to your project and run: 
 
