@@ -1,6 +1,7 @@
 
 ## Code Structure and Essential information reference:
 
+Resource: https://docs.google.com/document/d/1K33oV26y1N963cxYPK7f6nvJlM4i_fM-l6qde3LZy7E/edit
 
 
 ## SeoAgent Site Installation
