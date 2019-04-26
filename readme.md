@@ -4,7 +4,7 @@
 
 #### Project Install
 
-1. `git clone git@bitbucket.org:inkgroup12/new_seo_third_party.git soagent`
+1. `git clone`
 2. Create a schema in your database e.g. seoagent and Connect your mysql to .env file
 3. Run `composer install -vvv`
 4. Run `npm install`
