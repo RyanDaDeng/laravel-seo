@@ -10,7 +10,6 @@ namespace App\Modules\JobHistory\Controllers\Web;
 
 
 use App\Modules\JobHistory\Models\JobHistory;
-use App\Modules\JobHistory\Services\JobHistoryQuery;
 use App\Modules\JobHistory\Services\JobHistoryService;
 use Illuminate\Http\Request;
 

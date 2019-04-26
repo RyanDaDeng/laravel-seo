@@ -3,7 +3,7 @@
 namespace App\Modules\Keywords\Controllers\Web;
 
 use App\Http\Controllers\Controller;
-use App\Modules\JobHistory\Services\JobHistoryQuery;
+use App\Modules\JobHistory\Services\JobHistoryService;
 use App\Modules\Keywords\Models\Page;
 use App\Modules\Keywords\Models\QueryDetails;
 use App\Modules\Keywords\Services\QueryProfileQueries;
@@ -76,7 +76,7 @@ class KeywordWebController extends Controller
 
 
         // if job not finished
-        if (!JobHistoryQuery::createAndValidateCustomDateRange($aDateFromCarbon, $aDateToCarbon)) {
+        if (!JobHistoryService::createAndValidateCustomDateRange($aDateFromCarbon, $aDateToCarbon)) {
             return \Response::json(['warning' => true, 'message' => 'There is a job has been running for Compare From range. Please wait it to be finished.'], 400);
         }
 
@@ -103,7 +103,7 @@ class KeywordWebController extends Controller
         if ($request->query('b_date_from') && $request->query('b_date_to')) {
             $bDateFromCarbon = Carbon::parse($request->query('b_date_from'));
             $bDateToCarbon = Carbon::parse($request->query('b_date_to'));
-            if (!JobHistoryQuery::createAndValidateCustomDateRange($bDateFromCarbon, $bDateToCarbon)) {
+            if (!JobHistoryService::createAndValidateCustomDateRange($bDateFromCarbon, $bDateToCarbon)) {
                 return \Response::json(['warning' => true, 'message' => 'There is a job has been running for Compare To range. Please wait it to be finished.'], 400);
             }
             $hasCompareTo = true;
