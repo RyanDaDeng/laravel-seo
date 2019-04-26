@@ -202,7 +202,6 @@ class SeoAgentRepository
      */
     public function createHistory(SeoAgentDraftData $meta, $comments, $status)
     {
-        Log::info('23232');
         if (!MetaHistory::query()->where('seo_meta_hash', $meta->hash)->exists()) {
             $new = new MetaHistory();
             $new->comments = '';

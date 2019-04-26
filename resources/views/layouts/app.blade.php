@@ -39,8 +39,13 @@
                 <!-- Left Side Of Navbar -->
                 <ul class="navbar-nav mr-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/app">Home</a>
+                        <a class="nav-link" href="/app">View URLs</a>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link" href="/app/keywords">View Keywords</a>
+                    </li>
+
                     @if(\Illuminate\Support\Facades\Auth::check() )
                         <li class="nav-item">
                             <a class="nav-link" href="/app/settings">Settings</a>

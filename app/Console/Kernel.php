@@ -2,10 +2,12 @@
 
 namespace App\Console;
 
-use App\Console\Commands\IndexIdMigrationCommand;
-use App\Console\Commands\MigrateQueryProfileKeywordField;
+use App\Console\Commands\CalculateSnapshot;
+use App\Console\Commands\CtrBenchmark;
+use App\Console\Commands\CalculateInitialData;
 use App\Console\Commands\PathMD5Command;
-use App\Console\Commands\RankingMigrationCommand;
+use App\Console\Commands\ProcessSummaryJobCommand;
+use App\Console\Commands\ReRunCurrentDateSummaryCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -18,10 +20,11 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         //
+        ProcessSummaryJobCommand::class,
         PathMD5Command::class,
-        MigrateQueryProfileKeywordField::class,
-        RankingMigrationCommand::class,
-        IndexIdMigrationCommand::class
+        CtrBenchmark::class,
+        CalculateInitialData::class,
+        ReRunCurrentDateSummaryCommand::class
     ];
 
     /**
@@ -32,8 +35,9 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')
-        //          ->hourly();
+        $schedule->command('process:current')
+            ->timezone('Australia/Sydney')
+            ->dailyAt('23:59')->evenInMaintenanceMode();
     }
 
     /**

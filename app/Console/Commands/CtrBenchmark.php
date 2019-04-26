@@ -2,24 +2,24 @@
 
 namespace App\Console\Commands;
 
-use App\Modules\DataMigration\Services\DataMigrationService;
+use App\Modules\DataMigration\Services\CtrBenchmarkService;
 use Illuminate\Console\Command;
 
-class IndexIdMigrationCommand extends Command
+class CtrBenchmark extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'query:index';
+    protected $signature = 'calculate:benchmark';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Step 2';
 
     /**
      * Create a new command instance.
@@ -39,8 +39,7 @@ class IndexIdMigrationCommand extends Command
     public function handle()
     {
         //
-        $migration = new DataMigrationService();
-        $migration->indexMigration();
-
+        $service = new CtrBenchmarkService();
+        $service->calculateCtrBenchmark();
     }
 }

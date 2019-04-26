@@ -2,17 +2,18 @@
 
 namespace App\Console\Commands;
 
-use App\Modules\DataMigration\Services\DataMigrationService;
+use App\Jobs\ProcessSummary;
+use App\Modules\JobHistory\Models\JobHistory;
 use Illuminate\Console\Command;
 
-class RankingMigrationCommand extends Command
+class ProcessSummaryJobCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'query:ranking';
+    protected $signature = 'process:summary';
 
     /**
      * The console command description.
@@ -38,10 +39,11 @@ class RankingMigrationCommand extends Command
      */
     public function handle()
     {
-        //
-
-        $migration = new DataMigrationService();
-        $migration->queryRankingMigration();
-
+//        $processor = new JobHistoryProcessor();
+        $jobs = JobHistory::query()->where('status',JobHistory::PENDING)->get();
+        foreach($jobs as $job){
+//           $processor->runJob($job);
+            ProcessSummary::dispatch($job);
+        }
     }
 }

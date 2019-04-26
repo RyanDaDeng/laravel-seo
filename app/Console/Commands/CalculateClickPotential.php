@@ -2,24 +2,24 @@
 
 namespace App\Console\Commands;
 
-use App\Modules\DataMigration\Services\DataMigrationService;
+use App\Modules\DataMigration\Services\CtrBenchmarkService;
 use Illuminate\Console\Command;
 
-class MigrateQueryProfileKeywordField extends Command
+class CalculateClickPotential extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'query:keyword';
+    protected $signature = 'calculate:click';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Step 3';
 
     /**
      * Create a new command instance.
@@ -39,9 +39,7 @@ class MigrateQueryProfileKeywordField extends Command
     public function handle()
     {
         //
-
-        $migration = new DataMigrationService();
-        $migration->migrateQueryProfileKeywordField();
-
+        $service = new CtrBenchmarkService();
+        $service->calculateClickPotential();
     }
 }

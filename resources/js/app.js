@@ -36,18 +36,17 @@ Vue.use(Loading);
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
 import VoerroTagsInput from '@voerro/vue-tagsinput';
-Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 Vue.component('tags-input', VoerroTagsInput);
 Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 Vue.component('draft-data-list', require('./components/DraftDataList.vue'));
-Vue.component('draft-data-simple-list', require('./components/DraftDataSimpleList.vue'));
-Vue.component('keyword-simple-list', require('./components/KeywordSimpleList.vue'));
 Vue.component('setting', require('./components/Setting.vue'));
 Vue.component('api-passport', require('./components/ApiPassport.vue'));
 Vue.component('keyword-list', require('./components/KeywordList.vue'));
-Vue.component('seo-layout', require('./components/SeoLayout.vue'));
+Vue.component('keyword-layout', require('./components/KeywordLayout.vue'));
+Vue.component('job-history', require('./components/JobHistory.vue'));
 
-
+// event bus
+ window.EventBus = new Vue;
 
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key)))
