@@ -10,7 +10,7 @@ namespace App\Modules\DataMigration\Services;
 
 
 use App\Modules\Keywords\Models\QueryProfile;
-use App\Modules\Keywords\Services\KeywordQueries;
+use App\Modules\Keywords\Services\KeywordService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -44,7 +44,7 @@ class CtrBenchmarkService
 
         $from = Carbon::parse('2019-03-04')->subDay(28);
         $to = Carbon::parse('2019-03-04');
-        $result = KeywordQueries::getCompareToRangeBaseQuery($from, $to)->get()->toArray();
+        $result = KeywordService::getCompareToRangeBaseQuery($from, $to)->get()->toArray();
 
         foreach ($result as $datum) {
             $avgPosition = round($datum->sum_average_weight_ranking / $datum->sum_impressions, 4);

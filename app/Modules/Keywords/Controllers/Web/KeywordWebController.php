@@ -7,7 +7,7 @@ use App\Modules\JobHistory\Services\JobHistoryService;
 use App\Modules\Keywords\Models\Page;
 use App\Modules\Keywords\Models\QueryDetails;
 use App\Modules\Keywords\Services\QueryProfileQueries;
-use App\Modules\Keywords\Services\KeywordQueries;
+use App\Modules\Keywords\Services\KeywordService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -80,7 +80,7 @@ class KeywordWebController extends Controller
             return \Response::json(['warning' => true, 'message' => 'There is a job has been running for Compare From range. Please wait it to be finished.'], 400);
         }
 
-        $aRangeData = KeywordQueries::getKeywordList(
+        $aRangeData = KeywordService::getKeywordList(
             $aDateFrom,
             $aDateTo,
             $device,
@@ -120,7 +120,7 @@ class KeywordWebController extends Controller
                 $aRangeData['data'][$key]->trend = [];
                 // has compare to data, then appending compare result
                 if ($hasCompareTo) {
-                    $compareTo = KeywordQueries::getCompareToData($bDateFromCarbon, $bDateToCarbon, $row->page_id, $row->keyword_id, $device);
+                    $compareTo = KeywordService::getCompareToData($bDateFromCarbon, $bDateToCarbon, $row->page_id, $row->keyword_id, $device);
                     if($compareTo){
                         $compareTo->avg_positions = round($compareTo->sum_average_weight_ranking / $compareTo->sum_impressions, 4);
                         $aRangeData['data'][$key]->trend = [

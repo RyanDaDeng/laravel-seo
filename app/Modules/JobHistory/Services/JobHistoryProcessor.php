@@ -11,7 +11,7 @@ namespace App\Modules\JobHistory\Services;
 
 use App\Modules\DataMigration\Services\SnapshotSummaryService;
 use App\Modules\JobHistory\Models\JobHistory;
-use App\Modules\Keywords\Services\KeywordQueries;
+use App\Modules\Keywords\Services\KeywordService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
@@ -73,7 +73,7 @@ class JobHistoryProcessor
             $snapShotSummary->dropTableIfExists();
             $snapShotSummary->createTable();
 
-            $result = KeywordQueries::summarize($dateFrom, $dateTo);
+            $result = KeywordService::summarize($dateFrom, $dateTo);
             $snapShotSummary->insertData($result);
 
             $this->finished();

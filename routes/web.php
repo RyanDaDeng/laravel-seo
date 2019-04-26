@@ -33,7 +33,7 @@ dd($ditincts);
 
     $instance = \App\Modules\DataMigration\Services\SnapshotSummaryService::instance($dateFrom, $dateTo);
     foreach ($ditincts as $ditinct) {
-        $res = \App\Modules\Keywords\Services\KeywordQueries::summarizeByItem(
+        $res = \App\Modules\Keywords\Services\KeywordService::summarizeByItem(
             $dateFrom,
             $dateTo,
             $ditinct->page, $ditinct->keyword, $ditinct->device_type);
