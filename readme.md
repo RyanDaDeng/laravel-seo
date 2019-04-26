@@ -6,7 +6,8 @@ Resource: https://docs.google.com/document/d/1K33oV26y1N963cxYPK7f6nvJlM4i_fM-l6
 
 ## SeoAgent Site Installation
 
-- Project Install
+#### Project Install
+
 1. `git clone git@bitbucket.org:inkgroup12/new_seo_third_party.git soagent`
 2. Create a schema in your database e.g. seoagent and Connect your mysql to .env file
 3. Run `composer install -vvv`
@@ -28,6 +29,7 @@ PUSHER_APP_KEY=
 PUSHER_APP_SECRET=
 PUSHER_APP_CLUSTER=mt1
 ````
+(Confirm PUSHER details from Stephen)
 
 2. Open a new terminal and go to your project and run: 
 
