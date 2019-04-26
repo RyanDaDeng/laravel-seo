@@ -37,14 +37,33 @@
                 </b-col>
 
                 <b-col md="6" class="my-1">
-                    <b-form-group label-cols-horizontal label="keyword Search" class="mb-0">
+                    <b-form-group label-cols-horizontal label="Exactly Keyword Search" class="mb-0">
                         <b-input-group>
-                            <b-form-select v-model="paramFilter.keyword_filter" :options="compareFilterList"
-                                           slot="prepend"></b-form-select>
-                            <b-form-input v-model="paramFilter.keyword" placeholder="Type to Search"/>
+                            <b-form-input v-model="paramFilter.exactly_keyword" placeholder="Type to Search"/>
                         </b-input-group>
                     </b-form-group>
                 </b-col>
+
+
+                <b-col md="6" class="my-1">
+                    <b-form-group label-cols-horizontal label="Exclude Keywords Search" class="mb-0">
+
+                        <tags-input element-id="exclude" placeholder="Add Not Contain Keywords"
+                                    v-model="paramFilter.exclude_keywords"></tags-input>
+
+                    </b-form-group>
+                </b-col>
+
+
+                <b-col md="6" class="my-1">
+                    <b-form-group label-cols-horizontal label="Contain Keywords Search" class="mb-0">
+
+                        <tags-input element-id="exclude" placeholder="Add Contain Keywords"
+                                    v-model="paramFilter.contain_keywords"></tags-input>
+
+                    </b-form-group>
+                </b-col>
+
 
                 <b-col md="6" class="my-1">
                     <b-form-group label-cols-horizontal label="Device" class="mb-0">
@@ -368,13 +387,14 @@
                 paramFilter: {
                     url: '',
                     url_filter: 'contains',
-                    keyword: '',
-                    keyword_filter: 'contains',
+                    exclude_keywords: [],
+                    contain_keywords: [],
+                    exactly_keyword: '',
                     device: '',
                     sort_by: '',
                     sort_order: '',
                     is_primary: '',
-                    path_md5:''
+                    path_md5: ''
                 },
                 fields: [
                     // {key: 'id', label: 'ID', class: 'id-table-wrap',sortable: true},
@@ -509,7 +529,7 @@
                 evt.preventDefault();
                 let app = this;
                 let loader = this.$loading.show();
-                axios.put('/keywords/web/pages/' + this.selectedItem.page_id + '/keywords/' + this.selectedItem.keyword_id + '/benchmark', this.ctrBenchmarkForm).then(function (resp) {
+                axios.put('keywords/web/pages/' + this.selectedItem.page_id + '/keywords/' + this.selectedItem.keyword_id + '/benchmark', this.ctrBenchmarkForm).then(function (resp) {
 
                     app.items[app.selectedItemIndex].ctr_difference = app.items[app.selectedItemIndex].avg_ctr * 100 - resp.data.ctr_benchmark;
                     app.items[app.selectedItemIndex].ctr_benchmark = resp.data.ctr_benchmark;
@@ -538,7 +558,7 @@
                 let app = this;
                 let loader = this.$loading.show();
 
-                axios.put('/keywords/web/pages/' + this.selectedItem.page_id + '/keywords/' + this.selectedItem.keyword_id + '/click', this.clickPotentialForm).then(function (resp) {
+                axios.put('keywords/web/pages/' + this.selectedItem.page_id + '/keywords/' + this.selectedItem.keyword_id + '/click', this.clickPotentialForm).then(function (resp) {
                     app.items[app.selectedItemIndex].click_potential = resp.data.click_potential;
                     app.$notify({
                         type: 'success',
@@ -568,30 +588,17 @@
             },
             viewAllKeyword(item, index, button) {
                 this.pathMd5 = item.path_md5;
-                this.paramFilter = {
-                    url: '',
-                    url_filter: 'contains',
-                    keyword: '',
-                    keyword_filter: 'contains',
-                    device: '',
-                    sort_by: '',
-                    sort_order: '',
-                    a_date_from: '',
-                    a_date_to: '',
-                    b_date_from: '',
-                    b_date_to: '',
-                    per_page: '',
-                    path_md5: item.path_md5,
-                    is_primary: ''
-                };
+                this.paramFilter.path_md5 = item.path_md5;
+                this.paramFilter.is_primary = false;
                 this.searchNow();
             },
             resetNow() {
                 this.paramFilter = {
                     url: '',
                     url_filter: 'contains',
-                    keyword: '',
-                    keyword_filter: 'contains',
+                    exclude_keywords: [],
+                    contain_keywords: [],
+                    exactly_keyword: '',
                     device: '',
                     sort_by: '',
                     sort_order: '',
@@ -631,8 +638,9 @@
                         per_page: this.perPage,
                         url: this.paramFilter.url,
                         url_filter: this.paramFilter.url_filter,
-                        keyword: this.paramFilter.keyword,
-                        keyword_filter: this.paramFilter.keyword_filter,
+                        exclude_keywords: this.paramFilter.exclude_keywords,
+                        contain_keywords: this.paramFilter.contain_keywords,
+                        exactly_keyword: this.paramFilter.exactly_keyword,
                         device: this.paramFilter.device,
                         sort_by: this.paramFilter.sort_by,
                         sort_order: this.paramFilter.sort_order,
@@ -678,7 +686,7 @@
                         });
 
                         // send emit to JobHistory component to refresh the list
-                         EventBus.$emit('newJobCreated');
+                        EventBus.$emit('newJobCreated');
                     } else {
                         app.$notify({
                             type: 'error',

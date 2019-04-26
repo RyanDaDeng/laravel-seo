@@ -9,6 +9,7 @@ use App\Modules\Keywords\Models\Page;
 use App\Modules\Keywords\Models\QueryDetails;
 use App\Modules\SeoAgent\Models\SeoAgentCurrentData;
 use Carbon\Carbon;
+use Illuminate\Database\Query\Builder;
 
 class KeywordQueries
 {
@@ -36,11 +37,30 @@ class KeywordQueries
     }
 
 
-    public static function getFilteredKeywords($keywordFilter, $keyword)
+    public static function getFilteredKeywords(Builder $query, $exactly = null, $excludes = null, $contains = null)
     {
-        $data = self::getFilterOperand($keywordFilter, $keyword);
 
-        return Keyword::query()->where('keyword', $data[0], $data[1])->get();
+        $query = $query->join('tbl_gw_keywords as keywords', 'keywords.id', 'summary.keyword');
+        if ($exactly) {
+            $query = $query->where('keywords.keyword', '=', $exactly);
+
+        } else {
+
+            if ($excludes) {
+                foreach ($excludes as $exclude) {
+                    $query = $query->where('keywords.keyword', 'not like', "%$exclude%");
+                }
+
+            }
+
+            if ($contains) {
+                foreach ($contains as $contain) {
+                    $query = $query->where('keywords.keyword', 'like', "%$contain%");
+                }
+            }
+        }
+
+        return $query;
     }
 
 
@@ -168,9 +188,6 @@ class KeywordQueries
     }
 
 
-
-
-
     public static function customRangeUnionQuery(Carbon $dateFrom, Carbon $dateTo)
     {
         $dateRange = JobHistoryQuery::getDateRangeArray($dateFrom, $dateTo);
@@ -207,13 +224,14 @@ class KeywordQueries
                                           $device,
                                           $url,
                                           $urlFilter,
-                                          $keyword,
-                                          $keywordFilter,
                                           $sortBy,
                                           $sortOrder,
                                           $perPage,
                                           $pathMd5,
-                                          $isPrimary)
+                                          $isPrimary,
+                                          $exactlyKeyword,
+                                          $containKeywords,
+                                          $excludeKeywords)
     {
 
 
@@ -252,13 +270,12 @@ class KeywordQueries
 
         // keyword filter
         $keywordData = [];
-        if (!empty($keyword) && !empty($keywordFilter)) {
-            $keywordData = self::getFilteredKeywords($keywordFilter, $keyword);
-            $query = $query->whereIn('summary.keyword', $keywordData->pluck('id'));
+        if (!empty($excludeKeywords) || !empty($containKeywords) || !empty($exactlyKeyword)) {
+            $query = self::getFilteredKeywords($query, $exactlyKeyword, $excludeKeywords, $containKeywords);
         }
 
 
-        if (in_array($sortBy, ['ctr_difference','click_potential', 'ctr_benchmark'])) {
+        if (in_array($sortBy, ['ctr_difference', 'click_potential', 'ctr_benchmark'])) {
             $sortOrder = $sortOrder === 'asc' ? 'asc' : 'desc';
             $query = $query->orderBy($sortBy, $sortOrder);
         }
@@ -299,7 +316,7 @@ class KeywordQueries
 
         $res['data'] = $data;
 
-        return  $res;
+        return $res;
     }
 }
 

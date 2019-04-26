@@ -61,8 +61,11 @@ class KeywordWebController extends Controller
         $device = $request->query('device');
         $url = $request->query('url');
         $urlFilter = $request->query('url_filter');
-        $keyword = $request->query('keyword');
-        $keywordFilter = $request->query('keyword_filter');
+
+        $exactlyKeyword = $request->query('exactly_keyword');
+        $containKeyword = $request->query('contain_keywords');
+        $excludeKeywords = $request->query('exclude_keywords');
+
         $sortBy = $request->query('sort_by');
         $request->query('sort_order');
         $perPage = $request->query('per_page');
@@ -83,13 +86,14 @@ class KeywordWebController extends Controller
             $device,
             $url,
             $urlFilter,
-            $keyword,
-            $keywordFilter,
             $sortBy,
             $sortOrder,
             $perPage,
             $pathMd5,
-            $isPrimary);
+            $isPrimary,
+            $exactlyKeyword,
+            $containKeyword,
+            $excludeKeywords);
 
         $hasCompareTo = false;
         $bDateFromCarbon = null;
@@ -123,6 +127,7 @@ class KeywordWebController extends Controller
                             'positions_trend' => round($aRangeData['data'][$key]->avg_positions - $compareTo->avg_positions, 2),
                             'ctr_trend' => $this->compare($aRangeData['data'][$key]->avg_ctr, $compareTo->avg_ctr)
                         ];
+                        $aRangeData['data'][$key]->compareTo = $compareTo;
                     }
                 }
             }
